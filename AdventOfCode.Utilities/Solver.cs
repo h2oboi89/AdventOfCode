@@ -78,7 +78,7 @@ public static class Solver
         totalTime += sw.Elapsed;
 
         Console.ForegroundColor = ConsoleColor.Blue;
-        Console.WriteLine($"{year}.{type.Name}");
+        Console.Write($"{year}.{type.Name}");
         Console.ForegroundColor = originalColor;
         Console.WriteLine($" {FormatTime(sw.Elapsed)}");
 
