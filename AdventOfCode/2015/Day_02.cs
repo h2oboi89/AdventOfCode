@@ -30,14 +30,13 @@ internal class Day_02 : BaseDay
         return (parts[0], parts[1], parts[2]);
     }
 
-    private static int SurfaceArea(int length, int width, int height) =>
-            2 * ((length * width) + (width * height) + (height * length));
+    private static int SurfaceArea(int a, int b, int c) => 2 * ((a * b) + (b * c) + (c * a));
 
     private static int Extra(int a, int b) => a * b;
 
     private static int WrapPackage(int a, int b, int c) => SurfaceArea(a, b, c) + Extra(a, b);
 
-    private static int Volume(int length, int width, int height) => length * width * height;
+    private static int Volume(int a, int b, int c) => a * b * c;
 
     private static int Perimeter(int a, int b) => 2 * (a + b);
 
@@ -91,7 +90,8 @@ internal class Day_02 : BaseDay
     }
 
     [Part]
-    public string Solve_2() {
+    public string Solve_2()
+    {
         var total = 0;
 
         foreach (var (a, b, c) in input)
