@@ -35,9 +35,13 @@ internal class Day_02 : BaseDay
 
     private static int Extra(int a, int b) => a * b;
 
+    private static int WrapPackage(int a, int b, int c) => SurfaceArea(a, b, c) + Extra(a, b);
+
     private static int Volume(int length, int width, int height) => length * width * height;
 
     private static int Perimeter(int a, int b) => 2 * (a + b);
+
+    private static int TieRibbon(int a, int b, int c) => Volume(a, b, c) + Perimeter(a, b);
 
     [Test]
     public static bool Test_1()
@@ -52,7 +56,7 @@ internal class Day_02 : BaseDay
         {
             var (a, b, c) = ParseInput(i);
 
-            return SurfaceArea(a, b, c) + Extra(a, b);
+            return WrapPackage(a, b, c);
         });
     }
 
@@ -69,7 +73,7 @@ internal class Day_02 : BaseDay
         {
             var (a, b, c) = ParseInput(i);
 
-            return Volume(a, b, c) + Perimeter(a, b);
+            return TieRibbon(a, b, c);
         });
     }
 
@@ -80,10 +84,7 @@ internal class Day_02 : BaseDay
 
         foreach (var (a, b, c) in input)
         {
-            var surfaceArea = SurfaceArea(a, b, c);
-            var extra = a * b;
-
-            total += surfaceArea + extra;
+            total += WrapPackage(a, b, c);
         }
 
         return new($"{total}");
@@ -95,7 +96,7 @@ internal class Day_02 : BaseDay
 
         foreach (var (a, b, c) in input)
         {
-            total += Volume(a, b, c) + Perimeter(a, b);
+            total += TieRibbon(a, b, c);
         }
 
         return new($"{total}");
