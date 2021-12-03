@@ -9,10 +9,6 @@ public class Program
         Parser.Default.ParseArguments<Options>(args)
             .WithParsed(options =>
             {
-                //Console.WriteLine($"Year: '{options.Year}'");
-                //Console.WriteLine($"All: '{options.All}'");
-                //Console.WriteLine($"Days: '{string.Join(", ", options.Days)}'");
-
                 if (options.Year == -1)
                 {
                     if (options.All)
