@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+﻿using System.Diagnostics;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AdventOfCode.Utilities;
 
@@ -37,7 +32,7 @@ public static class Solver
         return type.Namespace.Split(".").Last().TrimStart('_');
     }
 
-    public static string GetHighestYear()
+    private static string GetHighestYear()
     {
         return days.OrderBy(x => x.year).Last().year;
     }
