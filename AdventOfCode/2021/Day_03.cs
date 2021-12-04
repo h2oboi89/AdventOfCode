@@ -128,22 +128,10 @@ internal class Day_03 : BaseDay
     }
 
     [Test]
-    public bool Test1()
-    {
-        return ExecuteTests(new List<(string, object)> { (string.Empty, 198) }, (i) =>
-        {
-            return Solve1(testInput, testInputWidth);
-        });
-    }
+    public bool Test1() => ExecuteTest(string.Empty, 198, (_) => Solve1(testInput, testInputWidth));
 
     [Test]
-    public bool Test2()
-    {
-        return ExecuteTests(new List<(string, object)> { (string.Empty, 230) }, (i) =>
-        {
-            return Solve2(testInput, testInputWidth);
-        });
-    }
+    public bool Test2() => ExecuteTest(string.Empty, 230, (_) => Solve2(testInput, testInputWidth));
 
     [Part]
     public string Solve_1() => $"{Solve1(input, inputWidth)}";

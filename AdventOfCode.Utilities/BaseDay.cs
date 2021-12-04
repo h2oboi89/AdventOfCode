@@ -12,15 +12,25 @@ public abstract class BaseDay {
 
         foreach (var (input, expected) in testValues)
         {
-            var actual = testFunc(input);
-
-            if (!actual.Equals(expected))
+            if (!ExecuteTest(input, expected, testFunc))
             {
-                PrintTestFailure(input, expected, actual);
                 pass = false;
             }
         }
 
         return pass;
+    }
+
+    protected static bool ExecuteTest(string input, object expected, Func<string, object> testFunc)
+    {
+        var actual = testFunc(input);
+
+        if (!actual.Equals(expected))
+        {
+            PrintTestFailure(input, expected, actual);
+            return false;
+        }
+
+        return true;
     }
 }
