@@ -1,0 +1,9 @@
+﻿namespace AdventOfCode;
+
+static class Int32Extensions
+{
+    public static int NearestPowerOfTen(this int i)
+    {
+        return (int)Math.Round(Math.Pow(10, Math.Ceiling(Math.Log10(i))));
+    }
+}
