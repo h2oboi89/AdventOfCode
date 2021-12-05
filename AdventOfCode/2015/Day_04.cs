@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace AdventOfCode._2015;
 
@@ -16,25 +12,28 @@ internal class Day_04 : BaseDay
         input = File.ReadAllText(inputFile).Trim();
     }
 
-    private static string Hex(byte[] hash) => string.Join("", hash.Select(b => b.ToString("X2")));
+    private static string Hex(IEnumerable<byte> hash) => string.Join("", hash.Select(b => b.ToString("X2")));
 
-    private static int Mine(string input)
+    private static int Mine(string input, int requiredLength)
     {
-        using (var md5 = MD5.Create())
+        using var md5 = MD5.Create();
+
+        var requiredStart = "0".Repeat(requiredLength);
+        var byteCount = (int)Math.Ceiling(requiredLength / 2.0);
+
+        var seed = 0;
+
+        while (true)
         {
-            var seed = 0;
-            while (true)
-            {
-                var value = $"{input}{seed}";
+            var value = $"{input}{seed}";
 
-                var bytes = Encoding.ASCII.GetBytes(value);
+            var bytes = Encoding.ASCII.GetBytes(value);
 
-                var hash = Hex(md5.ComputeHash(bytes));
+            var hash = Hex(md5.ComputeHash(bytes).Take(byteCount));
 
-                if (hash.Substring(0, 5).Equals("00000")) return seed;
+            if (hash.StartsWith(requiredStart)) return seed;
 
-                seed++;
-            }
+            seed++;
         }
     }
 
@@ -47,15 +46,12 @@ internal class Day_04 : BaseDay
             ("pqrstuv", 1048970),
         };
 
-        return ExecuteTests(testValues, (i) => Mine(i));
+        return ExecuteTests(testValues, (i) => Mine(i, 5));
     }
 
-    [Test]
-    public bool Test2() => true;
+    [Part]
+    public string Solve1() => $"{Mine(input, 5)}";
 
     [Part]
-    public string Solve1() => $"{Mine(input)}";
-
-    [Part]
-    public string Solve2() => $"{string.Empty}";
+    public string Solve2() => $"{Mine(input, 6)}";
 }

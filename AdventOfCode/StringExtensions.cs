@@ -13,4 +13,6 @@ static class StringExtensions
             yield return s.Substring(i, Math.Min(partLength, s.Length - i));
         }
     }
+
+    public static string Repeat(this string s, int count) => string.Join("", Enumerable.Repeat(s, count));
 }
