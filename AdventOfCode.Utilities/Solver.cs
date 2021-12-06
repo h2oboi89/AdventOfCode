@@ -3,11 +3,11 @@ using System.Reflection;
 
 namespace AdventOfCode.Utilities;
 
-public static class Solver
+public class Solver
 {
     private const string ClassPrefix = "Day";
-    private static readonly Assembly dll = Assembly.GetEntryAssembly();
-    private static readonly string dllDir = Path.GetDirectoryName(dll.Location);
+    private readonly Assembly dll;
+    private readonly string dllDir;
 
     private class DayInfo
     {
@@ -23,10 +23,13 @@ public static class Solver
         }
     }
 
-    private static readonly List<DayInfo> days = new();
+    private readonly List<DayInfo> days = new();
 
-    static Solver()
+    public Solver(Assembly assembly)
     {
+        dll = assembly;
+        dllDir = Path.GetDirectoryName(dll.Location);
+
         foreach (var type in GetDays())
         {
             days.Add(new DayInfo(GetYear(type), GetDay(type), type));
@@ -34,7 +37,7 @@ public static class Solver
     }
 
     #region Helper Methods
-    private static IEnumerable<Type> GetDays()
+    private IEnumerable<Type> GetDays()
     {
         return dll.GetTypes().Where(type => typeof(BaseDay).IsAssignableFrom(type) && !type.IsInterface && !type.IsAbstract);
     }
@@ -44,7 +47,7 @@ public static class Solver
         return int.Parse(type.Namespace.Split(".").Last().TrimStart('_'));
     }
 
-    private static int GetHighestYear()
+    private int GetHighestYear()
     {
         return days.OrderBy(x => x.Year).Last().Year;
     }
@@ -56,7 +59,7 @@ public static class Solver
         return int.Parse(name[(name.IndexOf(ClassPrefix) + ClassPrefix.Length)..].TrimStart('_'));
     }
 
-    private static string GetInputFile(int year, int index)
+    private string GetInputFile(int year, int index)
     {
         return Path.Combine(dllDir, year.ToString(), "Inputs", $"{index:D2}.txt");
     }
@@ -74,23 +77,17 @@ public static class Solver
     private static bool RunTests(Solution solution, Type type, BaseDay instance)
     {
         var sw = new Stopwatch();
-        var testsPassed = true;
 
         foreach (var test in GetTests(type))
         {
             sw.Restart();
-            var result = (bool)test.Invoke(instance, null);
+            var result = (TestResult)test.Invoke(instance, null);
             sw.Stop();
 
             solution.Tests.Add((test.Name, result, sw.Elapsed));
-
-            if (!result)
-            {
-                testsPassed = false;
-            }
         }
 
-        return testsPassed;
+        return solution.Tests.All(t => t.result.Pass == true);
     }
 
     private static void RunParts(Solution solution, Type type, BaseDay instance)
@@ -124,7 +121,7 @@ public static class Solver
     }
     #endregion
 
-    private static Solution Solve(DayInfo day)
+    private Solution Solve(DayInfo day, bool testMode = false)
     {
         var solution = new Solution(day.Year, day.Day, day.Type.Name);
 
@@ -138,7 +135,7 @@ public static class Solver
 
         var testsPassed = RunTests(solution, day.Type, instance);
 
-        if (testsPassed)
+        if (testsPassed && !testMode)
         {
             RunParts(solution, day.Type, instance);
         }
@@ -149,7 +146,7 @@ public static class Solver
         return solution;
     }
 
-    private static (IEnumerable<Solution> solutions, TimeSpan duration) Solve(IEnumerable<DayInfo> days)
+    private (IEnumerable<Solution> solutions, TimeSpan duration) Solve(IEnumerable<DayInfo> days)
     {
         if (!days.Any())
         {
@@ -175,7 +172,7 @@ public static class Solver
         return (solutions, totalRunTime);
     }
 
-    public static (IEnumerable<Solution> solutions, TimeSpan duration) SolveAll(int year)
+    public (IEnumerable<Solution> solutions, TimeSpan duration) SolveAll(int year)
     {
         if (year == -1)
         {
@@ -187,7 +184,14 @@ public static class Solver
         }
     }
 
-    public static (IEnumerable<Solution> solutions, TimeSpan duration) SolveLast(int year)
+    public IEnumerable<Solution> RunTests()
+    {
+        var (solutions, _) = SolveAll(-1);
+
+        return solutions;
+    }
+
+    public (IEnumerable<Solution> solutions, TimeSpan duration) SolveLast(int year)
     {
         if (year == -1) year = GetHighestYear();
 
@@ -201,7 +205,7 @@ public static class Solver
         return (new List<Solution>(), TimeSpan.Zero);
     }
 
-    public static (IEnumerable<Solution> solutions, TimeSpan duration) Solve(int year, IEnumerable<int> selectedDays)
+    public (IEnumerable<Solution> solutions, TimeSpan duration) Solve(int year, IEnumerable<int> selectedDays)
     {
         if (year == -1) year = GetHighestYear();
 

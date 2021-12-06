@@ -38,7 +38,7 @@ internal class Day_04 : BaseDay
     }
 
     [Test]
-    public static bool Test1()
+    public static TestResult Test1()
     {
         var testValues = new List<(string, object)>
         {

@@ -1,36 +1,38 @@
 ﻿namespace AdventOfCode.Utilities;
 
-public abstract class BaseDay { 
-    private static void PrintTestFailure(string input, object expected, object actual)
+public abstract class BaseDay
+{
+    protected static TestResult ExecuteTests(List<(string input, object expected)> testValues, Func<string, object> testFunc)
     {
-        Console.WriteLine($"Failure: '{input}' -> '{expected}', but was '{actual}'");
-    }
-
-    protected static bool ExecuteTests(List<(string input, object expected)> testValues, Func<string, object> testFunc)
-    {
-        var pass = true;
+        var output = new List<(bool, string)>();
 
         foreach (var (input, expected) in testValues)
         {
-            if (!ExecuteTest(input, expected, testFunc))
+            var testResult = ExecuteTest(input, expected, testFunc);
+
+            foreach(var r in testResult.Results)
             {
-                pass = false;
+                output.Add((r.pass, r.output));
             }
         }
 
-        return pass;
+        return new TestResult(output);
     }
 
-    protected static bool ExecuteTest(string input, object expected, Func<string, object> testFunc)
+    protected static TestResult ExecuteTest(string input, object expected, Func<string, object> testFunc)
     {
         var actual = testFunc(input);
+        var result = new List<(bool, string)>();
 
         if (!actual.Equals(expected))
         {
-            PrintTestFailure(input, expected, actual);
-            return false;
+            result.Add(new(false, $"Failure: '{input}' -> '{expected}', but was '{actual}'"));
+        }
+        else
+        {
+            result.Add(new(true, string.Empty));
         }
 
-        return true;
+        return new TestResult(result);
     }
 }

@@ -100,10 +100,10 @@ internal class Day_02 : BaseDay
     }
 
     [Test]
-    public bool Test1() => ExecuteTest(string.Empty, 150, (_) => Solve1(testInput));
+    public TestResult Test1() => ExecuteTest(string.Empty, 150, (_) => Solve1(testInput));
 
     [Test]
-    public bool Test2() => ExecuteTest(string.Empty, 900, (_) => Solve2(testInput));
+    public TestResult Test2() => ExecuteTest(string.Empty, 900, (_) => Solve2(testInput));
 
     [Part]
     public string Solve_1() => $"{Solve1(input)}";

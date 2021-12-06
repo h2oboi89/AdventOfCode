@@ -7,7 +7,7 @@ public class Solution
     public readonly string TypeName;
     public TimeSpan Construction = TimeSpan.Zero;
     public TimeSpan RunTime = TimeSpan.Zero;
-    public List<(string name, bool passed, TimeSpan duration)> Tests = new();
+    public List<(string name, TestResult result, TimeSpan duration)> Tests = new();
     public List<(string name, string result, TimeSpan duration)> Parts = new();
 
     public Solution(int year, int day, string typeName)

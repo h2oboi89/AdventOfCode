@@ -254,10 +254,10 @@ internal class Day_04 : BaseDay
     }
 
     [Test]
-    public bool Test1() => ExecuteTest(string.Empty, 4512, (_) => PlayToWin(TestValues, TestBoards));
+    public TestResult Test1() => ExecuteTest(string.Empty, 4512, (_) => PlayToWin(TestValues, TestBoards));
 
     [Test]
-    public bool Test2() => ExecuteTest(string.Empty, 1924, (_) => PlayToLose(TestValues, TestBoards));
+    public TestResult Test2() => ExecuteTest(string.Empty, 1924, (_) => PlayToLose(TestValues, TestBoards));
 
     [Part]
     public string Solve1() => $"{PlayToWin(PartValues, PartBoards)}";

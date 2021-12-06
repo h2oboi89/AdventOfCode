@@ -177,10 +177,10 @@ internal class Day_05 : BaseDay
     }
 
     [Test]
-    public bool Test1() => ExecuteTest(string.Empty, 5, (_) => MapVents(TestValues.dimension, TestValues.values, false, 2));
+    public TestResult Test1() => ExecuteTest(string.Empty, 5, (_) => MapVents(TestValues.dimension, TestValues.values, false, 2));
 
     [Test]
-    public bool Test2() => ExecuteTest(string.Empty, 12, (_) => MapVents(TestValues.dimension, TestValues.values, true, 2));
+    public TestResult Test2() => ExecuteTest(string.Empty, 12, (_) => MapVents(TestValues.dimension, TestValues.values, true, 2));
 
     [Part]
     public string Part1() => $"{MapVents(PartValues.dimension, PartValues.values, false, 2)}";
