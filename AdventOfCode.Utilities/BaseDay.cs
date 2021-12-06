@@ -26,7 +26,7 @@ public abstract class BaseDay
 
         if (!actual.Equals(expected))
         {
-            result.Add(new(false, $"Failure: '{input}' -> '{expected}', but was '{actual}'"));
+            result.Add(new(false, $"Failure: '{input}'; expected '{expected}', but was '{actual}'"));
         }
         else
         {
