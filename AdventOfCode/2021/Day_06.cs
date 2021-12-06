@@ -107,10 +107,10 @@ internal class Day_06 : BaseDay
     }
 
     [Test]
-    public bool Test1_1() => ExecuteTest(string.Empty, (ulong)26, (_) => Simulate(TestValues, 18));
+    public TestResult Test1_1() => ExecuteTest(string.Empty, (ulong)26, (_) => Simulate(TestValues, 18));
 
     [Test]
-    public bool Test1_2() => ExecuteTest(string.Empty, (ulong)5934, (_) => Simulate(TestValues, 80));
+    public TestResult Test1_2() => ExecuteTest(string.Empty, (ulong)5934, (_) => Simulate(TestValues, 80));
 
     [Part]
     public string Part1() => $"{Simulate(PartValues, 80)}";

@@ -1,4 +1,5 @@
 ﻿using CommandLine;
+using System.Reflection;
 
 namespace AdventOfCode;
 
@@ -17,20 +18,22 @@ public class Program
 
     private static (IEnumerable<Solution> solutions, TimeSpan duration) Solve(Options options)
     {
+        var solver = new Solver(Assembly.GetExecutingAssembly());
+        
         IEnumerable<Solution> solutions;
         TimeSpan totalRunTime;
         
         if (options.All)
         {
-            (solutions, totalRunTime) = Solver.SolveAll(options.Year);
+            (solutions, totalRunTime) = solver.SolveAll(options.Year);
         }
         else if (options.Days.Any())
         {
-            (solutions, totalRunTime) = Solver.Solve(options.Year, options.Days);
+            (solutions, totalRunTime) = solver.Solve(options.Year, options.Days);
         }
         else
         {
-            (solutions, totalRunTime) = Solver.SolveLast(options.Year);
+            (solutions, totalRunTime) = solver.SolveLast(options.Year);
         }
 
         return (solutions, totalRunTime);
@@ -40,7 +43,7 @@ public class Program
     {
         if (!solutions.Any())
         {
-            ConsoleWriteLineWithColor(ConsoleColor.Red, "No solutions found!");
+            ConsoleUtils.WriteLine(ConsoleColor.Red, "No solutions found!");
             return;
         }
 
@@ -48,29 +51,37 @@ public class Program
 
         foreach (var solution in solutions)
         {
-            ConsoleWriteWithColor(ConsoleColor.Blue, solution.Name);
+            ConsoleUtils.Write(ConsoleColor.Blue, solution.Name);
             Console.WriteLine($" {FormatTime(solution.Construction)}");
 
             Console.WriteLine(" - Tests:");
-            foreach (var (name, passed, duration) in solution.Tests)
+            foreach (var (name, result, duration) in solution.Tests)
             {
                 Console.Write($"   - {name}: ");
-                if (passed)
+                if (result.Pass)
                 {
-                    ConsoleWriteWithColor(ConsoleColor.Green, "passed");
+                    ConsoleUtils.Write(ConsoleColor.Green, "passed");
                 }
                 else
                 {
-                    ConsoleWriteWithColor(ConsoleColor.Red, "failed");
+                    ConsoleUtils.Write(ConsoleColor.Red, "failed");
                 }
                 Console.WriteLine($" [{FormatTime(duration)}]");
+                
+                if (!result.Pass)
+                {
+                    foreach(var (pass, output) in result.Results)
+                    {
+                        Console.WriteLine($"      - {pass} : {output}");
+                    }
+                }
             }
 
             Console.WriteLine(" - Parts:");
             foreach (var (name, result, duration) in solution.Parts)
             {
                 Console.Write($"   - {name}: ");
-                ConsoleWriteWithColor(ConsoleColor.Cyan, result);
+                ConsoleUtils.Write(ConsoleColor.Cyan, result);
                 Console.WriteLine($" [{FormatTime(duration)}]");
             }
             Console.WriteLine($" - CPU Time: {FormatTime(solution.ExecutionTime)}");
@@ -89,23 +100,6 @@ public class Program
         Console.WriteLine($" - Minimum: {FormatTime(min)}");
         Console.WriteLine($" - Maximum: {FormatTime(max)}");
         Console.WriteLine($" - Average: {FormatTime(avg)}");
-    }
-
-    private static void ConsoleColorMethod(ConsoleColor color, string text, Action<string> method)
-    {
-        Console.ForegroundColor = color;
-        method(text);
-        Console.ResetColor();
-    }
-
-    private static void ConsoleWriteWithColor(ConsoleColor color, string text)
-    {
-        ConsoleColorMethod(color, text, Console.Write);
-    }
-
-    private static void ConsoleWriteLineWithColor(ConsoleColor color, string text)
-    {
-        ConsoleColorMethod(color, text, Console.WriteLine);
     }
 
     private static string FormatTime(TimeSpan time)

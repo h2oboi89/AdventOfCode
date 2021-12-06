@@ -56,18 +56,18 @@ internal class Day_01 : BaseDay
     }
 
     [Test]
-    public bool Test_1()
+    public TestResult Test_1()
     {
-        return ExecuteTests(new List<(string, object)> { (string.Empty, 7) }, (i) =>
+        return ExecuteTest(string.Empty, 7, (i) =>
         {
             return Solve(testInput, 1);
         });
     }
 
     [Test]
-    public bool Test_2()
+    public TestResult Test_2()
     {
-        return ExecuteTests(new List<(string, object)> { (string.Empty, 5) }, (i) =>
+        return ExecuteTest(string.Empty, 5, (i) =>
         {
             return Solve(testInput, 3);
         });

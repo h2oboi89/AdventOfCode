@@ -118,7 +118,7 @@ internal class Day_03 : BaseDay
     }
 
     [Test]
-    public static bool Test1()
+    public static TestResult Test1()
     {
         var testValues = new List<(string, object)>
         {
@@ -131,7 +131,7 @@ internal class Day_03 : BaseDay
     }
 
     [Test]
-    public static bool Test2()
+    public static TestResult Test2()
     {
         var testValues = new List<(string, object)>
         {
