@@ -110,8 +110,7 @@ internal class Day_05 : BaseDay
         }
     }
 
-    private readonly (int dimension, IEnumerable<PointPair> values) PartValues;
-    private readonly (int dimension, IEnumerable<PointPair> values) TestValues;
+    private readonly (int dimension, IEnumerable<PointPair> values) PartValues, TestValues;
 
     public Day_05(string intputFile)
     {
