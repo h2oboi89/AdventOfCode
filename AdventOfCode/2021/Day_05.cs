@@ -29,72 +29,34 @@ internal class Day_05 : BaseDay
 
         public override string ToString() => $"[ {Start}, {End} ] {IsDiagonal}";
 
-        private IEnumerable<Point> GetHorizonalLine
+        private int NumPoints
         {
             get
             {
-                var start = Start;
-                var end = End;
+                var x = Math.Abs(Start.X - End.X) + 1;
+                var y = Math.Abs(Start.Y - End.Y) + 1;
 
-                if (End.X < Start.X)
-                {
-                    start = End;
-                    end = Start;
-                }
-
-                for (var x = start.X; x <= end.X; x++)
-                {
-                    yield return new Point(x, Start.Y);
-                }
-            }
-        }
-
-        private IEnumerable<Point> GetVerticalLine
-        {
-            get
-            {
-                var start = Start;
-                var end = End;
-
-                if (End.Y < Start.Y)
-                {
-                    start = End;
-                    end = Start;
-                }
-
-                for (var y = start.Y; y <= end.Y; y++)
-                {
-                    yield return new Point(Start.X, y);
-                }
-            }
-        }
-
-        private IEnumerable<Point> GetDiagonalLine
-        {
-            get
-            {
-                var xDir = 1; var yDir = 1;
-
-                if (End.X < Start.X) xDir = -1;
-                if (End.Y < Start.Y) yDir = -1;
-
-                var p = new Point(Start.X, Start.Y);
-                for (var i = 0; i <= Math.Abs(End.X - Start.X); i++)
-                {
-                    yield return p;
-
-                    p = new Point(p.X + xDir, p.Y + yDir);
-                }
+                return Math.Max(x, y);
             }
         }
 
         public IEnumerable<Point> GetLine()
         {
-            if (IsHorizonal) return GetHorizonalLine;
+            var dx = 1; var dy = 1;
 
-            if (IsVertical) return GetVerticalLine;
+            if (End.X < Start.X) dx= -1;
+            if (End.Y < Start.Y) dy = -1;
 
-            return GetDiagonalLine;
+            if (IsHorizonal) dy = 0;
+            if (IsVertical) dx = 0;
+
+            var p = new Point(Start.X, Start.Y);
+            for(var i = 0; i < NumPoints; i++)
+            {
+                yield return p;
+
+                p = new Point(p.X + dx, p.Y + dy);
+            }
         }
     }
 
