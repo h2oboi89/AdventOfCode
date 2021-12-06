@@ -9,44 +9,56 @@ public static class Solver
     private static readonly Assembly dll = Assembly.GetEntryAssembly();
     private static readonly string dllDir = Path.GetDirectoryName(dll.Location);
 
-    private static readonly List<(string year, int index, Type type)> days = new();
-
-    static Solver()
+    private class DayInfo
     {
-        foreach (var day in GetDays())
-        {
-            var year = GetYear(day);
-            var index = GetIndex(day);
+        public readonly int Year;
+        public readonly int Day;
+        public readonly Type Type;
 
-            days.Add((year, index, day));
+        public DayInfo(int year, int day, Type type)
+        {
+            Year = year;
+            Day = day;
+            Type = type;
         }
     }
 
+    private static readonly List<DayInfo> days = new();
+
+    static Solver()
+    {
+        foreach (var type in GetDays())
+        {
+            days.Add(new DayInfo(GetYear(type), GetDay(type), type));
+        }
+    }
+
+    #region Helper Methods
     private static IEnumerable<Type> GetDays()
     {
         return dll.GetTypes().Where(type => typeof(BaseDay).IsAssignableFrom(type) && !type.IsInterface && !type.IsAbstract);
     }
 
-    private static string GetYear(Type type)
+    private static int GetYear(Type type)
     {
-        return type.Namespace.Split(".").Last().TrimStart('_');
+        return int.Parse(type.Namespace.Split(".").Last().TrimStart('_'));
     }
 
-    private static string GetHighestYear()
+    private static int GetHighestYear()
     {
-        return days.OrderBy(x => x.year).Last().year;
+        return days.OrderBy(x => x.Year).Last().Year;
     }
 
-    private static int GetIndex(Type type)
+    private static int GetDay(Type type)
     {
         var name = type.Name;
 
         return int.Parse(name[(name.IndexOf(ClassPrefix) + ClassPrefix.Length)..].TrimStart('_'));
     }
 
-    private static string GetInputFile(string year, int index)
+    private static string GetInputFile(int year, int index)
     {
-        return Path.Combine(dllDir, year, "Inputs", $"{index:D2}.txt");
+        return Path.Combine(dllDir, year.ToString(), "Inputs", $"{index:D2}.txt");
     }
 
     private static IEnumerable<MethodInfo> GetTests(Type type)
@@ -59,181 +71,140 @@ public static class Solver
         return type.GetMethods().Where(x => x.GetCustomAttributes(typeof(Part), false).FirstOrDefault() != null);
     }
 
-    private static void Solve((string year, int index, Type type) day)
+    private static bool RunTests(Solution solution, Type type, BaseDay instance)
     {
-        if (day == default) return;
-
-        var (year, index, type) = day;
-
-        var totalTime = default(TimeSpan);
         var sw = new Stopwatch();
-        var constructor = type.GetConstructor(new Type[] { typeof(string) });
-        var inputFile = GetInputFile(year, index);
-        var originalColor = Console.ForegroundColor;
-
-        sw.Start();
-        var instance = (BaseDay)constructor.Invoke(new object[] { inputFile });
-        sw.Stop();
-
-        totalTime += sw.Elapsed;
-
-        Console.ForegroundColor = ConsoleColor.Blue;
-        Console.Write($"{year}.{type.Name}");
-        Console.ForegroundColor = originalColor;
-        Console.WriteLine($" {FormatTime(sw.Elapsed)}");
-
         var testsPassed = true;
 
-        var testResults = new List<(string, bool)>();
-
-        sw.Restart();
         foreach (var test in GetTests(type))
         {
+            sw.Restart();
             var result = (bool)test.Invoke(instance, null);
+            sw.Stop();
 
-            testResults.Add((test.Name, result));
+            solution.Tests.Add((test.Name, result, sw.Elapsed));
 
             if (!result)
             {
                 testsPassed = false;
             }
         }
-        sw.Stop();
 
-        totalTime += sw.Elapsed;
+        return testsPassed;
+    }
 
-        Console.WriteLine(" - Tests:");
-        foreach (var (name, result) in testResults)
+    private static void RunParts(Solution solution, Type type, BaseDay instance)
+    {
+        var sw = new Stopwatch();
+        foreach (var part in GetParts(type))
         {
-            if (result)
-            {
-                Console.Write($"   - {name}: ");
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("passed");
-            }
-            else
-            {
-                Console.Write($"   - {name}: ");
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("failed");
-            }
+            sw.Restart();
+            var result = (string)part.Invoke(instance, null);
+            sw.Stop();
 
-            Console.ForegroundColor = originalColor;
+            solution.Parts.Add((part.Name, result, sw.Elapsed));
         }
+    }
+
+    private static void ConsoleColorMethod(ConsoleColor color, string text, Action<string> method)
+    {
+        Console.ForegroundColor = color;
+        method(text);
+        Console.ResetColor();
+    }
+
+    private static void ConsoleWriteWithColor(ConsoleColor color, string text)
+    {
+        ConsoleColorMethod(color, text, Console.Write);
+    }
+
+    private static void ConsoleWriteLineWithColor(ConsoleColor color, string text)
+    {
+        ConsoleColorMethod(color, text, Console.WriteLine);
+    }
+    #endregion
+
+    private static Solution Solve(DayInfo day)
+    {
+        var solution = new Solution(day.Year, day.Day, day.Type.Name);
+
+        var sw = new Stopwatch();
+        var constructor = day.Type.GetConstructor(new Type[] { typeof(string) });
+        var inputFile = GetInputFile(day.Year, day.Day);
+
+        sw.Start();
+        var instance = (BaseDay)constructor.Invoke(new object[] { inputFile });
+        solution.Construction = sw.Elapsed;
+
+        var testsPassed = RunTests(solution, day.Type, instance);
 
         if (testsPassed)
         {
-            var partResults = new List<(string, string, TimeSpan)>();
-
-            foreach (var part in GetParts(type))
-            {
-                sw.Restart();
-                var result = (string)part.Invoke(instance, null);
-                sw.Stop();
-
-                totalTime += sw.Elapsed;
-
-                partResults.Add((part.Name, result, sw.Elapsed));
-            }
-
-            Console.WriteLine(" - Parts:");
-            foreach (var (name, result, time) in partResults)
-            {
-                Console.Write($"   - {name}: ");
-                Console.ForegroundColor = ConsoleColor.Cyan;
-                Console.Write(result);
-                Console.ForegroundColor = originalColor;
-                Console.WriteLine($" [{FormatTime(time)}]");
-            }
+            RunParts(solution, day.Type, instance);
         }
+        sw.Stop();
 
-        Console.WriteLine($" - Total Time: {FormatTime(totalTime)}");
+        solution.RunTime = sw.Elapsed;
+
+        return solution;
     }
 
-    public static void Solve(string year, int index)
+    private static (IEnumerable<Solution> solutions, TimeSpan duration) Solve(IEnumerable<DayInfo> days)
     {
-        Solve(days.Where(x => x.year == year && x.index == index).FirstOrDefault());
-    }
-
-    public static void SolveAll()
-    {
-        var yearGroups = days.OrderBy(x => x.year).GroupBy(x => x.year);
-
+        if (!days.Any())
+        {
+            return (new List<Solution>(), TimeSpan.Zero);
+        }
+        
         var sw = new Stopwatch();
+        var dayTasks = new List<Task<Solution>>();
 
         sw.Start();
-        foreach (var yearGroup in yearGroups)
+        foreach (var day in days)
         {
-            var year = yearGroup.First().year;
-
-            var sortedDays = yearGroup.OrderBy(x => x.index);
-
-            foreach (var day in sortedDays)
-            {
-                Solve(day);
-                Console.WriteLine();
-            }
+            dayTasks.Add(Task.Run(() => Solve(day)));
         }
+
+        Task.WhenAll(dayTasks).Wait();
         sw.Stop();
 
-        Console.WriteLine($"Total Execution time: {FormatTime(sw.Elapsed)}");
+        var totalRunTime = sw.Elapsed;
+
+        var solutions = dayTasks.Select(t => t.Result).OrderBy(s => s.Year).ThenBy(s => s.Day);
+
+        return (solutions, totalRunTime);
     }
 
-    public static void SolveAll(string year)
+    public static (IEnumerable<Solution> solutions, TimeSpan duration) SolveAll(int year)
     {
-        var filteredDays = days.Where(x => x.year == year).OrderBy(x => x.index);
-
-        var sw = new Stopwatch();
-
-        sw.Start();
-        foreach (var day in filteredDays)
+        if (year == -1)
         {
-            Solve(day);
-            Console.WriteLine();
+            return Solve(days);
         }
-        sw.Stop();
-
-        Console.WriteLine($"Total Execution time: {FormatTime(sw.Elapsed)}");
-    }
-
-    public static void Solve(IEnumerable<int> indexes) => Solve(GetHighestYear(), indexes);
-
-    public static void Solve(string year, IEnumerable<int> indexes) {
-        var sw = new Stopwatch();
-
-        sw.Start(); 
-        foreach (var i in indexes)
+        else
         {
-            Solve(year, i);
+            return Solve(days.Where(d => d.Year == year));
         }
-        sw.Stop();
-
-        Console.WriteLine($"Total Execution time: {FormatTime(sw.Elapsed)}");
     }
 
-    public static void SolveLast() => SolveLast(GetHighestYear());
-
-    public static void SolveLast(string year)
+    public static (IEnumerable<Solution> solutions, TimeSpan duration) SolveLast(int year)
     {
-        Solve(days.Where(x => x.year == year).OrderBy(x => x.index).LastOrDefault());
-    }
+        if (year == -1) year = GetHighestYear();
 
-    private static string FormatTime(TimeSpan time)
-    {
-        var elapsedMilliseconds = time.TotalMilliseconds;
+        var lastDay = days.Where(d => d.Year == year).LastOrDefault();
 
-        const int MILLISECOND = 1;
-        const int SECOND = 1_000 * MILLISECOND;
-        const int MINUTE = 60 * SECOND;
-
-        var message = elapsedMilliseconds switch
+        if (lastDay != default)
         {
-            < MILLISECOND => $"{elapsedMilliseconds:F} ms",
-            < SECOND => $"{Math.Round(elapsedMilliseconds)} ms",
-            < MINUTE => $"{0.001 * elapsedMilliseconds:F} s",
-            _ => $"{Math.Floor(elapsedMilliseconds / MINUTE)} min {Math.Round(0.001 * (elapsedMilliseconds % MINUTE))} s",
-        };
+            return Solve(new List<DayInfo> { lastDay });
+        }
 
-        return message;
+        return (new List<Solution>(), TimeSpan.Zero);
+    }
+
+    public static (IEnumerable<Solution> solutions, TimeSpan duration) Solve(int year, IEnumerable<int> selectedDays)
+    {
+        if (year == -1) year = GetHighestYear();
+
+        return Solve(days.Where(d => d.Year == year && selectedDays.Contains(d.Day)));
     }
 }
