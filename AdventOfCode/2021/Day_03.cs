@@ -2,10 +2,8 @@
 
 internal class Day_03 : BaseDay
 {
-    private readonly int inputWidth;
-    private readonly int testInputWidth;
-    private readonly List<int> input = new();
-    private readonly List<int> testInput = new();
+    private readonly int inputWidth, testInputWidth;
+    private readonly List<int> input = new(), testInput = new();
     private readonly List<string> testValues = new()
     {
         "00100",

@@ -6,8 +6,7 @@ internal class Day_05 : BaseDay
 {
     private class Point
     {
-        public readonly int X;
-        public readonly int Y;
+        public readonly int X, Y;
 
         public Point(int x, int y) { X = x; Y = y; }
 
@@ -16,8 +15,7 @@ internal class Day_05 : BaseDay
 
     private class PointPair
     {
-        public readonly Point Start;
-        public readonly Point End;
+        public readonly Point Start, End;
 
         public PointPair(Point start, Point end) { Start = start; End = end; }
 
@@ -33,10 +31,10 @@ internal class Day_05 : BaseDay
         {
             get
             {
-                var x = Math.Abs(Start.X - End.X) + 1;
-                var y = Math.Abs(Start.Y - End.Y) + 1;
+                var dx = Math.Abs(Start.X - End.X) + 1;
+                var dy = Math.Abs(Start.Y - End.Y) + 1;
 
-                return Math.Max(x, y);
+                return Math.Max(dx, dy);
             }
         }
 
