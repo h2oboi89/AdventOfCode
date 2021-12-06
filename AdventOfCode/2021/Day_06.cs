@@ -27,12 +27,12 @@ internal class Day_06 : BaseDay
                 continue;
             }
 
-            // parse pair of points
+            // parse initial fish values
             values.AddRange(line.Split(",").Select(v => int.Parse(v)));
         }
     }
 
-    private class Cohort : IComparable<Cohort>
+    private class Cohort
     {
         public int Timer;
         public ulong Count = 0;
@@ -40,13 +40,6 @@ internal class Day_06 : BaseDay
         public Cohort(int timer)
         {
             Timer = timer;
-        }
-
-        public int CompareTo(Cohort? other)
-        {
-            if (other == null) return 1;
-
-            return Timer.CompareTo(other.Timer);
         }
     }
 
@@ -94,7 +87,7 @@ internal class Day_06 : BaseDay
                 }
             }
 
-            // reset fish that spawned
+            // reset fish that spawned new fish
             foreach (var cohort in cohorts)
             {
                 if (cohort.Timer == 6)
