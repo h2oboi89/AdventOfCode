@@ -121,7 +121,7 @@ public class Solver
     }
     #endregion
 
-    private Solution Solve(DayInfo day, bool testMode = false)
+    private Solution Solve(DayInfo day, bool testMode)
     {
         var solution = new Solution(day.Year, day.Day, day.Type.Name);
 
@@ -146,7 +146,7 @@ public class Solver
         return solution;
     }
 
-    private (IEnumerable<Solution> solutions, TimeSpan duration) Solve(IEnumerable<DayInfo> days)
+    private (IEnumerable<Solution> solutions, TimeSpan duration) Solve(IEnumerable<DayInfo> days, bool testMode = false)
     {
         if (!days.Any())
         {
@@ -159,7 +159,7 @@ public class Solver
         sw.Start();
         foreach (var day in days)
         {
-            dayTasks.Add(Task.Run(() => Solve(day)));
+            dayTasks.Add(Task.Run(() => Solve(day, testMode)));
         }
 
         Task.WhenAll(dayTasks).Wait();
@@ -184,13 +184,6 @@ public class Solver
         }
     }
 
-    public IEnumerable<Solution> RunTests()
-    {
-        var (solutions, _) = SolveAll(-1);
-
-        return solutions;
-    }
-
     public (IEnumerable<Solution> solutions, TimeSpan duration) SolveLast(int year)
     {
         if (year == -1) year = GetHighestYear();
@@ -210,5 +203,12 @@ public class Solver
         if (year == -1) year = GetHighestYear();
 
         return Solve(days.Where(d => d.Year == year && selectedDays.Contains(d.Day)));
+    }
+
+    public IEnumerable<Solution> RunTests()
+    {
+        var (solutions, _) = Solve(days, true);
+
+        return solutions;
     }
 }
