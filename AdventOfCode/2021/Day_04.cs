@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 
 namespace AdventOfCode._2021;
 
@@ -10,7 +6,7 @@ internal class Day_04 : BaseDay
 {
     private class BingoBoard
     {
-        public readonly Space[,] Spaces = new Space[5, 5];
+        private readonly Space[,] Spaces = new Space[5, 5];
 
         public BingoBoard(IEnumerable<int> values)
         {
@@ -29,11 +25,12 @@ internal class Day_04 : BaseDay
             }
         }
 
-        public class Space
+        private class Space
         {
             public readonly int Value;
 
             public bool Marked = false;
+
             public Space(int value)
             {
                 Value = value;
@@ -137,11 +134,9 @@ internal class Day_04 : BaseDay
         }
     }
 
-    private readonly IEnumerable<int> PartValues;
-    private readonly IEnumerable<int> TestValues;
+    private readonly IEnumerable<int> PartValues, TestValues;
 
-    private readonly IEnumerable<BingoBoard> PartBoards;
-    private readonly IEnumerable<BingoBoard> TestBoards;
+    private readonly IEnumerable<BingoBoard> PartBoards, TestBoards;
 
     public Day_04(string intputFile)
     {
@@ -185,7 +180,7 @@ internal class Day_04 : BaseDay
         }
     }
 
-    private (IEnumerable<int>, IEnumerable<BingoBoard>) ParseInput(string values, string cards)
+    private static (IEnumerable<int>, IEnumerable<BingoBoard>) ParseInput(string values, string cards)
     {
         var intValues = values.Split(',').Select(v => int.Parse(v));
 
