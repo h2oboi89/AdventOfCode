@@ -44,8 +44,6 @@ public class Program
             return;
         }
 
-        var min = TimeSpan.MaxValue;
-        var max = TimeSpan.Zero;
         var runTimes = new List<TimeSpan>();
 
         foreach (var solution in solutions)
@@ -79,13 +77,11 @@ public class Program
             Console.WriteLine($" - Run Time: {FormatTime(solution.RunTime)}");
             Console.WriteLine();
 
-            if (solution.RunTime > max) max = solution.RunTime;
-
-            if (solution.RunTime < min) min = solution.RunTime;
-
             runTimes.Add(solution.RunTime);
         }
 
+        var min = runTimes.Min();
+        var max = runTimes.Max();
         var avg = TimeSpan.FromMilliseconds(runTimes.Select(t => t.TotalMilliseconds).Average());
 
         Console.WriteLine($"{solutions.Count()} problems solved");
