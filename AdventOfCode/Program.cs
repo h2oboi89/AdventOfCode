@@ -7,13 +7,18 @@ public class Program
     public static void Main(string[] args)
     {
         Parser.Default.ParseArguments<Options>(args)
-            .WithParsed(Solve);
+            .WithParsed(options =>
+            {
+                var (solutions, totalRunTime) = Solve(options);
+
+                PrintResults(solutions, totalRunTime);
+            });
     }
 
-    private static void Solve(Options options)
+    private static (IEnumerable<Solution> solutions, TimeSpan duration) Solve(Options options)
     {
-        TimeSpan totalRunTime;
         IEnumerable<Solution> solutions;
+        TimeSpan totalRunTime;
         
         if (options.All)
         {
@@ -28,6 +33,11 @@ public class Program
             (solutions, totalRunTime) = Solver.SolveLast(options.Year);
         }
 
+        return (solutions, totalRunTime);
+    }
+
+    private static void PrintResults(IEnumerable<Solution> solutions, TimeSpan totalRunTime)
+    {
         if (!solutions.Any())
         {
             ConsoleWriteLineWithColor(ConsoleColor.Red, "No solutions found!");
