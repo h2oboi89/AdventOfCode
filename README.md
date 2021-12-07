@@ -1,5 +1,7 @@
 # AdventOfCode
 
+![example workflow](https://https://github.com/h2oboi89/AdventOfCode/actions/workflows/dotnet.yml/badge.svg)
+
 Solutions for [Advent of Code](https://adventofcode.com/)
 
 Usage:
