@@ -56,22 +56,10 @@ internal class Day_01 : BaseDay
     }
 
     [Test]
-    public TestResult Test_1()
-    {
-        return ExecuteTest(string.Empty, 7, (i) =>
-        {
-            return Solve(testInput, 1);
-        });
-    }
+    public TestResult Test_1() => ExecuteTest(7, () => Solve(testInput, 1));
 
     [Test]
-    public TestResult Test_2()
-    {
-        return ExecuteTest(string.Empty, 5, (i) =>
-        {
-            return Solve(testInput, 3);
-        });
-    }
+    public TestResult Test_2() => ExecuteTest(5, () => Solve(testInput, 3));
 
     [Part]
     public string Solve_1() => $"{Solve(input, 1)}";

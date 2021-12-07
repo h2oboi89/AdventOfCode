@@ -166,7 +166,7 @@ internal class Day_06 : BaseDay
             new Range(new Point(499, 499), new Point(500, 500), Action.Off),
         };
 
-        return ExecuteTest(string.Empty, (1_000 * 1_000) - 1_000 - 4, (_) => FollowInstructions(new BoolGrid(), instructions));
+        return ExecuteTest((1_000 * 1_000) - 1_000 - 4, () => FollowInstructions(new BoolGrid(), instructions));
     }
 
     [Test]
@@ -178,7 +178,7 @@ internal class Day_06 : BaseDay
             new Range(new Point(0, 0), new Point(999, 999), Action.Toggle),
         };
 
-        return ExecuteTest(string.Empty, 1 + 2_000_000, (_) => FollowInstructions(new IntGrid(), instructions));
+        return ExecuteTest(1 + 2_000_000, () => FollowInstructions(new IntGrid(), instructions));
     }
 
     [Part]
