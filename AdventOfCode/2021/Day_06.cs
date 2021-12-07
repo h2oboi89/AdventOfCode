@@ -28,7 +28,7 @@ internal class Day_06 : BaseDay
             }
 
             // parse initial fish values
-            values.AddRange(line.Split(",").Select(v => int.Parse(v)));
+            values.AddRange(ParseCommaSeparatedInt32s(line));
         }
     }
 
