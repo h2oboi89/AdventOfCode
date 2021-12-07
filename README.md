@@ -1,6 +1,6 @@
 # AdventOfCode
 
-![example workflow](https://https://github.com/h2oboi89/AdventOfCode/actions/workflows/dotnet.yml/badge.svg)
+[![.NET](https://github.com/h2oboi89/AdventOfCode/actions/workflows/dotnet.yml/badge.svg)](https://github.com/h2oboi89/AdventOfCode/actions/workflows/dotnet.yml)
 
 Solutions for [Advent of Code](https://adventofcode.com/)
 
