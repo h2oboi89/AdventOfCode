@@ -35,4 +35,21 @@ public abstract class BaseDay
 
         return new TestResult(result);
     }
+
+    protected static TestResult ExecuteTest(object expected, Func<object> testFunc)
+    {
+        var actual = testFunc();
+        var result = new List<(bool, string)>();
+
+        if (!actual.Equals(expected))
+        {
+            result.Add(new(false, $"Failure: expected '{expected}', but was '{actual}'"));
+        }
+        else
+        {
+            result.Add(new(true, string.Empty));
+        }
+
+        return new TestResult(result);
+    }
 }

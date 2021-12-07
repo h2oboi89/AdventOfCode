@@ -126,10 +126,10 @@ internal class Day_03 : BaseDay
     }
 
     [Test]
-    public TestResult Test1() => ExecuteTest(string.Empty, 198, (_) => Solve1(testInput, testInputWidth));
+    public TestResult Test1() => ExecuteTest(198, () => Solve1(testInput, testInputWidth));
 
     [Test]
-    public TestResult Test2() => ExecuteTest(string.Empty, 230, (_) => Solve2(testInput, testInputWidth));
+    public TestResult Test2() => ExecuteTest(230, () => Solve2(testInput, testInputWidth));
 
     [Part]
     public string Solve_1() => $"{Solve1(input, inputWidth)}";
