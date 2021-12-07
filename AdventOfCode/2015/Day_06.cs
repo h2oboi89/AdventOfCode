@@ -1,6 +1,5 @@
 ﻿using AdventOfCode.Common;
 using System.Collections;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace AdventOfCode._2015;
@@ -19,7 +18,13 @@ internal class Day_06 : BaseDay
         {
             var captured = lineRegex.Match(line);
 
-            var action = captured.Groups["action"].Value switch { "on" => Action.On, "off" => Action.Off, "toggle" => Action.Toggle, _ => Action.Unknown };
+            var action = captured.Groups["action"].Value switch
+            {
+                "on" => Action.On,
+                "off" => Action.Off,
+                "toggle" => Action.Toggle,
+                _ => Action.Unknown
+            };
 
             var startX = int.Parse(captured.Groups["startX"].Value);
             var startY = int.Parse(captured.Groups["startY"].Value);
@@ -36,8 +41,7 @@ internal class Day_06 : BaseDay
 
     private class Range : IEnumerable<Point>
     {
-        public readonly Point Start;
-        public readonly Point End;
+        public readonly Point Start, End;
         public readonly Action Action;
 
         public Range(Point start, Point end, Action action)
@@ -59,19 +63,27 @@ internal class Day_06 : BaseDay
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 
-    private class BoolGrid
+    private abstract class Grid
+    {
+        public abstract void On(Point point);
+        public abstract void Off(Point point);
+        public abstract void Toggle(Point point);
+        public abstract int Lit { get; }
+    }
+
+    private class BoolGrid : Grid
     {
         private readonly bool[,] grid = new bool[1000, 1000];
 
         private void Set(Point point, bool state) => grid[point.Y, point.X] = state;
 
-        public void On(Point point) => Set(point, true);
+        public override void On(Point point) => Set(point, true);
 
-        public void Off(Point point) => Set(point, false);
+        public override void Off(Point point) => Set(point, false);
 
-        public void Toggle(Point point) => Set(point, !grid[point.Y, point.X]);
+        public override void Toggle(Point point) => Set(point, !grid[point.Y, point.X]);
 
-        public int Lit
+        public override int Lit
         {
             get
             {
@@ -87,31 +99,31 @@ internal class Day_06 : BaseDay
         }
     }
 
-    private class IntGrid
+    private class IntGrid : Grid
     {
-        private readonly uint[,] grid = new uint[1000, 1000];
+        private readonly int[,] grid = new int[1000, 1000];
 
-        public void On(Point point)
+        public override void On(Point point)
         {
-            if (grid[point.Y, point.X] == uint.MaxValue) return;
+            if (grid[point.Y, point.X] == int.MaxValue) return;
 
             grid[point.Y, point.X]++;
         }
 
-        public void Off(Point point)
+        public override void Off(Point point)
         {
-            if (grid[point.Y, point.X] == uint.MinValue) return;
+            if (grid[point.Y, point.X] == 0) return;
 
             grid[point.Y, point.X]--;
         }
 
-        public void Toggle(Point point) { On(point); On(point); }
+        public override void Toggle(Point point) { On(point); On(point); }
 
-        public uint Lit
+        public override int Lit
         {
             get
             {
-                uint on = 0;
+                int on = 0;
 
                 foreach (var p in grid)
                 {
@@ -123,33 +135,8 @@ internal class Day_06 : BaseDay
         }
     }
 
-    private static int FollowInstructions1(IEnumerable<Range> instructions)
+    private static int FollowInstructions(Grid grid, IEnumerable<Range> instructions)
     {
-        var grid = new BoolGrid();
-
-        foreach (var instruction in instructions)
-        {
-            Action<Point> method = instruction.Action switch
-            {
-                Action.On => grid.On,
-                Action.Off => grid.Off,
-                Action.Toggle => grid.Toggle,
-                _ => throw new ArgumentException($"Unknown action: {instruction.Action}"),
-            };
-
-            foreach (var point in instruction)
-            {
-                method(point);
-            }
-        }
-
-        return grid.Lit;
-    }
-
-    private static uint FollowInstructions2(IEnumerable<Range> instructions)
-    {
-        var grid = new IntGrid();
-
         foreach (var instruction in instructions)
         {
             Action<Point> method = instruction.Action switch
@@ -179,7 +166,7 @@ internal class Day_06 : BaseDay
             new Range(new Point(499, 499), new Point(500, 500), Action.Off),
         };
 
-        return ExecuteTest(string.Empty, (1_000 * 1_000) - 1_000 - 4, (_) => FollowInstructions1(instructions));
+        return ExecuteTest(string.Empty, (1_000 * 1_000) - 1_000 - 4, (_) => FollowInstructions(new BoolGrid(), instructions));
     }
 
     [Test]
@@ -191,12 +178,12 @@ internal class Day_06 : BaseDay
             new Range(new Point(0, 0), new Point(999, 999), Action.Toggle),
         };
 
-        return ExecuteTest(string.Empty, (uint)(1 + 2_000_000), (_) => FollowInstructions2(instructions));
+        return ExecuteTest(string.Empty, 1 + 2_000_000, (_) => FollowInstructions(new IntGrid(), instructions));
     }
 
     [Part]
-    public string Solve1() => $"{FollowInstructions1(instructions)}";
+    public string Solve1() => $"{FollowInstructions(new BoolGrid(), instructions)}";
 
     [Part]
-    public string Solve2() => $"{FollowInstructions2(instructions)}";
+    public string Solve2() => $"{FollowInstructions(new IntGrid(), instructions)}";
 }
