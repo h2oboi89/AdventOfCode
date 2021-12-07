@@ -5,7 +5,6 @@ public abstract class BaseDay
     protected IEnumerable<int> ParseCommaSeparatedInt32s(string input) =>
         input.Split(",").Select(v => int.Parse(v));
 
-
     protected static TestResult ExecuteTests(List<(string input, object expected)> testValues, Func<string, object> testFunc)
     {
         var output = new List<(bool, string)>();
