@@ -1,6 +1,6 @@
 # AdventOfCode
 
-[![CI](https://github.com/h2oboi89/AdventOfCode/actions/workflows/dotnet.yml/badge.svg)](https://github.com/h2oboi89/AdventOfCode/actions/workflows/dotnet.yml)
+[![CI](https://github.com/h2oboi89/AdventOfCode/actions/workflows/CI.yml/badge.svg)](https://github.com/h2oboi89/AdventOfCode/actions/workflows/CI.yml)
 
 ## Description
 Solutions for [Advent of Code](https://adventofcode.com/)
