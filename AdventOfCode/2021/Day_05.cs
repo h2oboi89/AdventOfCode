@@ -1,18 +1,10 @@
-﻿using System.Text;
+﻿using AdventOfCode.Common;
+using System.Text;
 
 namespace AdventOfCode._2021;
 
 internal class Day_05 : BaseDay
 {
-    private class Point
-    {
-        public readonly int X, Y;
-
-        public Point(int x, int y) { X = x; Y = y; }
-
-        public override string ToString() => $"( {X}, {Y} )";
-    }
-
     private class PointPair
     {
         public readonly Point Start, End;
