@@ -2,57 +2,33 @@
 
 public abstract class BaseDay
 {
-    protected IEnumerable<int> ParseCommaSeparatedInt32s(string input) =>
+    protected static IEnumerable<int> ParseCommaSeparatedInt32s(string input) =>
         input.Split(",").Select(v => int.Parse(v));
 
-    protected static TestResult ExecuteTests(List<(string input, object expected)> testValues, Func<string, object> testFunc)
+    protected static TestResult ExecuteTests(IEnumerable<(string input, object expected)> testValues, Func<string, object> testFunc)
     {
         var output = new List<(bool, string)>();
 
         foreach (var (input, expected) in testValues)
         {
-            var testResult = ExecuteTest(input, expected, testFunc);
-
-            foreach(var r in testResult.Results)
-            {
-                output.Add((r.pass, r.output));
-            }
+            output.Add(Check(expected, testFunc(input)));
         }
 
         return new TestResult(output);
     }
 
-    protected static TestResult ExecuteTest(string input, object expected, Func<string, object> testFunc)
-    {
-        var actual = testFunc(input);
-        var result = new List<(bool, string)>();
+    protected static TestResult ExecuteTest(object expected, Func<object> testFunc) =>
+        new(new List<(bool, string)> { Check(expected, testFunc()) });
 
+    protected static (bool, string) Check(object expected, object actual)
+    {
         if (!actual.Equals(expected))
         {
-            result.Add(new(false, $"Failure: '{input}'; expected '{expected}', but was '{actual}'"));
+            return (false, $"Failure: expected '{expected}', but was '{actual}'");
         }
         else
         {
-            result.Add(new(true, string.Empty));
+            return (true, string.Empty);
         }
-
-        return new TestResult(result);
-    }
-
-    protected static TestResult ExecuteTest(object expected, Func<object> testFunc)
-    {
-        var actual = testFunc();
-        var result = new List<(bool, string)>();
-
-        if (!actual.Equals(expected))
-        {
-            result.Add(new(false, $"Failure: expected '{expected}', but was '{actual}'"));
-        }
-        else
-        {
-            result.Add(new(true, string.Empty));
-        }
-
-        return new TestResult(result);
     }
 }
