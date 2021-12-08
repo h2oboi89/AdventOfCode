@@ -243,9 +243,7 @@ internal class Day_07 : BaseDay
             ("y", (ushort)456),
         };
 
-        var circuit = Assemble(testInstructions);
-
-        Simulate(circuit);
+        var circuit = Simulate(Assemble(testInstructions));
 
         return ExecuteTests(expected, (name) => circuit[name].Value);
     }
