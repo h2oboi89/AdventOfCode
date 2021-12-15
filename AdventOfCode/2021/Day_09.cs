@@ -136,19 +136,19 @@ internal class Day_09 : BaseDay
         }
     }
 
-    private static int FindLargestBasins(int[,] input)
+    private static int Product(IEnumerable<int> values)
     {
-        var basins = FindBasins(input).OrderByDescending(b => b.Count).Take(3);
-
         var result = 1;
 
-        foreach(var basin in basins)
+        foreach (var v in values)
         {
-            result *= basin.Count;
+            result *= v;
         }
 
         return result;
     }
+
+    private static int FindLargestBasins(int[,] input) => Product(FindBasins(input).OrderByDescending(b => b.Count).Take(3).Select(b => b.Count));
 
     [Test]
     public TestResult Test1() => ExecuteTest(15, () => FindRisk(testInput));
