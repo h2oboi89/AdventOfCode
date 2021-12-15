@@ -116,10 +116,9 @@ internal class Day_10 : BaseDay
 
     private static int CalculateCorruptionScore(IEnumerable<string> input)
     {
-        var corruptLines = FindCorrupted(input);
-
         var score = 0;
-        foreach (var (line, index) in corruptLines)
+
+        foreach (var (line, index) in FindCorrupted(input))
         {
             score += InvalidPoints[line[index]];
         }
@@ -129,11 +128,9 @@ internal class Day_10 : BaseDay
 
     private static ulong CalculateIncompleteScore(IEnumerable<string> input)
     {
-        var incompleteLines = FindIncomplete(input);
-
         var scores = new List<ulong>();
 
-        foreach (var line in incompleteLines)
+        foreach (var line in FindIncomplete(input))
         {
             var completion = new List<char>();
 
