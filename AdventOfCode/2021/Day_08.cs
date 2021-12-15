@@ -142,8 +142,8 @@ internal class Day_08 : BaseDay
                 case 2: digits[1] = pattern; break;
                 case 3: digits[7] = pattern; break;
                 case 4: digits[4] = pattern; break;
-                case 5: len5.Add(pattern); break;
-                case 6: len6.Add(pattern); break;
+                case 5: len5.Add(pattern); break; // 2, 3, 5
+                case 6: len6.Add(pattern); break; // 0, 6, 9
                 case 7: digits[8] = pattern; break;
             }
         }
