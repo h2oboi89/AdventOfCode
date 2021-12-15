@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using AdventOfCode.Common;
 
 namespace AdventOfCode._2015;
 
@@ -16,38 +16,14 @@ internal class Day_03 : BaseDay
 
     private class House
     {
-        public readonly Address Address;
+        public readonly Point Address;
 
         public int Presents = 0;
 
-        public House(Address address)
+        public House(Point address)
         {
             Address = address;
         }
-    }
-
-    private class Address
-    {
-        public readonly int X, Y;
-
-        public Address(int x, int y)
-        {
-            X = x;
-            Y = y;
-        }
-
-        public override bool Equals(object? obj)
-        {
-            if (obj == null) return false;
-
-            if (obj is not Address other) return false;
-
-            return other.X == X & other.Y == Y;
-        }
-
-        public override int GetHashCode() => (X, Y).GetHashCode();
-
-        public override string ToString() => $"( {X}, {Y} )";
     }
 
     public Day_03(string inputFile)
@@ -71,7 +47,7 @@ internal class Day_03 : BaseDay
 
     private static IEnumerable<House> Travel(IEnumerable<Direction> directions)
     {
-        var houses = new List<House> { new House(new Address(0, 0)) };
+        var houses = new List<House> { new House(new Point(0, 0)) };
 
         var current = houses[0];
 
@@ -81,10 +57,10 @@ internal class Day_03 : BaseDay
         {
             var newAddr = direction switch
             {
-                Direction.Up => new Address(current.Address.X, current.Address.Y + 1),
-                Direction.Down => new Address(current.Address.X, current.Address.Y - 1),
-                Direction.Left => new Address(current.Address.X - 1, current.Address.Y),
-                Direction.Right => new Address(current.Address.X + 1, current.Address.Y),
+                Direction.Up => new Point(current.Address.X, current.Address.Y + 1),
+                Direction.Down => new Point(current.Address.X, current.Address.Y - 1),
+                Direction.Left => new Point(current.Address.X - 1, current.Address.Y),
+                Direction.Right => new Point(current.Address.X + 1, current.Address.Y),
                 _ => throw new InvalidOperationException("WTF...")
             };
 
