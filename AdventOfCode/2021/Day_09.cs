@@ -11,6 +11,21 @@ internal class Day_09 : BaseDay
     {
         var parsed = new List<int[]>();
 
+        static int[,] ProcessInput(List<int[]> input)
+        {
+            var processedInput = new int[input.Count, input[0].Length];
+
+            for (var y = 0; y < processedInput.GetLength(0); y++)
+            {
+                for (var x = 0; x < processedInput.GetLength(1); x++)
+                {
+                    processedInput[y, x] = input[y][x];
+                }
+            }
+
+            return processedInput;
+        }
+
         var test = true;
         foreach (var line in File.ReadAllLines(inputFile))
         {
@@ -37,21 +52,6 @@ internal class Day_09 : BaseDay
 
             parsed.Add(lineValues.ToArray());
         }
-    }
-
-    private static int[,] ProcessInput(List<int[]> input)
-    {
-        var processedInput = new int[input.Count, input[0].Length];
-
-        for (var y = 0; y < processedInput.GetLength(0); y++)
-        {
-            for (var x = 0; x < processedInput.GetLength(1); x++)
-            {
-                processedInput[y, x] = input[y][x];
-            }
-        }
-
-        return processedInput;
     }
 
     private static IEnumerable<Point> GetNeighbors(int x, int y, int[,] input)
