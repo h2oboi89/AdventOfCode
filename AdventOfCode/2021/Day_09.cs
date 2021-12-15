@@ -98,17 +98,7 @@ internal class Day_09 : BaseDay
         }
     }
 
-    private static int FindRisk(int[,] input)
-    {
-        var risk = 0;
-
-        foreach (var min in FindMinimums(input))
-        {
-            risk += GetValue(min, input) + 1;
-        }
-
-        return risk;
-    }
+    private static int FindRisk(int[,] input) => FindMinimums(input).Sum(m => GetValue(m, input) + 1);
 
     private static IEnumerable<List<Point>> FindBasins(int[,] input)
     {
