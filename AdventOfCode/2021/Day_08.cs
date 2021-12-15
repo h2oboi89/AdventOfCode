@@ -173,7 +173,6 @@ internal class Day_08 : BaseDay
         len6.Remove(digits[9]);
 
         // Unsolved = 0, 3, 5, 6
-
         foreach(var p in len5)
         {
             switch(PatternOverlap(digits[1], p))
@@ -193,7 +192,6 @@ internal class Day_08 : BaseDay
         }
 
         // All solved
-
         return digits.ToDictionary(x=> x.Value, x => x.Key);
     }
 
