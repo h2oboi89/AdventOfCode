@@ -86,7 +86,7 @@ internal class Day_09 : BaseDay
                     if (current >= neighbor)
                     {
                         isMin = false;
-                        continue;
+                        break;
                     }
                 }
 
