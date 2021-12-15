@@ -12,7 +12,16 @@ internal class Day_08 : BaseDay
 
         static (IEnumerable<string>, IEnumerable<string>) ParseInput(string input)
         {
-            static IEnumerable<string> ParsePart(string part) => part.Split(' ');
+            static string Sort(string s)
+            {
+                var chars = s.ToArray();
+
+                Array.Sort(chars);
+
+                return new(chars);
+            }
+
+            static IEnumerable<string> ParsePart(string part) => part.Split(' ').Select(s => Sort(s));
 
             var parts = input.Split(" | ");
 
@@ -41,63 +50,21 @@ internal class Day_08 : BaseDay
         }
     }
 
-    private enum Segment { A, B, C, D, E, F, G }
-
-    private class SegmentMap
-    {
-        private List<char> guesses = new() { 'a', 'b', 'c', 'd', 'e', 'f', 'g' };
-
-        public readonly Segment Segment;
-
-        public SegmentMap(Segment segment)
-        {
-            Segment = segment;
-        }
-
-        public string Possibilities => string.Join(' ', guesses);
-
-        public bool Solved => guesses.Count == 1;
-
-        public void Set(char c) => guesses = new List<char> { c };
-
-        public void Remove(char c) => guesses.Remove(c);
-    }
-
-    //private readonly Dictionary<int, List<char>> digitMap = new()
-    //{
-    //    { 0, new List<char>() { 'a', 'b', 'c', 'e', 'f', 'g' } },
-    //    { 1, new List<char>() { 'c', 'f' } },
-    //    { 2, new List<char>() { 'a', 'c', 'd', 'e', 'g' } },
-    //    { 3, new List<char>() { 'a', 'c', 'd', 'f', 'g' } },
-    //    { 4, new List<char>() { 'b', 'c', 'd', 'f' } },
-    //    { 5, new List<char>() { 'a', 'b', 'd', 'f', 'g' } },
-    //    { 6, new List<char>() { 'a', 'b', 'd', 'e', 'f', 'g' } },
-    //    { 7, new List<char>() { 'a', 'c', 'f' } },
-    //    { 8, new List<char>() { 'a', 'b', 'c', 'd', 'e', 'f', 'g' } },
-    //    { 9, new List<char>() { 'a', 'b', 'c', 'd', 'f', 'g' } },
-    //};
-
-    private class Digit
-    {
-        public readonly string Segments;
-
-        public readonly int Value;
-
-        public Digit(int value, string segments) { Value = value; Segments = segments; }
-    }
-
-    private static int CountUniqueLengthDigits(IEnumerable<string> digits)
+    private static int CountUniqueLengthDigits(IEnumerable<(IEnumerable<string> patterns, IEnumerable<string> digits)> input)
     {
         var digitCount = new Dictionary<int, int>() { { 1, 0 }, { 4, 0 }, { 7, 0 }, { 8, 0 } };
 
-        foreach (var digit in digits)
+        foreach (var (_, digits) in input)
         {
-            switch (digit.Length)
+            foreach (var digit in digits)
             {
-                case 2: digitCount[1]++; break;
-                case 3: digitCount[7]++; break;
-                case 4: digitCount[4]++; break;
-                case 7: digitCount[8]++; break;
+                switch (digit.Length)
+                {
+                    case 2: digitCount[1]++; break;
+                    case 3: digitCount[7]++; break;
+                    case 4: digitCount[4]++; break;
+                    case 7: digitCount[8]++; break;
+                }
             }
         }
 
@@ -111,29 +78,162 @@ internal class Day_08 : BaseDay
         return sum;
     }
 
-    [Test]
-    public TestResult Test1()
+    private static Dictionary<string, int> DecodePatterns(IEnumerable<string> patterns)
+    {
+        static IEnumerable<char> FindUniqueSegments(IEnumerable<string> strings)
+        {
+            var chars = new Dictionary<char, int>();
+
+            foreach (var s in strings)
+            {
+                foreach (var c in s)
+                {
+                    if (!chars.ContainsKey(c))
+                    {
+                        chars.Add(c, 1);
+                    }
+                    else
+                    {
+                        chars[c]++;
+                    }
+                }
+            }
+
+            return chars.Where(kvp => kvp.Value == 1).Select(kvp => kvp.Key);
+        }
+
+        static char FindSegmentNotInPattern(IEnumerable<char> segments, string pattern)
+        {
+            foreach (var segment in segments)
+            {
+                if (!pattern.Contains(segment))
+                {
+                    return segment;
+                }
+            }
+
+            throw new ArgumentException("All segments in pattern");
+        }
+
+        static int PatternOverlap(string a, string b)
+        {
+            var count = 0;
+
+            foreach (var c in a)
+            {
+                if (b.Contains(c))
+                {
+                    count++;
+                }
+            }
+
+            return count;
+        }
+
+        var digits = new Dictionary<int, string>();
+
+        var len5 = new List<string>();
+        var len6 = new List<string>();
+
+        foreach (var pattern in patterns)
+        {
+            switch(pattern.Length)
+            {
+                case 2: digits[1] = pattern; break;
+                case 3: digits[7] = pattern; break;
+                case 4: digits[4] = pattern; break;
+                case 5: len5.Add(pattern); break;
+                case 6: len6.Add(pattern); break;
+                case 7: digits[8] = pattern; break;
+            }
+        }
+
+        // Unsolved = 0, 2, 3, 5, 6, 9
+        var eb = FindUniqueSegments(len5);
+        var e = FindSegmentNotInPattern(eb, digits[4]);
+
+        foreach(var p in len5)
+        {
+            if (p.Contains(e))
+            {
+                digits[2] = p;
+            }
+        }
+
+        len5.Remove(digits[2]);
+
+        foreach(var p in len6)
+        {
+            if (!p.Contains(e))
+            {
+                digits[9] = p;
+            }
+        }
+
+        len6.Remove(digits[9]);
+
+        // Unsolved = 0, 3, 5, 6
+
+        foreach(var p in len5)
+        {
+            switch(PatternOverlap(digits[1], p))
+            {
+                case 1: digits[5] = p; break;
+                case 2: digits[3] = p; break;
+            }
+        }
+
+        foreach (var p in len6)
+        {
+            switch (PatternOverlap(digits[1], p))
+            {
+                case 1: digits[6] = p; break;
+                case 2: digits[0] = p; break;
+            }
+        }
+
+        // All solved
+
+        return digits.ToDictionary(x=> x.Value, x => x.Key);
+    }
+
+    private static int DecodeDigits(Dictionary<string, int> patterns, IEnumerable<string> digits)
+    {
+        var value = 0;
+
+        foreach(var d in digits)
+        {
+            value *= 10;
+
+            value += patterns[d];
+        }
+
+        return value;
+    }
+
+    private static int Decode(IEnumerable<(IEnumerable<string> patterns, IEnumerable<string> digits)> input)
     {
         var sum = 0;
 
-        foreach (var (_, digits) in testInput)
+        foreach(var (patterns, digits) in input)
         {
-            sum += CountUniqueLengthDigits(digits);
+            var value = DecodeDigits(DecodePatterns(patterns), digits);
+
+            sum += value;
         }
 
-        return ExecuteTest(26, () => sum);
+        return sum;
     }
+
+    [Test]
+    public TestResult Test1() => ExecuteTest(26, () => CountUniqueLengthDigits(testInput));
+
+    [Test]
+    public TestResult Test2() => ExecuteTest(61229, () => Decode(testInput));
 
     [Part]
-    public string Solve1()
-    {
-        var sum = 0;
+    public string Solve1() => $"{CountUniqueLengthDigits(input)}";
 
-        foreach (var (_, digits) in input)
-        {
-            sum += CountUniqueLengthDigits(digits);
-        }
-
-        return $"{sum}";
-    }
+    [Part]
+    public string Solve2() => $"{Decode(input)}";
 }
