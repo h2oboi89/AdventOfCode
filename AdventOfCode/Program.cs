@@ -21,44 +21,42 @@ public class Program
     {
         var sw = new Stopwatch();
         sw.Start();
-        Console.WriteLine("Running solution...");
 
-        IEnumerable<Solution> solutions = new List<Solution>();
-        TimeSpan totalRunTime = default;
+        Console.WriteLine("Running solution...");
 
         var solveTask = Task.Run(() =>
         {
             var solver = new Solver(Assembly.GetExecutingAssembly());
 
-
             if (options.All)
             {
-                (solutions, totalRunTime) = solver.SolveAll(options.Year);
+                return solver.SolveAll(options.Year);
             }
             else if (options.Days.Any())
             {
-                (solutions, totalRunTime) = solver.Solve(options.Year, options.Days);
+                return solver.Solve(options.Year, options.Days);
             }
             else
             {
-                (solutions, totalRunTime) = solver.SolveLast(options.Year);
+                return solver.SolveLast(options.Year);
             }
         });
 
-        while(!solveTask.IsCompleted)
+        var clearString = new string(Enumerable.Repeat(' ', Console.BufferWidth).ToArray());
+
+        while (!solveTask.IsCompleted)
         {
-            Console.Write($"{new string(Enumerable.Repeat(' ', Console.BufferWidth).ToArray())}\r");
-            Console.Write($"{sw.Elapsed:mm\\:ss}\r");
+            Console.Write($"{clearString}\r{FormatTime(sw.Elapsed)}\r");
 
             Thread.Sleep(900);
         }
-        Console.WriteLine();
-        Console.WriteLine("Finished");
-        sw.Stop();
 
+        Console.WriteLine($"{Environment.NewLine}Finished");
+
+        sw.Stop();
         solveTask.Wait();
 
-        return (solutions, totalRunTime);
+        return solveTask.Result;
     }
 
     private static void PrintResults(IEnumerable<Solution> solutions, TimeSpan totalRunTime)
@@ -89,10 +87,10 @@ public class Program
                     ConsoleUtils.Write(ConsoleColor.Red, "failed");
                 }
                 Console.WriteLine($" [{FormatTime(duration)}]");
-                
+
                 if (!result.Pass)
                 {
-                    foreach(var (pass, output) in result.Results)
+                    foreach (var (pass, output) in result.Results)
                     {
                         Console.WriteLine($"      - {pass} : {output}");
                     }
