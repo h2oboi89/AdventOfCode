@@ -19,11 +19,6 @@ public class Program
 
     private static (IEnumerable<Solution> solutions, TimeSpan duration) Solve(Options options)
     {
-        var sw = new Stopwatch();
-        sw.Start();
-
-        Console.WriteLine("Running solution...");
-
         var solveTask = Task.Run(() =>
         {
             var solver = new Solver(Assembly.GetExecutingAssembly());
@@ -42,18 +37,31 @@ public class Program
             }
         });
 
-        var clearString = new string(Enumerable.Repeat(' ', Console.BufferWidth).ToArray());
-
-        while (!solveTask.IsCompleted)
+        if (!Debugger.IsAttached)
         {
-            Console.Write($"{clearString}\r{FormatTime(sw.Elapsed)}\r");
+            var sw = new Stopwatch();
+            sw.Start();
 
-            Thread.Sleep(900);
+            Console.WriteLine("Running solution...");
+
+
+            var clearString = new string(Enumerable.Repeat(' ', Console.BufferWidth).ToArray());
+
+            while (!solveTask.IsCompleted)
+            {
+                Console.Write($"{clearString}\r{FormatTime(sw.Elapsed)}\r");
+
+                Thread.Sleep(900);
+            }
+
+            Console.WriteLine($"{Environment.NewLine}Finished");
+
+            sw.Stop();
         }
-
-        Console.WriteLine($"{Environment.NewLine}Finished");
-
-        sw.Stop();
+        else
+        {
+            solveTask.Wait();
+        }
 
         return solveTask.Result;
     }

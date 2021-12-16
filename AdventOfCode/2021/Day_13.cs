@@ -15,7 +15,7 @@ internal class Day_13 : BaseDay
         var points = new List<string>();
         var folds = new List<string>();
 
-        static (Page page, List<(char, int)>) ParseInput(List<string> points, List<string> folds)
+        static (Page, List<(char, int)>) ParseInput(List<string> points, List<string> folds)
         {
             var parsedPoints = new List<Point>();
             var parsedFolds = new List<(char, int)>();
