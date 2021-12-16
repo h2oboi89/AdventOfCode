@@ -15,13 +15,7 @@ internal class Day_09 : BaseDay
         {
             var processedInput = new int[input.Count, input[0].Length];
 
-            for (var y = 0; y < processedInput.GetLength(0); y++)
-            {
-                for (var x = 0; x < processedInput.GetLength(1); x++)
-                {
-                    processedInput[y, x] = input[y][x];
-                }
-            }
+            processedInput.All((x, y) => processedInput[y, x] = input[y][x]);
 
             return processedInput;
         }
@@ -54,23 +48,6 @@ internal class Day_09 : BaseDay
         }
     }
 
-    private static IEnumerable<Point> GetNeighbors(int x, int y, int[,] input)
-    {
-        // top
-        if (y != 0) yield return new Point(x, y - 1);
-
-        // right
-        if (x != input.GetLength(1) - 1) yield return new Point(x + 1, y);
-
-        // bottom
-        if (y != input.GetLength(0) - 1) yield return new Point(x, y + 1);
-
-        // left
-        if (x != 0) yield return new Point(x - 1, y);
-    }
-
-    private static int GetValue(Point p, int[,] input) => input[p.Y, p.X];
-
     private static IEnumerable<Point> FindMinimums(int[,] input)
     {
         for (var y = 0; y < input.GetLength(0); y++)
@@ -81,7 +58,7 @@ internal class Day_09 : BaseDay
 
                 var isMin = true;
 
-                foreach (var neighbor in GetNeighbors(x, y, input).Select(n => GetValue(n, input)))
+                foreach (var neighbor in input.GetNeighbors(new Point(x, y), false).Select(input.GetValue))
                 {
                     if (current >= neighbor)
                     {
@@ -98,7 +75,7 @@ internal class Day_09 : BaseDay
         }
     }
 
-    private static int FindRisk(int[,] input) => FindMinimums(input).Sum(m => GetValue(m, input) + 1);
+    private static int FindRisk(int[,] input) => FindMinimums(input).Sum(m => input.GetValue(m) + 1);
 
     private static IEnumerable<List<Point>> FindBasins(int[,] input)
     {
@@ -113,12 +90,13 @@ internal class Day_09 : BaseDay
             {
                 var current = unprocessed.Dequeue();
 
-                if (GetValue(current, input) == 9)
+                if (input.GetValue(current) == 9)
                 {
                     continue;
                 }
 
-                if (!basin.Contains(current)) {
+                if (!basin.Contains(current))
+                {
                     basin.Add(current);
                 }
                 else
@@ -126,7 +104,7 @@ internal class Day_09 : BaseDay
                     continue;
                 }
 
-                foreach(var neighbor in GetNeighbors(current.X, current.Y, input))
+                foreach (var neighbor in input.GetNeighbors(current, false))
                 {
                     unprocessed.Enqueue(neighbor);
                 }
