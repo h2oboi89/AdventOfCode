@@ -15,6 +15,8 @@ namespace AdventOfCode.Tests
 
             var solutions = solver.RunTests().OrderBy(s => s.Year).ThenBy(s => s.Day);
 
+            Console.WriteLine($"Found {solutions.Count()} solutions");
+
             var allPass = true;
             foreach (var solution in solutions)
             {
