@@ -15,4 +15,3 @@ Usage:
 
 ## Credits
 Framework idea shamelessly stolen from [AoCHelper](https://github.com/eduherminio/AoCHelper)
-
