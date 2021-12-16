@@ -72,12 +72,12 @@ internal class Day_14 : BaseDay
         {
             for (var i = 0; i < polymer.Length - 1; i++)
             {
-                Elements.AddOrCreate(polymer[i]);
+                Elements.AddOrUpdate(polymer[i]);
 
-                pairs.AddOrCreate(polymer.Substring(i, 2));
+                pairs.AddOrUpdate(polymer.Substring(i, 2));
             }
 
-            Elements.AddOrCreate(polymer.Last());
+            Elements.AddOrUpdate(polymer.Last());
         }
 
         private Polymer(Dictionary<string, char> rules) { this.rules = rules; }
@@ -100,10 +100,10 @@ internal class Day_14 : BaseDay
             {
                 var newElement = rules[pair.Key];
 
-                updatedPolymer.Elements.AddOrCreate(newElement, pair.Value);
+                updatedPolymer.Elements.AddOrUpdate(newElement, pair.Value);
 
-                updatedPolymer.pairs.AddOrCreate($"{pair.Key[0]}{newElement}", pair.Value);
-                updatedPolymer.pairs.AddOrCreate($"{newElement}{pair.Key[1]}", pair.Value);
+                updatedPolymer.pairs.AddOrUpdate($"{pair.Key[0]}{newElement}", pair.Value);
+                updatedPolymer.pairs.AddOrUpdate($"{newElement}{pair.Key[1]}", pair.Value);
             }
 
             return updatedPolymer;

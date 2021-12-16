@@ -2,7 +2,7 @@
 
 static  class DictionaryExtensions
 {
-    public static void AddOrCreate<TKey>(this Dictionary<TKey, ulong> dict, TKey key) where TKey : notnull
+    public static void AddOrUpdate<TKey>(this Dictionary<TKey, ulong> dict, TKey key) where TKey : notnull
     {
         if (!dict.ContainsKey(key))
         {
@@ -12,7 +12,7 @@ static  class DictionaryExtensions
         dict[key]++;
     }
 
-    public static void AddOrCreate<TKey>(this Dictionary<TKey, ulong> dict, TKey key, ulong value) where TKey : notnull
+    public static void AddOrUpdate<TKey>(this Dictionary<TKey, ulong> dict, TKey key, ulong value) where TKey : notnull
     {
         if (!dict.ContainsKey(key))
         {
