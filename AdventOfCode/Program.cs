@@ -54,6 +54,7 @@ public class Program
         }
         Console.WriteLine();
         Console.WriteLine("Finished");
+        sw.Stop();
 
         solveTask.Wait();
 
