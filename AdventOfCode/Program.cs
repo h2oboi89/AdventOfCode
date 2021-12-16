@@ -1,4 +1,5 @@
 ﻿using CommandLine;
+using System.Diagnostics;
 using System.Reflection;
 
 namespace AdventOfCode;
@@ -18,23 +19,43 @@ public class Program
 
     private static (IEnumerable<Solution> solutions, TimeSpan duration) Solve(Options options)
     {
-        var solver = new Solver(Assembly.GetExecutingAssembly());
-        
-        IEnumerable<Solution> solutions;
-        TimeSpan totalRunTime;
-        
-        if (options.All)
+        var sw = new Stopwatch();
+        sw.Start();
+        Console.WriteLine("Running solution...");
+
+        IEnumerable<Solution> solutions = new List<Solution>();
+        TimeSpan totalRunTime = default;
+
+        var solveTask = Task.Run(() =>
         {
-            (solutions, totalRunTime) = solver.SolveAll(options.Year);
-        }
-        else if (options.Days.Any())
+            var solver = new Solver(Assembly.GetExecutingAssembly());
+
+
+            if (options.All)
+            {
+                (solutions, totalRunTime) = solver.SolveAll(options.Year);
+            }
+            else if (options.Days.Any())
+            {
+                (solutions, totalRunTime) = solver.Solve(options.Year, options.Days);
+            }
+            else
+            {
+                (solutions, totalRunTime) = solver.SolveLast(options.Year);
+            }
+        });
+
+        while(!solveTask.IsCompleted)
         {
-            (solutions, totalRunTime) = solver.Solve(options.Year, options.Days);
+            Console.Write($"{new string(Enumerable.Repeat(' ', Console.BufferWidth).ToArray())}\r");
+            Console.Write($"{sw.Elapsed:mm\\:ss}\r");
+
+            Thread.Sleep(900);
         }
-        else
-        {
-            (solutions, totalRunTime) = solver.SolveLast(options.Year);
-        }
+        Console.WriteLine();
+        Console.WriteLine("Finished");
+
+        solveTask.Wait();
 
         return (solutions, totalRunTime);
     }
