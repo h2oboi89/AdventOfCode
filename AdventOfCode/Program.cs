@@ -54,7 +54,6 @@ public class Program
         Console.WriteLine($"{Environment.NewLine}Finished");
 
         sw.Stop();
-        solveTask.Wait();
 
         return solveTask.Result;
     }
