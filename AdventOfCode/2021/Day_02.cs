@@ -100,10 +100,10 @@ internal class Day_02 : BaseDay
     }
 
     [Test]
-    public TestResult Test1() => ExecuteTest(150, () => Solve1(testInput));
+    public TestResult Test1() => ExecuteTest(testInput, 150, Solve1);
 
     [Test]
-    public TestResult Test2() => ExecuteTest(900, () => Solve2(testInput));
+    public TestResult Test2() => ExecuteTest(testInput, 900, Solve2);
 
     [Part]
     public string Solve_1() => $"{Solve1(input)}";

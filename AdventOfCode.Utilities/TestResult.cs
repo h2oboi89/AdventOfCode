@@ -2,12 +2,16 @@
 
 public class TestResult
 {
-    public readonly bool Pass;
+    public bool Pass => Results.All(r => r.pass);
     public IEnumerable<(bool pass, string output)> Results;
 
     public TestResult(IEnumerable<(bool pass, string output)> results)
     {
         Results = results;
-        Pass = results.All(r => r.pass == true);
+    }
+
+    public TestResult((bool pass, string output) result)
+    {
+        Results = new List<(bool pass, string output)>() { result };
     }
 }
