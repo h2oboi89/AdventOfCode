@@ -28,7 +28,7 @@ public class Solver
     public Solver(Assembly assembly)
     {
         dll = assembly;
-        dllDir = Path.GetDirectoryName(dll.Location);
+        dllDir = Path.GetDirectoryName(dll.Location) ?? string.Empty;
 
         foreach (var type in GetDays())
         {
@@ -44,7 +44,7 @@ public class Solver
 
     private static int GetYear(Type type)
     {
-        return int.Parse(type.Namespace.Split(".").Last().TrimStart('_'));
+        return int.Parse((type.Namespace ?? string.Empty).Split(".").Last().TrimStart('_'));
     }
 
     private int GetHighestYear()
@@ -81,10 +81,24 @@ public class Solver
         foreach (var test in GetTests(type))
         {
             sw.Restart();
-            var result = (TestResult)test.Invoke(instance, null);
+            var result = test.Invoke(instance, null);
             sw.Stop();
 
-            solution.Tests.Add((test.Name, result, sw.Elapsed));
+            if (result is TestResult testResult)
+            {
+                solution.Tests.Add((test.Name, testResult, sw.Elapsed));
+            }
+            else
+            {
+                if (result == null)
+                {
+                    throw new InvalidCastException($"Test result should be of type {typeof(TestResult)} but was null");
+                }
+                else
+                {
+                    throw new InvalidCastException($"Test result should be of type {typeof(TestResult)} but was {result.GetType()}");
+                }
+            }
         }
 
         return solution.Tests.All(t => t.result.Pass == true);
@@ -96,10 +110,24 @@ public class Solver
         foreach (var part in GetParts(type))
         {
             sw.Restart();
-            var result = (string)part.Invoke(instance, null);
+            var result = part.Invoke(instance, null);
             sw.Stop();
 
-            solution.Parts.Add((part.Name, result, sw.Elapsed));
+            if (result is string output)
+            {
+                solution.Parts.Add((part.Name, output, sw.Elapsed));
+            }
+            else
+            {
+                if (result == null)
+                {
+                    throw new InvalidCastException($"Test result should be of type {typeof(TestResult)} but was null");
+                }
+                else
+                {
+                    throw new InvalidCastException($"Test result should be of type {typeof(string)} but was {result.GetType()}");
+                }
+            }
         }
     }
 
@@ -127,6 +155,12 @@ public class Solver
 
         var sw = new Stopwatch();
         var constructor = day.Type.GetConstructor(new Type[] { typeof(string) });
+
+        if (constructor == null)
+        {
+            throw new SolvingException("Expected constructor of type Constructor(string) but found none.");
+        }
+
         var inputFile = GetInputFile(day.Year, day.Day);
 
         sw.Start();
@@ -152,7 +186,7 @@ public class Solver
         {
             return (new List<Solution>(), TimeSpan.Zero);
         }
-        
+
         var sw = new Stopwatch();
         var dayTasks = new List<Task<Solution>>();
 
@@ -163,6 +197,7 @@ public class Solver
         }
 
         Task.WhenAll(dayTasks).Wait();
+
         sw.Stop();
 
         var totalRunTime = sw.Elapsed;

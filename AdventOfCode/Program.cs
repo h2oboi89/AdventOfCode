@@ -44,7 +44,6 @@ public class Program
 
             Console.WriteLine("Running solution...");
 
-
             var clearString = new string(Enumerable.Repeat(' ', Console.BufferWidth).ToArray());
 
             while (!solveTask.IsCompleted)

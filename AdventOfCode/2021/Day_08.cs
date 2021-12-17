@@ -2,8 +2,8 @@
 
 internal class Day_08 : BaseDay
 {
-    private readonly IEnumerable<(IEnumerable<string> patterns, IEnumerable<string> digits)> testInput;
-    private readonly IEnumerable<(IEnumerable<string> patterns, IEnumerable<string> digits)> input;
+    private readonly IEnumerable<(IEnumerable<string> patterns, IEnumerable<string> digits)> testInput = new List<(IEnumerable<string>, IEnumerable<string>)>();
+    private readonly IEnumerable<(IEnumerable<string> patterns, IEnumerable<string> digits)> input = new List<(IEnumerable<string>, IEnumerable<string>)>();
 
     public Day_08(string inputFile)
     {

@@ -2,8 +2,8 @@
 
 internal class Day_14 : BaseDay
 {
-    private readonly Polymer input;
-    private readonly Polymer testInput;
+    private readonly Polymer input = new(string.Empty, new());
+    private readonly Polymer testInput = new(string.Empty, new());
 
     public Day_14(string inputFile)
     {
@@ -70,14 +70,17 @@ internal class Day_14 : BaseDay
 
         public Polymer(string polymer, Dictionary<string, char> rules) : this(rules)
         {
-            for (var i = 0; i < polymer.Length - 1; i++)
+            if (polymer.Length > 2)
             {
-                Elements.AddOrUpdate(polymer[i]);
+                for (var i = 0; i < polymer.Length - 1; i++)
+                {
+                    Elements.AddOrUpdate(polymer[i]);
 
-                pairs.AddOrUpdate(polymer.Substring(i, 2));
+                    pairs.AddOrUpdate(polymer.Substring(i, 2));
+                }
+
+                Elements.AddOrUpdate(polymer.Last());
             }
-
-            Elements.AddOrUpdate(polymer.Last());
         }
 
         private Polymer(Dictionary<string, char> rules) { this.rules = rules; }

@@ -4,8 +4,8 @@ namespace AdventOfCode._2021;
 
 internal class Day_09 : BaseDay
 {
-    private readonly int[,] input;
-    private readonly int[,] testInput;
+    private readonly int[,] input = new int[0,0];
+    private readonly int[,] testInput = new int[0, 0];
 
     public Day_09(string inputFile)
     {
