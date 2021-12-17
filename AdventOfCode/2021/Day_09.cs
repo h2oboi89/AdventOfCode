@@ -58,7 +58,7 @@ internal class Day_09 : BaseDay
 
                 var isMin = true;
 
-                foreach (var neighbor in input.GetNeighbors(new Point(x, y), false).Select(input.GetValue))
+                foreach (var neighbor in input.GetNeighborPoints(new Point(x, y), false).Select(input.GetValue))
                 {
                     if (current >= neighbor)
                     {
@@ -104,7 +104,7 @@ internal class Day_09 : BaseDay
                     continue;
                 }
 
-                foreach (var neighbor in input.GetNeighbors(current, false))
+                foreach (var neighbor in input.GetNeighborPoints(current, false))
                 {
                     unprocessed.Enqueue(neighbor);
                 }
