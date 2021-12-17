@@ -43,12 +43,12 @@ static class MultidimensionalArrayExtensions
         if (p.X != 0) yield return new Point(p.X - 1, p.Y);
     }
 
+    public static IEnumerable<T> GetNeighbors<T>(this T[,] array, Point p, bool includeDiagonals) =>
+        array.GetNeighborPoints(p, includeDiagonals).Select(p => array.GetValue(p));
+
     public static T First<T>(this T[,] array) => array[0, 0];
 
     public static T Last<T>(this T[,] array) => array[array.GetLength(0) - 1, array.GetLength(1) - 1];
-
-    public static IEnumerable<T> GetNeighbors<T>(this T[,] array, Point p, bool includeDiagonals) =>
-        array.GetNeighborPoints(p, includeDiagonals).Select(p => array.GetValue(p));
 
     public static T GetValue<T>(this T[,] array, Point p) => array[p.Y, p.X];
 
