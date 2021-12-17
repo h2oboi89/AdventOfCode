@@ -114,7 +114,7 @@ internal class Day_11 : BaseDay
             {
                 flashCount++;
 
-                foreach (var neighbor in input.GetNeighbors(p, true))
+                foreach (var neighbor in input.GetNeighborPoints(p, true))
                 {
                     var n = input.GetValue(neighbor);
 

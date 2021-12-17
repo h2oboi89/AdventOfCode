@@ -4,7 +4,7 @@ namespace AdventOfCode;
 
 static class MultidimensionalArrayExtensions
 {
-    public static IEnumerable<Point> GetNeighbors<T>(this T[,] array, Point p, bool includeDiagonal)
+    public static IEnumerable<Point> GetNeighborPoints<T>(this T[,] array, Point p, bool includeDiagonal)
     {
         // top left
         if (includeDiagonal)
@@ -41,8 +41,14 @@ static class MultidimensionalArrayExtensions
 
         // left
         if (p.X != 0) yield return new Point(p.X - 1, p.Y);
-
     }
+
+    public static IEnumerable<T> GetNeighbors<T>(this T[,] array, Point p, bool includeDiagonals) =>
+        array.GetNeighborPoints(p, includeDiagonals).Select(p => array.GetValue(p));
+
+    public static T First<T>(this T[,] array) => array[0, 0];
+
+    public static T Last<T>(this T[,] array) => array[array.GetLength(0) - 1, array.GetLength(1) - 1];
 
     public static T GetValue<T>(this T[,] array, Point p) => array[p.Y, p.X];
 
@@ -68,11 +74,22 @@ static class MultidimensionalArrayExtensions
         }
     }
 
+    public static IEnumerable<T> Each<T>(this T[,] array)
+    {
+        for (var y = 0; y < array.GetLength(0); y++)
+        {
+            for (var x = 0; x < array.GetLength(1); x++)
+            {
+                yield return array[y, x];
+            }
+        }
+    }
+
     public static T[,] Clone<T>(this T[,] array, Func<T, T> tClone)
     {
         var clone = new T[array.GetLength(0), array.GetLength(1)];
 
-        clone.All((x, y) => clone[y, x] = tClone(array[y,x]));
+        clone.All((x, y) => clone[y, x] = tClone(array[y, x]));
 
         return clone;
     }
