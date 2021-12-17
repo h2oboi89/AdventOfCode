@@ -4,8 +4,8 @@ namespace AdventOfCode._2021;
 
 internal class Day_11 : BaseDay
 {
-    private readonly Octopus[,] input;
-    private readonly Octopus[,] testInput;
+    private readonly Octopus[,] input = new Octopus[0, 0];
+    private readonly Octopus[,] testInput = new Octopus[0, 0];
 
     public Day_11(string inputFile)
     {

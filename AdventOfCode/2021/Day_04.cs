@@ -134,14 +134,12 @@ internal class Day_04 : BaseDay
         }
     }
 
-    private readonly IEnumerable<int> PartValues, TestValues;
-
-    private readonly IEnumerable<BingoBoard> PartBoards, TestBoards;
+    private readonly (IEnumerable<int> values, IEnumerable<BingoBoard> boards) input, testInput = (new List<int>(), new List<BingoBoard>());
 
     public Day_04(string intputFile)
     {
         string? values = null;
-        var cards = new StringBuilder();
+        var cards = new List<string>();
         var isTest = true;
 
         foreach (var line in File.ReadAllLines(intputFile))
@@ -156,17 +154,13 @@ internal class Day_04 : BaseDay
 
             if (line.StartsWith("#")) // marks end of input section (test and part)
             {
-                var (intValues, boards) = ParseInput(values, cards.ToString());
-                
                 if (isTest)
                 {
-                    TestValues = intValues;
-                    TestBoards = boards;
+                    testInput = ParseInput(values, cards);
                 }
                 else
                 {
-                    PartValues = intValues;
-                    PartBoards = boards;
+                    input = ParseInput(values, cards);
                 }
                 
                 values = null;
@@ -176,18 +170,18 @@ internal class Day_04 : BaseDay
             }
 
             // lines are usually card values except for cases above
-            cards.AppendLine(line);
+            cards.Add(line);
         }
     }
 
-    private static (IEnumerable<int>, IEnumerable<BingoBoard>) ParseInput(string values, string cards)
+    private static (IEnumerable<int>, IEnumerable<BingoBoard>) ParseInput(string values, IEnumerable<string> cards)
     {
         var intValues = values.Split(',').Select(v => int.Parse(v));
 
         var boards = new List<BingoBoard>();
         var boardValues = new List<int>();
 
-        foreach (var row in cards.Split(Environment.NewLine))
+        foreach (var row in cards)
         {
             boardValues.AddRange(row.SplitInParts(3).Select(v => int.Parse(v)));
 
@@ -254,14 +248,14 @@ internal class Day_04 : BaseDay
     }
 
     [Test]
-    public TestResult Test1() => ExecuteTest(4512, () => PlayToWin(TestValues, TestBoards));
+    public TestResult Test1() => ExecuteTest(4512, () => PlayToWin(testInput.values, testInput.boards));
 
     [Test]
-    public TestResult Test2() => ExecuteTest(1924, () => PlayToLose(TestValues, TestBoards));
+    public TestResult Test2() => ExecuteTest(1924, () => PlayToLose(testInput.values, testInput.boards));
 
     [Part]
-    public string Solve1() => $"{PlayToWin(PartValues, PartBoards)}";
+    public string Solve1() => $"{PlayToWin(input.values, input.boards)}";
 
     [Part]
-    public string Solve2() => $"{PlayToLose(PartValues, PartBoards)}";
+    public string Solve2() => $"{PlayToLose(input.values, input.boards)}";
 }

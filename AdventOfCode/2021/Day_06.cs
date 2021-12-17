@@ -2,7 +2,8 @@
 
 internal class Day_06 : BaseDay
 {
-    private readonly IEnumerable<int> PartValues, TestValues;
+    private readonly IEnumerable<int> input = new List<int>();
+    private readonly IEnumerable<int> testInput = new List<int>();
 
     public Day_06(string intputFile)
     {
@@ -15,11 +16,11 @@ internal class Day_06 : BaseDay
             {
                 if (isTest)
                 {
-                    TestValues = values;
+                    testInput = values;
                 }
                 else
                 {
-                    PartValues = values;
+                    input = values;
                 }
 
                 values = new List<int>();
@@ -107,14 +108,14 @@ internal class Day_06 : BaseDay
     }
 
     [Test]
-    public TestResult Test1_1() => ExecuteTest((ulong)26, () => Simulate(TestValues, 18));
+    public TestResult Test1_1() => ExecuteTest((ulong)26, () => Simulate(testInput, 18));
 
     [Test]
-    public TestResult Test1_2() => ExecuteTest((ulong)5934, () => Simulate(TestValues, 80));
+    public TestResult Test1_2() => ExecuteTest((ulong)5934, () => Simulate(testInput, 80));
 
     [Part]
-    public string Part1() => $"{Simulate(PartValues, 80)}";
+    public string Part1() => $"{Simulate(input, 80)}";
 
     [Part]
-    public string Part2() => $"{Simulate(PartValues, 256)}";
+    public string Part2() => $"{Simulate(input, 256)}";
 }

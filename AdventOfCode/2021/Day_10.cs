@@ -2,8 +2,8 @@
 
 internal class Day_10 : BaseDay
 {
-    public readonly IEnumerable<string> input;
-    public readonly IEnumerable<string> testInput;
+    public readonly IEnumerable<string> input = new List<string>();
+    public readonly IEnumerable<string> testInput = new List<string>();
 
     private const char NULL = '\0';
 

@@ -2,8 +2,8 @@
 
 internal class Day_14 : BaseDay
 {
-    private readonly Polymer input;
-    private readonly Polymer testInput;
+    private readonly Polymer input = new(string.Empty, new());
+    private readonly Polymer testInput = new(string.Empty, new());
 
     public Day_14(string inputFile)
     {
