@@ -11,7 +11,9 @@ namespace AdventOfCode.Tests
         [NUnit.Framework.Test]
         public void Test1()
         {
+#pragma warning disable CS8604 // Possible null reference argument.
             var solver = new Solver(Assembly.GetAssembly(typeof(Program)));
+#pragma warning restore CS8604 // Possible null reference argument.
 
             var solutions = solver.RunTests().OrderBy(s => s.Year).ThenBy(s => s.Day);
 
