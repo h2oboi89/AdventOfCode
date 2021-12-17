@@ -1,4 +1,5 @@
-﻿using System.Security.Cryptography;
+﻿using AdventOfCode.Common;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace AdventOfCode._2015;
@@ -11,8 +12,6 @@ internal class Day_04 : BaseDay
     {
         input = File.ReadAllText(inputFile).Trim();
     }
-
-    private static string Hex(IEnumerable<byte> hash) => string.Join("", hash.Select(b => b.ToString("X2")));
 
     private static int Mine(string input, int requiredLength)
     {
@@ -29,7 +28,7 @@ internal class Day_04 : BaseDay
 
             var bytes = Encoding.ASCII.GetBytes(value);
 
-            var hash = Hex(md5.ComputeHash(bytes).Take(byteCount));
+            var hash = Base.ToHexString(md5.ComputeHash(bytes).Take(byteCount));
 
             if (hash.StartsWith(requiredStart)) return seed;
 
