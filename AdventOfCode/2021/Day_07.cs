@@ -8,7 +8,7 @@ internal class Day_07 : BaseDay
 
     public Day_07(string inputFile)
     {
-        Positions = ParseCommaSeparatedInt32s(File.ReadAllText(inputFile));
+        Positions = File.ReadAllText(inputFile).ParseCommaSeparatedInt32s();
     }
 
     private static int SimpleCost(int a, int b) => Math.Abs(a - b);

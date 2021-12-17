@@ -15,4 +15,7 @@ static class StringExtensions
     }
 
     public static string Repeat(this string s, int count) => string.Join("", Enumerable.Repeat(s, count));
+
+    public static IEnumerable<int> ParseCommaSeparatedInt32s(this string input) =>
+        input.Split(",").Select(v => int.Parse(v));
 }
