@@ -40,19 +40,6 @@ internal class Day_16 : BaseDay
 
             return bits;
         }
-
-        public static ulong Value(IEnumerable<byte> bits)
-        {
-            ulong result = 0;
-
-            foreach (var bit in bits)
-            {
-                result <<= 1;
-                result |= bit;
-            }
-
-            return result;
-        }
     }
 
     private abstract class Packet
@@ -66,6 +53,19 @@ internal class Day_16 : BaseDay
             Type = type;
         }
 
+        private static ulong BitsToValue(IEnumerable<byte> bits)
+        {
+            ulong result = 0;
+
+            foreach (var bit in bits)
+            {
+                result <<= 1;
+                result |= bit;
+            }
+
+            return result;
+        }
+
         private static IEnumerable<byte> GetBits(BitStream stream, ref int index, int count)
         {
             var bits = stream.Get(index, count);
@@ -75,10 +75,10 @@ internal class Day_16 : BaseDay
         }
 
         private static byte GetByte(BitStream stream, ref int index, int count) =>
-            (byte)BitStream.Value(GetBits(stream, ref index, count));
+            (byte)BitsToValue(GetBits(stream, ref index, count));
 
         private static ushort GetUShort(BitStream stream, ref int index, int count) =>
-            (ushort)BitStream.Value(GetBits(stream, ref index, count));
+            (ushort)BitsToValue(GetBits(stream, ref index, count));
 
         private static byte GetHeaderField(BitStream stream, ref int index) => GetByte(stream, ref index, 3);
 
@@ -140,9 +140,9 @@ internal class Day_16 : BaseDay
                 return new Operator(version, type, packets);
             }
 
-            private static IEnumerable<Packet> ParseToLength(BitStream stream, ref int index, int lengthBitsCount)
+            private static IEnumerable<Packet> ParseToLength(BitStream stream, ref int index, int bitsCount)
             {
-                var length = GetUShort(stream, ref index, lengthBitsCount);
+                var length = GetUShort(stream, ref index, bitsCount);
 
                 var packets = new List<Packet>();
 
@@ -156,9 +156,9 @@ internal class Day_16 : BaseDay
                 return packets;
             }
 
-            private static IEnumerable<Packet> ParseToCount(BitStream stream, ref int index, int lengthBitsCount)
+            private static IEnumerable<Packet> ParseToCount(BitStream stream, ref int index, int bitsCount)
             {
-                var count = GetUShort(stream, ref index, lengthBitsCount);
+                var count = GetUShort(stream, ref index, bitsCount);
 
                 var packets = new List<Packet>();
 
@@ -235,9 +235,9 @@ internal class Day_16 : BaseDay
         {
             yield return opPacket;
 
-            foreach(var p in opPacket.Packets)
+            foreach (var p in opPacket.Packets)
             {
-                foreach(var subP in Iterate(p))
+                foreach (var subP in Iterate(p))
                 {
                     yield return subP;
                 }
