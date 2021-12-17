@@ -14,7 +14,7 @@ internal class Day_16 : BaseDay
 
     private class BitStream
     {
-        private readonly List<byte> bytes = new();
+        private readonly List<byte> bytes;
 
         public BitStream(string hexBytes)
         {
@@ -23,8 +23,6 @@ internal class Day_16 : BaseDay
 
         public IEnumerable<byte> Get(int index, int count)
         {
-            var bits = new List<byte>(count);
-
             for (var i = 0; i < count; i++)
             {
                 var bitIndex = index + i;
@@ -35,10 +33,8 @@ internal class Day_16 : BaseDay
 
                 var bit = (byte)((bytes[byteIndex] >> shift) & 0x01);
 
-                bits.Add(bit);
+                yield return bit;
             }
-
-            return bits;
         }
     }
 
