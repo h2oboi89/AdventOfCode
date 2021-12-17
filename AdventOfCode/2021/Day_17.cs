@@ -42,20 +42,26 @@ internal class Day_17 : BaseDay
         private readonly Point Start;
         private readonly Point End;
 
-        public TargetArea() { Start = new Point(0, 0); End = new Point(0, 0); }
+        public TargetArea() : this(new Point(0, 0), new Point(0, 0)) { }
 
         public TargetArea(Point start, Point end) { Start = start; End = end; }
 
+        /// <summary>
+        /// Determines relative position of <paramref name="point"/> to this <see cref="TargetArea"/>.
+        /// Logic is similar to <see cref="IComparer{T}.Compare(T?, T?)"/>
+        /// </summary>
+        /// <param name="point"><see cref="Point"/> to check.</param>
+        /// <returns><see cref="(int, int)"/> comparing <paramref name="point"/> location to this <see cref="TargetArea"/></returns>
         public (int x, int y) CheckLocation(Point point)
         {
             int x = 0;
             if (point.X < Start.X) x = -1;
-            if (point.X >= Start.X && point.X <= End.X) x = 0;
+            //if (point.X >= Start.X && point.X <= End.X) x = 0;
             if (point.X > End.X) x = 1;
 
             int y = 0;
             if (point.Y < Start.Y) y = -1;
-            if (point.Y >= Start.Y && point.Y <= End.Y) y = 0;
+            //if (point.Y >= Start.Y && point.Y <= End.Y) y = 0;
             if (point.Y > End.Y) y = 1;
 
             return (x, y);
@@ -89,17 +95,20 @@ internal class Day_17 : BaseDay
 
             var relativePosition = area.CheckLocation(position);
 
+            // in target area
             if (relativePosition.Equals((0, 0)))
             {
                 return (true, maxY);
             }
 
+            // in line with target area
             if (relativePosition.x == 0 && relativePosition.y == initialRelation.y ||
                 relativePosition.y == 0 && relativePosition.x == initialRelation.x)
             {
                 continue;
             }
 
+            // overshot target area
             if (relativePosition.x != initialRelation.x || relativePosition.y != initialRelation.y)
             {
                 return (false, int.MinValue);
