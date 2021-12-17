@@ -27,3 +27,8 @@ year-all:
 .PHONY: test
 test:
 	dotnet test $(BUILD_CONFIG) -l "console;verbosity=detailed"
+
+.PHONY: clean
+clean:
+	dotnet clean
+	dotnet clean -c Release
