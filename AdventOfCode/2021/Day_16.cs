@@ -76,8 +76,6 @@ internal class Day_16 : BaseDay
         private static ushort GetUShort(BitStream stream, ref int index, int count) =>
             (ushort)BitsToValue(GetBits(stream, ref index, count));
 
-        private static byte GetHeaderField(BitStream stream, ref int index) => GetByte(stream, ref index, 3);
-
         public override string ToString() => $"Version: {Version} Type: {Type}";
 
         public abstract ulong Execute();
@@ -202,9 +200,11 @@ internal class Day_16 : BaseDay
 
         private static Packet Parse(BitStream stream, ref int index)
         {
-            var version = GetHeaderField(stream, ref index);
+            static byte GetCommonField(BitStream stream, ref int index) => GetByte(stream, ref index, 3);
 
-            var type = GetHeaderField(stream, ref index);
+            var version = GetCommonField(stream, ref index);
+
+            var type = GetCommonField(stream, ref index);
 
             return type switch
             {
