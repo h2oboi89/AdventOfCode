@@ -1,9 +1,5 @@
 ﻿using AdventOfCode.Common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace AdventOfCode._2021;
 
@@ -88,6 +84,8 @@ internal class Day_16 : BaseDay
 
         public override string ToString() => $"Version: {Version} Type: {Type}";
 
+        public abstract ulong Execute();
+
         public class Literal : Packet
         {
             public readonly ulong Value;
@@ -118,6 +116,8 @@ internal class Day_16 : BaseDay
 
                 return new Literal(version, type, value);
             }
+
+            public override ulong Execute() => Value;
 
             public override string ToString() => $"{base.ToString()} Value: {Value}";
         }
@@ -168,6 +168,24 @@ internal class Day_16 : BaseDay
                 }
 
                 return packets;
+            }
+
+            public override ulong Execute()
+            {
+                var packetResults = Packets.Select(p => p.Execute());
+
+                return Type switch
+                {
+                    0 => packetResults.Sum(),
+                    1 => packetResults.Product(),
+                    2 => packetResults.Min(),
+                    3 => packetResults.Max(),
+                    // 4 => literal packet
+                    5 => (ulong)(packetResults.First() > packetResults.Last() ? 1 : 0),
+                    6 => (ulong)(packetResults.First() < packetResults.Last() ? 1 : 0),
+                    7 => (ulong)(packetResults.First() == packetResults.Last() ? 1 : 0),
+                    _ => 0, // should not hit this
+                };
             }
 
             public override string ToString()
@@ -286,14 +304,33 @@ internal class Day_16 : BaseDay
 
         return ExecuteTests(testValues, (input) =>
         {
-            var stream = new BitStream(input);
-
-            var packet = Packet.Parse(stream);
+            var packet = Packet.Parse(new BitStream(input));
 
             return (TotalPacketCount(packet), VersionSum(packet));
         });
     }
 
+    [Test]
+    public static TestResult Test5()
+    {
+        var testValues = new List<(string input, ulong expected)>()
+        {
+            ("C200B40A82", 3),
+            ("04005AC33890", 54),
+            ("880086C3E88112", 7),
+            ("CE00C43D881120", 9),
+            ("D8005AC2A8F0", 1),
+            ("F600BC2D8F", 0),
+            ("9C005AC2F8F0", 0),
+            ("9C0141080250320F1802104A08", 1),
+        };
+
+        return ExecuteTests(testValues, (input) => Packet.Parse(new BitStream(input)).Execute());
+    }
+
     [Part]
     public string Solve1() => $"{VersionSum(Packet.Parse(input))}";
+
+    [Part]
+    public string Solve2() => $"{Packet.Parse(input).Execute()}";
 }
