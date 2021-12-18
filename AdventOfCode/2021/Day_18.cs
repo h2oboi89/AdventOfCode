@@ -4,6 +4,7 @@ internal class Day_18 : BaseDay
 {
     private readonly List<string> testInput = new();
     private readonly List<string> input = new();
+
     public Day_18(string inputFile)
     {
         var test = true;
@@ -81,10 +82,7 @@ internal class Day_18 : BaseDay
 
                 while (stack.Count > 1)
                 {
-                    var a = stack.Pop();
-                    var b = stack.Pop();
-
-                    stack.Push(Add(a, b));
+                    stack.Push(Add(stack.Pop(), stack.Pop()));
                 }
 
                 return stack.Pop();
@@ -232,6 +230,8 @@ internal class Day_18 : BaseDay
                 return 0;
             }
 
+            public int Magnitude => CalculateMagnitude(this);
+
             private static Node Clone(Node node)
             {
                 if (node is External eNode)
@@ -248,8 +248,6 @@ internal class Day_18 : BaseDay
             }
 
             private Internal Clone() => (Internal)Clone(this);
-
-            public int Magnitude => CalculateMagnitude(this);
 
             protected override int Hash() => Left.Hash() ^ Right.Hash();
 
