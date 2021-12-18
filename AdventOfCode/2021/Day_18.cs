@@ -17,6 +17,14 @@ internal class Day_18 : BaseDay
             internal Node Left = new External();
             internal Node Right = new External();
 
+            internal Internal() { }
+
+            internal Internal(Node left, Node right)
+            {
+                Left = left; left.Parent = this;
+                Right = right; right.Parent = this;
+            }
+
             public static IEnumerable<Internal> Parse(IEnumerable<string> inputs) => inputs.Select(i => Parse(i));
 
             public static Internal Parse(string input)
@@ -53,19 +61,7 @@ internal class Day_18 : BaseDay
                 throw new ArgumentException("Invalid input", nameof(input));
             }
 
-            public static Internal Add(Internal a, Internal b)
-            {
-                var c = new Internal
-                {
-                    Left = a,
-                    Right = b
-                };
-
-                a.Parent = c;
-                b.Parent = c;
-
-                return c.Reduce();
-            }
+            public static Internal Add(Internal a, Internal b) => new Internal(a.Clone(), b.Clone()).Reduce();
 
             public static Internal Add(IEnumerable<Internal> numbers)
             {
@@ -224,6 +220,23 @@ internal class Day_18 : BaseDay
                 return 0;
             }
 
+            private static Node Clone(Node node)
+            {
+                if (node is External eNode)
+                {
+                    return new External(eNode.Value);
+                }
+
+                if (node is Internal iNode)
+                {
+                    return new Internal(Clone(iNode.Left), Clone(iNode.Right));
+                }
+
+                return new Internal();
+            }
+
+            private Internal Clone() => (Internal)Clone(this);
+
             public int Magnitude => CalculateMagnitude(this);
 
             protected override int Hash() => Left.Hash() ^ Right.Hash();
@@ -246,11 +259,7 @@ internal class Day_18 : BaseDay
                 var left = (int)Math.Floor(Value / 2.0);
                 var right = (int)Math.Ceiling(Value / 2.0);
 
-                var parent = new Internal();
-                parent.Left = new External(left, parent);
-                parent.Right = new External(right, parent);
-
-                return parent;
+                return new Internal(new External(left), new External(right));
             }
 
             protected override int Hash() => Value.GetHashCode();
