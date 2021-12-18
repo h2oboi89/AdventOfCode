@@ -5,10 +5,7 @@ internal class Day_18 : BaseDay
     private readonly List<string> input = new();
     public Day_18(string inputFile)
     {
-        foreach (var line in File.ReadAllLines(inputFile))
-        {
-            input.Add(line);
-        }
+        input.AddRange(File.ReadLines(inputFile));
     }
 
     private abstract class Node
@@ -17,8 +14,8 @@ internal class Day_18 : BaseDay
 
         public class Internal : Node
         {
-            public Node Left = new External();
-            public Node Right = new External();
+            internal Node Left = new External();
+            internal Node Right = new External();
 
             public static IEnumerable<Internal> Parse(IEnumerable<string> inputs) => inputs.Select(i => Parse(i));
 
@@ -190,9 +187,9 @@ internal class Day_18 : BaseDay
 
             private static IEnumerable<External> Values(Node node)
             {
-                if (node is External external)
+                if (node is External eNode)
                 {
-                    yield return external;
+                    yield return eNode;
                 }
 
                 if (node is Internal iNode)
@@ -209,6 +206,26 @@ internal class Day_18 : BaseDay
                 }
             }
 
+            private static int CalculateMagnitude(Node node)
+            {
+                if (node is External eNode)
+                {
+                    return eNode.Value;
+                }
+
+                if (node is Internal iNode)
+                {
+                    var left = 3 * CalculateMagnitude(iNode.Left);
+                    var right = 2 * CalculateMagnitude(iNode.Right);
+
+                    return left + right;
+                }
+
+                return 0;
+            }
+
+            public int Magnitude => CalculateMagnitude(this);
+
             protected override int Hash() => Left.Hash() ^ Right.Hash();
 
             public override string ToString() => $"[{Left},{Right}]";
@@ -216,7 +233,7 @@ internal class Day_18 : BaseDay
 
         public class External : Node
         {
-            public int Value = -1;
+            internal int Value = -1;
 
             internal External() { }
 
@@ -286,7 +303,7 @@ internal class Day_18 : BaseDay
     }
 
     [Test]
-    public static TestResult Test1()
+    public static TestResult MultipleAddTest()
     {
         var testValues = new List<(string, string)>()
         {
@@ -299,7 +316,7 @@ internal class Day_18 : BaseDay
     }
 
     [Test]
-    public static TestResult Test2()
+    public static TestResult BigAddTest()
     {
         var inputs = new List<string>()
         {
@@ -319,4 +336,49 @@ internal class Day_18 : BaseDay
 
         return ExecuteTest(expected, () => Node.Internal.Add(Node.Internal.Parse(inputs)).ToString());
     }
+
+    [Test]
+    public static TestResult MagnitudeTest()
+    {
+        var testValues = new List<(string, int)>
+        {
+            ("[[1,2],[[3,4],5]]", 143),
+            ("[[[[0,7],4],[[7,8],[6,0]]],[8,1]]", 1384),
+            ("[[[[1,1],[2,2]],[3,3]],[4,4]]",  445),
+            ("[[[[3,0],[5,3]],[4,4]],[5,5]]", 791),
+            ("[[[[5,0],[7,4]],[5,5]],[6,6]]", 1137),
+            ("[[[[8,7],[7,7]],[[8,6],[7,7]]],[[[0,7],[6,6]],[8,7]]]", 3488),
+        };
+
+        return ExecuteTests(testValues, (i) => Node.Internal.Parse(i).Magnitude);
+    }
+
+    [Test]
+    public static TestResult Test1()
+    {
+        var input = new List<string>()
+        {
+            "[[[0,[5,8]],[[1,7],[9,6]]],[[4,[1,2]],[[1,4],2]]]",
+            "[[[5,[2,8]],4],[5,[[9,9],0]]]",
+            "[6,[[[6,2],[5,6]],[[7,6],[4,7]]]]",
+            "[[[6,[0,7]],[0,9]],[4,[9,[9,0]]]]",
+            "[[[7,[6,4]],[3,[1,3]]],[[[5,5],1],9]]",
+            "[[6,[[7,3],[3,2]]],[[[3,8],[5,7]],4]]",
+            "[[[[5,4],[7,7]],8],[[8,3],8]]",
+            "[[9,3],[[9,9],[6,[4,9]]]]",
+            "[[2,[[7,7],7]],[[5,8],[[9,3],[0,2]]]]",
+            "[[[[5,2],5],[8,[3,7]]],[[5,[7,5]],[4,4]]]",
+        };
+
+        var expected = ("[[[[6,6],[7,6]],[[7,7],[7,0]]],[[[7,7],[7,7]],[[7,8],[9,9]]]]", 4140);
+
+        return ExecuteTest(expected, () => {
+            var result = Node.Internal.Add(Node.Internal.Parse(input));
+
+            return (result.ToString(), result.Magnitude);
+        });
+    }
+
+    [Part]
+    public string Solve1() => $"{Node.Internal.Add(Node.Internal.Parse(input)).Magnitude}";
 }
