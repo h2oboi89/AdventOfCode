@@ -41,7 +41,7 @@ internal class Day_11 : BaseDay
             var lineValues = new List<int>();
             foreach (var c in line)
             {
-                lineValues.Add(c - 48);
+                lineValues.Add(c - '0');
             }
 
             parsed.Add(lineValues.ToArray());
