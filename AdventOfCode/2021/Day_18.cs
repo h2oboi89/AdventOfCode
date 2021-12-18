@@ -2,10 +2,22 @@
 
 internal class Day_18 : BaseDay
 {
+    private readonly List<string> testInput = new();
     private readonly List<string> input = new();
     public Day_18(string inputFile)
     {
-        input.AddRange(File.ReadLines(inputFile));
+        var test = true;
+        foreach (var line in File.ReadAllLines(inputFile))
+        {
+            if (line.StartsWith("#"))
+            {
+                test = false;
+                continue;
+            }
+
+            if (test) testInput.Add(line);
+            else input.Add(line);
+        }
     }
 
     private abstract class Node
@@ -279,6 +291,32 @@ internal class Day_18 : BaseDay
         public override int GetHashCode() => Hash();
     }
 
+    private static (Node.Internal a, Node.Internal b, Node.Internal c, int max) FindLargestMagnitude(IEnumerable<string> input)
+    {
+        var (ma, mb, mc, maxMagnitude) = (new Node.Internal(), new Node.Internal(), new Node.Internal(), 0);
+
+        void Add(Node.Internal a, Node.Internal b)
+        {
+            var c = Node.Internal.Add(a, b);
+            var magnitude = c.Magnitude;
+
+            if (magnitude > maxMagnitude)
+            {
+                ma = a; mb = b; mc = c; maxMagnitude = magnitude;
+            }
+        }
+
+        foreach (var (a, b) in Node.Internal.Parse(input).ToList().CartesianProduct())
+        {
+            if (a.Equals(b)) continue;
+
+            Add(a, b);
+            Add(b, a);
+        }
+
+        return (ma, mb, mc, maxMagnitude);
+    }
+
     [Test]
     public static TestResult ParseTest()
     {
@@ -363,31 +401,39 @@ internal class Day_18 : BaseDay
     }
 
     [Test]
-    public static TestResult Test1()
+    public TestResult Test1()
     {
-        var input = new List<string>()
-        {
-            "[[[0,[5,8]],[[1,7],[9,6]]],[[4,[1,2]],[[1,4],2]]]",
-            "[[[5,[2,8]],4],[5,[[9,9],0]]]",
-            "[6,[[[6,2],[5,6]],[[7,6],[4,7]]]]",
-            "[[[6,[0,7]],[0,9]],[4,[9,[9,0]]]]",
-            "[[[7,[6,4]],[3,[1,3]]],[[[5,5],1],9]]",
-            "[[6,[[7,3],[3,2]]],[[[3,8],[5,7]],4]]",
-            "[[[[5,4],[7,7]],8],[[8,3],8]]",
-            "[[9,3],[[9,9],[6,[4,9]]]]",
-            "[[2,[[7,7],7]],[[5,8],[[9,3],[0,2]]]]",
-            "[[[[5,2],5],[8,[3,7]]],[[5,[7,5]],[4,4]]]",
-        };
-
         var expected = ("[[[[6,6],[7,6]],[[7,7],[7,0]]],[[[7,7],[7,7]],[[7,8],[9,9]]]]", 4140);
 
-        return ExecuteTest(expected, () => {
-            var result = Node.Internal.Add(Node.Internal.Parse(input));
+        return ExecuteTest(expected, () =>
+        {
+            var result = Node.Internal.Add(Node.Internal.Parse(testInput));
 
             return (result.ToString(), result.Magnitude);
         });
     }
 
+    [Test]
+    public TestResult Test2()
+    {
+        var expected = (
+            "[[2,[[7,7],7]],[[5,8],[[9,3],[0,2]]]]",
+            "[[[0,[5,8]],[[1,7],[9,6]]],[[4,[1,2]],[[1,4],2]]]",
+            "[[[[7,8],[6,6]],[[6,0],[7,7]]],[[[7,8],[8,8]],[[7,9],[0,6]]]]",
+            3993
+        );
+
+        return ExecuteTest(expected, () =>
+        {
+            var (a, b, c, max) = FindLargestMagnitude(testInput);
+
+            return (a.ToString(), b.ToString(), c.ToString(), max);
+        });
+    }
+
     [Part]
     public string Solve1() => $"{Node.Internal.Add(Node.Internal.Parse(input)).Magnitude}";
+
+    [Part]
+    public string Solve2() => $"{FindLargestMagnitude(input).max}";
 }
