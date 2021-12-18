@@ -20,6 +20,8 @@ internal class Day_18 : BaseDay
             public Node Left = new External();
             public Node Right = new External();
 
+            public static IEnumerable<Internal> Parse(IEnumerable<string> inputs) => inputs.Select(i => Parse(i));
+
             public static Internal Parse(string input)
             {
                 var index = 0;
@@ -65,7 +67,22 @@ internal class Day_18 : BaseDay
                 a.Parent = c;
                 b.Parent = c;
 
-                return c;
+                return c.Reduce();
+            }
+
+            public static Internal Add(IEnumerable<Internal> numbers)
+            {
+                var stack = new Stack<Internal>(numbers.Reverse());
+
+                while (stack.Count > 1)
+                {
+                    var a = stack.Pop();
+                    var b = stack.Pop();
+
+                    stack.Push(Add(a, b));
+                }
+
+                return stack.Pop();
             }
 
             private static bool Reduce(Internal number)
@@ -110,7 +127,7 @@ internal class Day_18 : BaseDay
                 return false;
             }
 
-            public Internal Reduce()
+            private Internal Reduce()
             {
                 while (Reduce(this)) { }
 
@@ -261,10 +278,45 @@ internal class Day_18 : BaseDay
         var a = Node.Internal.Parse("[[[[4,3],4],4],[7,[[8,4],9]]]");
         var b = Node.Internal.Parse("[1,1]");
 
-        var c = Node.Internal.Add(a, b).Reduce();
+        var c = Node.Internal.Add(a, b);
 
         var expected = Node.Internal.Parse("[[[[0,7],4],[[7,8],[6,0]]],[8,1]]");
 
         return ExecuteTest(expected.ToString(), () => c.ToString());
+    }
+
+    [Test]
+    public static TestResult Test1()
+    {
+        var testValues = new List<(string, string)>()
+        {
+            ("[1,1];[2,2];[3,3];[4,4]", "[[[[1,1],[2,2]],[3,3]],[4,4]]"),
+            ("[1,1];[2,2];[3,3];[4,4];[5,5]", "[[[[3,0],[5,3]],[4,4]],[5,5]]"),
+            ("[1,1];[2,2];[3,3];[4,4];[5,5];[6,6]", "[[[[5,0],[7,4]],[5,5]],[6,6]]"),
+        };
+
+        return ExecuteTests(testValues, (line) => Node.Internal.Add(Node.Internal.Parse(line.Split(';'))).ToString());
+    }
+
+    [Test]
+    public static TestResult Test2()
+    {
+        var inputs = new List<string>()
+        {
+            "[[[0,[4,5]],[0,0]],[[[4,5],[2,6]],[9,5]]]",
+            "[7,[[[3,7],[4,3]],[[6,3],[8,8]]]]",
+            "[[2,[[0,8],[3,4]]],[[[6,7],1],[7,[1,6]]]]",
+            "[[[[2,4],7],[6,[0,5]]],[[[6,8],[2,8]],[[2,1],[4,5]]]]",
+            "[7,[5,[[3,8],[1,4]]]]",
+            "[[2,[2,2]],[8,[8,1]]]",
+            "[2,9]",
+            "[1,[[[9,3],9],[[9,0],[0,7]]]]",
+            "[[[5,[7,4]],7],1]",
+            "[[[[4,2],2],6],[8,7]]"
+        };
+
+        var expected = "[[[[8,7],[7,7]],[[8,6],[7,7]]],[[[0,7],[6,6]],[8,7]]]";
+
+        return ExecuteTest(expected, () => Node.Internal.Add(Node.Internal.Parse(inputs)).ToString());
     }
 }
