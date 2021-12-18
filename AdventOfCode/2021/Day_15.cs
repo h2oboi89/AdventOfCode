@@ -49,7 +49,7 @@ internal class Day_15 : BaseDay
                 gridSize = line.Length;
             }
 
-            values.Add(line.Select(c => c - 48).ToArray());
+            values.Add(line.Select(c => c - '0').ToArray());
         }
     }
 
