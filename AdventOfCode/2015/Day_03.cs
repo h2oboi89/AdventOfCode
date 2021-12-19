@@ -24,6 +24,8 @@ internal class Day_03 : BaseDay
         {
             Address = address;
         }
+
+        public override string ToString() => $"{Address} : {Presents}";
     }
 
     public Day_03(string inputFile)
