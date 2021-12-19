@@ -127,7 +127,7 @@ internal class Day_05 : BaseDay
         return nice;
     }
 
-    [Test]
+    [DayTest]
     public static TestResult Test1()
     {
         var testValues = new List<(string, object)>
@@ -142,7 +142,7 @@ internal class Day_05 : BaseDay
         return ExecuteTests(testValues, (i) => IsNice1(i));
     }
 
-    [Test]
+    [DayTest]
     public static TestResult Test2()
     {
         var testValues = new List<(string, object)>
@@ -156,9 +156,9 @@ internal class Day_05 : BaseDay
         return ExecuteTests(testValues, (i) => IsNice2(i));
     }
 
-    [Part]
+    [DayPart]
     public string Part1() => $"{CheckList(input, IsNice1)}";
 
-    [Part]
+    [DayPart]
     public string Part2() => $"{CheckList(input, IsNice2)}";
 }

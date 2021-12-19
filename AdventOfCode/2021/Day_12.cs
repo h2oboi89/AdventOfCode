@@ -233,7 +233,7 @@ internal class Day_12 : BaseDay
         return paths;
     }
 
-    [Test]
+    [DayTest]
     public TestResult Test1()
     {
         var testInputAndResults = testInputs.Zip(new List<object> { 10, 19, 226 }, (input, expected) => (input, expected));
@@ -241,7 +241,7 @@ internal class Day_12 : BaseDay
         return ExecuteTests(testInputAndResults, (nodes) => GeneratePaths(nodes).Count);
     }
 
-    [Test]
+    [DayTest]
     public TestResult Test2()
     {
         var testInputAndResults = testInputs.Zip(new List<object> { 36, 103, 3509 }, (input, expected) => (input, expected));
@@ -250,9 +250,9 @@ internal class Day_12 : BaseDay
             GeneratePaths(nodes, GenerateVisitLimits(nodes)).Count);
     }
 
-    [Part]
+    [DayPart]
     public string Solve1() => $"{GeneratePaths(input).Count}";
 
-    [Part]
+    [DayPart]
     public string Solve2() => $"{GeneratePaths(input, GenerateVisitLimits(input)).Count}";
 }

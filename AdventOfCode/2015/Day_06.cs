@@ -156,7 +156,7 @@ internal class Day_06 : BaseDay
         return grid.Lit;
     }
 
-    [Test]
+    [DayTest]
     public static TestResult Test1()
     {
         var instructions = new List<Range>
@@ -169,7 +169,7 @@ internal class Day_06 : BaseDay
         return ExecuteTest((1_000 * 1_000) - 1_000 - 4, () => FollowInstructions(new BoolGrid(), instructions));
     }
 
-    [Test]
+    [DayTest]
     public static TestResult Test2()
     {
         var instructions = new List<Range>
@@ -181,9 +181,9 @@ internal class Day_06 : BaseDay
         return ExecuteTest(1 + 2_000_000, () => FollowInstructions(new IntGrid(), instructions));
     }
 
-    [Part]
+    [DayPart]
     public string Solve1() => $"{FollowInstructions(new BoolGrid(), instructions)}";
 
-    [Part]
+    [DayPart]
     public string Solve2() => $"{FollowInstructions(new IntGrid(), instructions)}";
 }

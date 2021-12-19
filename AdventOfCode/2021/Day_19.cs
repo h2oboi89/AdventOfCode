@@ -86,7 +86,7 @@ internal class Day_19 : BaseDay
         }
     }
 
-    [Test]
+    [DayTest]
     public TestResult ParseTest()
     {
         var testValues = new List<(int, int)>()

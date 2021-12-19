@@ -168,15 +168,15 @@ internal class Day_05 : BaseDay
         return dangerZone.DangerVents(dangerLevel);
     }
 
-    [Test]
+    [DayTest]
     public TestResult Test1() => ExecuteTest(5, () => MapVents(TestValues.dimension, TestValues.values, false, 2));
 
-    [Test]
+    [DayTest]
     public TestResult Test2() => ExecuteTest(12, () => MapVents(TestValues.dimension, TestValues.values, true, 2));
 
-    [Part]
+    [DayPart]
     public string Part1() => $"{MapVents(PartValues.dimension, PartValues.values, false, 2)}";
 
-    [Part]
+    [DayPart]
     public string Part2() => $"{MapVents(PartValues.dimension, PartValues.values, true, 2)}";
 }

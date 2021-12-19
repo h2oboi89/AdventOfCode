@@ -167,15 +167,15 @@ internal class Day_10 : BaseDay
         return scores[middleIndex];
     }
 
-    [Test]
+    [DayTest]
     public TestResult Test1() => ExecuteTest(26397, () => CalculateCorruptionScore(testInput));
 
-    [Test]
+    [DayTest]
     public TestResult Test2() => ExecuteTest((ulong)288957, () => CalculateIncompleteScore(testInput));
 
-    [Part]
+    [DayPart]
     public string Solve1() => $"{CalculateCorruptionScore(input)}";
 
-    [Part]
+    [DayPart]
     public string Solve2() => $"{CalculateIncompleteScore(input)}";
 }

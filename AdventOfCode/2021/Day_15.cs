@@ -165,15 +165,15 @@ internal class Day_15 : BaseDay
         return shortestPath;
     }
 
-    [Test]
+    [DayTest]
     public TestResult Test1() => ExecuteTest(40, () => DijkstraShortestPath(Clone(testInput)).Last().TotalRisk);
 
-    [Test]
+    [DayTest]
     public TestResult Test2() => ExecuteTest(315, () => DijkstraShortestPath(Expand(testInput)).Last().TotalRisk);
 
-    [Part]
+    [DayPart]
     public string Solve1() => $"{DijkstraShortestPath(Clone(input)).Last().TotalRisk}";
 
-    [Part]
+    [DayPart]
     public string Solve2() => $"{DijkstraShortestPath(Expand(input)).Last().TotalRisk}";
 }

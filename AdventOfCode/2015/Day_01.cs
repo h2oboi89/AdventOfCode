@@ -61,7 +61,7 @@ internal class Day_01 : BaseDay
         return position;
     }
 
-    [Test]
+    [DayTest]
     public static TestResult Test_1()
     {
         var testValues = new List<(string input, object expected)>
@@ -80,7 +80,7 @@ internal class Day_01 : BaseDay
         return ExecuteTests(testValues, (i) => FollowDirections(ParseDirections(i)));
     }
 
-    [Test]
+    [DayTest]
     public static TestResult Test_2()
     {
         var testValues = new List<(string input, object expected)>
@@ -92,9 +92,9 @@ internal class Day_01 : BaseDay
         return ExecuteTests(testValues, (i) => FindBasement(ParseDirections(i)));
     }
 
-    [Part]
+    [DayPart]
     public string Solve_1() => $"{FollowDirections(directions)}";
 
-    [Part]
+    [DayPart]
     public string Solve_2() => $"{FindBasement(directions)}";
 }

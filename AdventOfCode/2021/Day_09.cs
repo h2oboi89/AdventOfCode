@@ -116,15 +116,15 @@ internal class Day_09 : BaseDay
 
     private static int FindLargestBasins(int[,] input) => FindBasins(input).OrderByDescending(b => b.Count).Take(3).Select(b => b.Count).Product();
 
-    [Test]
+    [DayTest]
     public TestResult Test1() => ExecuteTest(15, () => FindRisk(testInput));
 
-    [Test]
+    [DayTest]
     public TestResult Test2() => ExecuteTest(1134, () => FindLargestBasins(testInput));
 
-    [Part]
+    [DayPart]
     public string Solve1() => $"{FindRisk(input)}";
 
-    [Part]
+    [DayPart]
     public string Solve2() => $"{FindLargestBasins(input)}";
 }

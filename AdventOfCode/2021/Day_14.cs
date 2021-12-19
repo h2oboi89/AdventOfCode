@@ -132,15 +132,15 @@ internal class Day_14 : BaseDay
         return max - min;
     }
 
-    [Test]
+    [DayTest]
     public TestResult Test1() => ExecuteTest((ulong)1588, () => Simulate(testInput, 10));
 
-    [Test]
+    [DayTest]
     public TestResult Test2() => ExecuteTest((ulong)2_188_189_693_529, () => Simulate(testInput, 40));
 
-    [Part]
+    [DayPart]
     public string Solve1() => $"{Simulate(input, 10)}";
 
-    [Part]
+    [DayPart]
     public string Solve2() => $"{Simulate(input, 40)}";
 }

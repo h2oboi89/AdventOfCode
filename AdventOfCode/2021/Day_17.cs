@@ -150,7 +150,7 @@ internal class Day_17 : BaseDay
         }
     }
 
-    [Test]
+    [DayTest]
     public TestResult Test1()
     {
         var testValues = new List<((int x, int y), bool expected)>()
@@ -164,15 +164,15 @@ internal class Day_17 : BaseDay
         return ExecuteTests(testValues, (i) => Launch(i.x, i.y, testArea).hit);
     }
 
-    [Test]
+    [DayTest]
     public TestResult Test2() => ExecuteTest((6, 9, 45), () => CalculateBestVelocity(testArea));
 
-    [Test]
+    [DayTest]
     public TestResult Test3() => ExecuteTest(112, () => CalculateAllVelocities(testArea).Count());
 
-    [Part]
+    [DayPart]
     public string Solve1() => $"{CalculateBestVelocity(partArea).maxHeight}";
 
-    [Part]
+    [DayPart]
     public string Solve2() => $"{CalculateAllVelocities(partArea).Count()}";
 }

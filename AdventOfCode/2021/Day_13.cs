@@ -197,10 +197,10 @@ internal class Day_13 : BaseDay
         }
     }
 
-    [Test]
+    [DayTest]
     public TestResult Test1() => ExecuteTest(17, () => testInput.page.Fold(testInput.folds[0]).AreSet);
 
-    [Test]
+    [DayTest]
     public TestResult Test2() => ExecuteTest(16, () =>
     {
         var page = testInput.page;
@@ -216,10 +216,10 @@ internal class Day_13 : BaseDay
     });
 
 
-    [Part]
+    [DayPart]
     public string Solve1() => $"{input.page.Fold(input.folds[0]).AreSet}";
 
-    [Part]
+    [DayPart]
     public string Solve2()
     {
         var page = input.page;

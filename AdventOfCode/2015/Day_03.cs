@@ -95,7 +95,7 @@ internal class Day_03 : BaseDay
         return santaHouses.Union(roboHouses).DistinctBy(h => h.Address).Count();
     }
 
-    [Test]
+    [DayTest]
     public static TestResult Test1()
     {
         var testValues = new List<(string, object)>
@@ -108,7 +108,7 @@ internal class Day_03 : BaseDay
         return ExecuteTests(testValues, (i) => Travel(ParseInput(i)).Count());
     }
 
-    [Test]
+    [DayTest]
     public static TestResult Test2()
     {
         var testValues = new List<(string, object)>
@@ -121,9 +121,9 @@ internal class Day_03 : BaseDay
         return ExecuteTests(testValues, (i) => SplitTravel(ParseInput(i)));
     }
 
-    [Part]
+    [DayPart]
     public string Solve1() => $"{Travel(input).Count()}";
 
-    [Part]
+    [DayPart]
     public string Solve2() => $"{SplitTravel(input)}";
 }

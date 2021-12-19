@@ -99,15 +99,15 @@ internal class Day_02 : BaseDay
         return horizontal * depth;
     }
 
-    [Test]
+    [DayTest]
     public TestResult Test1() => ExecuteTest(testInput, 150, Solve1);
 
-    [Test]
+    [DayTest]
     public TestResult Test2() => ExecuteTest(testInput, 900, Solve2);
 
-    [Part]
+    [DayPart]
     public string Solve_1() => $"{Solve1(input)}";
 
-    [Part]
+    [DayPart]
     public string Solve_2() => $"{Solve2(input)}";
 }

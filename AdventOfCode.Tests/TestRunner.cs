@@ -8,7 +8,7 @@ namespace AdventOfCode.Tests
 {
     public class Tests
     {
-        [NUnit.Framework.Test]
+        [Test]
         public void Test1()
         {
 #pragma warning disable CS8604 // Possible null reference argument.

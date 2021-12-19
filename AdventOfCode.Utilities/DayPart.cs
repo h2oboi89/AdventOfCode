@@ -4,7 +4,7 @@
 /// Identifies a <see cref="BaseDay"/> part solution function.
 /// </summary>
 [AttributeUsage(AttributeTargets.Method)]
-public class Part : Attribute
+public class DayPart : Attribute
 {
-    public Part() { }
+    public DayPart() { }
 }

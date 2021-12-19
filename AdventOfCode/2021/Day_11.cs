@@ -166,15 +166,15 @@ internal class Day_11 : BaseDay
         }
     }
 
-    [Test]
+    [DayTest]
     public TestResult Test1() => ExecuteTest(1656, () => Simulate(testInput, 100));
 
-    [Test]
+    [DayTest]
     public TestResult Test2() => ExecuteTest(195, () => SimulateSync(testInput));
 
-    [Part]
+    [DayPart]
     public string Solve1() => $"{Simulate(input, 100)}";
 
-    [Part]
+    [DayPart]
     public string Solve2() => $"{SimulateSync(input)}";
 }
