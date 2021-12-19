@@ -68,61 +68,44 @@ internal class Day_19 : BaseDay
             _points.AddRange(points);
         }
 
-        private static Exception InvalidAxis(Axis axis) => new Exception($"Invalid axis {axis}");
+        private static Exception InvalidAxis(Axis axis) => new($"Invalid axis {axis}");
+
+        private IEnumerable<Point3D> ForEachPoint(Func<Point3D, Point3D> transformFunc)
+        {
+            foreach (var point in Points)
+            {
+                yield return transformFunc(point);
+            }
+        }
 
         public Scanner Flatten(Axis axis)
         {
-            var points = new List<Point3D>();
-
-            foreach (var point in Points)
+            var points = ForEachPoint(point => axis switch
             {
-                points.Add(axis switch
-                {
-                    Axis.X => new Point3D(0, point.Y, point.Z),
-                    Axis.Y => new Point3D(point.X, 0, point.Z),
-                    Axis.Z => new Point3D(point.X, point.Y, 0),
-                    _ => throw InvalidAxis(axis)
-                });
-            }
+                Axis.X => new Point3D(0, point.Y, point.Z),
+                Axis.Y => new Point3D(point.X, 0, point.Z),
+                Axis.Z => new Point3D(point.X, point.Y, 0),
+                _ => throw InvalidAxis(axis)
+            });
 
             return new Scanner(Id, points);
         }
 
         public Scanner Rotate(Axis axis)
         {
-            var points = new List<Point3D>();
-
-            foreach (var point in Points)
+            var points = ForEachPoint(point => axis switch
             {
-                points.Add(axis switch
-                {
-                    Axis.X => new Point3D(point.X, point.Z, -point.Y),
-                    Axis.Y => new Point3D(-point.Z, point.Y, point.X),
-                    Axis.Z => new Point3D(point.Y, -point.X, point.Z),
-                    _ => throw InvalidAxis(axis)
-                });
-            }
+                Axis.X => new Point3D(point.X, point.Z, -point.Y),
+                Axis.Y => new Point3D(-point.Z, point.Y, point.X),
+                Axis.Z => new Point3D(point.Y, -point.X, point.Z),
+                _ => throw InvalidAxis(axis)
+            });
 
             return new Scanner(Id, points);
         }
 
-        public Scanner Translate(Axis axis, int distance)
-        {
-            var points = new List<Point3D>();
-
-            foreach (var point in Points)
-            {
-                points.Add(axis switch
-                {
-                    Axis.X => new Point3D(point.X + distance, point.Y, point.Z),
-                    Axis.Y => new Point3D(point.X, point.Y + distance, point.Z),
-                    Axis.Z => new Point3D(point.X, point.Y, point.Z + distance),
-                    _ => throw InvalidAxis(axis)
-                });
-            }
-
-            return new Scanner(Id, points);
-        }
+        public Scanner Translate(int dx, int dy, int dz) =>
+            new(Id, ForEachPoint(point => new Point3D(point.X + dx, point.Y + dy, point.Z + dz)));
 
         public (int min, int max) Range(Axis axis)
         {
@@ -138,7 +121,6 @@ internal class Day_19 : BaseDay
 
             foreach (var point in Points)
             {
-
                 (min, max) = axis switch
                 {
                     Axis.X => Check(point.X, min, max),
