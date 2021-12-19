@@ -7,9 +7,9 @@ internal class Day_05 : BaseDay
 {
     private class PointPair
     {
-        public readonly Point Start, End;
+        public readonly Point2D Start, End;
 
-        public PointPair(Point start, Point end) { Start = start; End = end; }
+        public PointPair(Point2D start, Point2D end) { Start = start; End = end; }
 
         public bool IsHorizonal => Start.Y == End.Y;
 
@@ -30,7 +30,7 @@ internal class Day_05 : BaseDay
             }
         }
 
-        public IEnumerable<Point> GetLine()
+        public IEnumerable<Point2D> GetLine()
         {
             var dx = 1; var dy = 1;
 
@@ -40,12 +40,12 @@ internal class Day_05 : BaseDay
             if (IsHorizonal) dy = 0;
             if (IsVertical) dx = 0;
 
-            var p = new Point(Start.X, Start.Y);
+            var p = new Point2D(Start.X, Start.Y);
             for(var i = 0; i < NumPoints; i++)
             {
                 yield return p;
 
-                p = new Point(p.X + dx, p.Y + dy);
+                p = new Point2D(p.X + dx, p.Y + dy);
             }
         }
     }
@@ -139,7 +139,7 @@ internal class Day_05 : BaseDay
             // parse pair of points
             var parts = line.Split("->").Select(p => p.Trim());
 
-            var points = new List<Point>();
+            var points = new List<Point2D>();
             foreach (var part in parts)
             {
                 var coords = part.Split(",").Select(c => int.Parse(c));
@@ -147,7 +147,7 @@ internal class Day_05 : BaseDay
 
                 CheckMax(x, y);
 
-                points.Add(new Point(x, y));
+                points.Add(new Point2D(x, y));
             }
 
             values.Add(new PointPair(points.First(), points.Last()));

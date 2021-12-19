@@ -23,7 +23,7 @@ internal class Day_17 : BaseDay
             var y1 = int.Parse(captured.Groups["y1"].Value);
             var y2 = int.Parse(captured.Groups["y2"].Value);
 
-            var targetArea = new TargetArea(new Point(x1, y1), new Point(x2, y2));
+            var targetArea = new TargetArea(new Point2D(x1, y1), new Point2D(x2, y2));
 
             if (test)
             {
@@ -39,20 +39,20 @@ internal class Day_17 : BaseDay
 
     private class TargetArea
     {
-        private readonly Point Start;
-        private readonly Point End;
+        private readonly Point2D Start;
+        private readonly Point2D End;
 
-        public TargetArea() : this(new Point(0, 0), new Point(0, 0)) { }
+        public TargetArea() : this(new Point2D(0, 0), new Point2D(0, 0)) { }
 
-        public TargetArea(Point start, Point end) { Start = start; End = end; }
+        public TargetArea(Point2D start, Point2D end) { Start = start; End = end; }
 
         /// <summary>
         /// Determines relative position of <paramref name="point"/> to this <see cref="TargetArea"/>.
         /// Logic is similar to <see cref="IComparer{T}.Compare(T?, T?)"/>
         /// </summary>
-        /// <param name="point"><see cref="Point"/> to check.</param>
+        /// <param name="point"><see cref="Point2D"/> to check.</param>
         /// <returns><see cref="(int, int)"/> comparing <paramref name="point"/> location to this <see cref="TargetArea"/></returns>
-        public (int x, int y) CheckLocation(Point point)
+        public (int x, int y) CheckLocation(Point2D point)
         {
             int x = 0;
             if (point.X < Start.X) x = -1;
@@ -70,14 +70,14 @@ internal class Day_17 : BaseDay
 
     private static (bool hit, int maxHeight) Launch(int x, int y, TargetArea area)
     {
-        var position = new Point(0, 0);
+        var position = new Point2D(0, 0);
         var maxY = position.Y;
 
         var initialRelation = area.CheckLocation(position);
 
-        static (Point p, int x, int y) Update(Point point, int x, int y)
+        static (Point2D p, int x, int y) Update(Point2D point, int x, int y)
         {
-            var p = new Point(point.X + x, point.Y + y);
+            var p = new Point2D(point.X + x, point.Y + y);
 
             if (x > 0) x--;
             if (x < 0) x++;

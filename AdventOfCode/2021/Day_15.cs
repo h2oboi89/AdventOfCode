@@ -21,7 +21,7 @@ internal class Day_15 : BaseDay
         {
             var processedInput = new Node[input.Count, input[0].Length];
 
-            processedInput.All((x, y) => processedInput[y, x] = new Node(new Point(x, y), input[y][x]));
+            processedInput.All((x, y) => processedInput[y, x] = new Node(new Point2D(x, y), input[y][x]));
 
             input.Clear();
 
@@ -55,12 +55,12 @@ internal class Day_15 : BaseDay
 
     private class Node
     {
-        public readonly Point Point;
+        public readonly Point2D Point;
         public readonly int Risk;
         public int TotalRisk = int.MaxValue;
         public Node? Previous = null;
 
-        public Node(Point point, int risk)
+        public Node(Point2D point, int risk)
         {
             Point = point;
             Risk = risk;
@@ -109,7 +109,7 @@ internal class Day_15 : BaseDay
                 {
                     var x_new = x_increase + node.Point.X;
                     var y_new = y_increase + node.Point.Y;
-                    var point_new = new Point(x_new, y_new);
+                    var point_new = new Point2D(x_new, y_new);
                     var risk_new = UpdateRisk(node.Risk, valueIncrease);
 
                     expandedNodes[y_new, x_new] = new Node(point_new, risk_new);
