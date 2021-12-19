@@ -79,24 +79,6 @@ internal class Day_19 : BaseDay
         }
 
         /// <summary>
-        /// Flattens <see cref="Scanner.Points"/> along <paramref name="axis"/>.
-        /// </summary>
-        /// <param name="axis"><see cref="Axis"/> to flatten against.</param>
-        /// <returns>New <see cref="Scanner"/> with <see cref="Scanner.Points"/> flattened against <paramref name="axis"/></returns>
-        public Scanner Flatten(Axis axis)
-        {
-            var points = ForEachPoint(point => axis switch
-            {
-                Axis.X => new Point3D(0, point.Y, point.Z),
-                Axis.Y => new Point3D(point.X, 0, point.Z),
-                Axis.Z => new Point3D(point.X, point.Y, 0),
-                _ => throw InvalidAxis(axis)
-            });
-
-            return new Scanner(Id, points);
-        }
-
-        /// <summary>
         /// Rotates <see cref="Scanner.Points"/> clockwise by 90 degrees around <paramref name="axis"/>.
         /// </summary>
         /// <param name="axis"><see cref="Axis"/> to rotate around.</param>
@@ -183,19 +165,21 @@ internal class Day_19 : BaseDay
         }
 
         public override string ToString() => $"{Id} ({string.Join(", ", Points)})";
-    }
 
-    /*
-        foreach of 3 axis for base matrix:
-            foreach of 3 axis for test matrix:
-                foreach of 4 rotations of test matrix:
-                    // TODO: try to match at least 12 points and add to candidate group
-                    // this will be 2D translation step
-    
-        foreach candidate in candidates:
-            // TODO: unflatten and slide along axis until 12 points match or out of range
-            // TODO: combine matrices if match and restart until only 1 matrix left
-    */
+        public static Scanner? Match(Scanner a, Scanner b)
+        {
+            Scanner? result = null;
+
+            /*
+             * 1. Create all permutations
+             * 2. Eliminate duplicates
+             * 3. for (n * m) scanners set origin and check matches
+             *      if (matches >= 12) calculate offset and merge
+             */
+
+            return result;
+        }
+    }
 
     [DayTest]
     public TestResult ParseTest()
