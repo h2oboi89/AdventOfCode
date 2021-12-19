@@ -78,6 +78,11 @@ internal class Day_19 : BaseDay
             }
         }
 
+        /// <summary>
+        /// Flattens <see cref="Scanner.Points"/> along <paramref name="axis"/>.
+        /// </summary>
+        /// <param name="axis"><see cref="Axis"/> to flatten against.</param>
+        /// <returns>New <see cref="Scanner"/> with <see cref="Scanner.Points"/> flattened against <paramref name="axis"/></returns>
         public Scanner Flatten(Axis axis)
         {
             var points = ForEachPoint(point => axis switch
@@ -91,6 +96,11 @@ internal class Day_19 : BaseDay
             return new Scanner(Id, points);
         }
 
+        /// <summary>
+        /// Rotates <see cref="Scanner.Points"/> clockwise by 90 degrees around <paramref name="axis"/>.
+        /// </summary>
+        /// <param name="axis"><see cref="Axis"/> to rotate around.</param>
+        /// <returns>New <see cref="Scanner"/> with <see cref="Scanner.Points"/> rotated by 90 degrees around <paramref name="axis"/></returns>
         public Scanner Rotate(Axis axis)
         {
             var points = ForEachPoint(point => axis switch
@@ -104,6 +114,13 @@ internal class Day_19 : BaseDay
             return new Scanner(Id, points);
         }
 
+        /// <summary>
+        /// Translates <see cref="Scanner.Points"/> by specified distances.
+        /// </summary>
+        /// <param name="dx"><see cref="Axis.X"/> adjustment.</param>
+        /// <param name="dy"><see cref="Axis.Y"/> adjustment.</param>
+        /// <param name="dz"><see cref="Axis.Z"/> adjustment.</param>
+        /// <returns>New <see cref="Scanner"/> with <see cref="Scanner.Points"/> adjusted by the specified amounts.</returns>
         public Scanner Translate(int dx, int dy, int dz) =>
             new(Id, ForEachPoint(point => new Point3D(point.X + dx, point.Y + dy, point.Z + dz)));
 
