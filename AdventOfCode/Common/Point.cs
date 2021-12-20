@@ -57,6 +57,8 @@ internal class Point3D : Point
         Set(Coordinate.Z, z);
     }
 
+    public static Point3D operator -(Point3D p) => new(-p.X, -p.Y, -p.Z);
+
     public int X => Get(Coordinate.X);
 
     public int Y => Get(Coordinate.Y);
