@@ -161,8 +161,8 @@ internal class Day_06 : BaseDay
     {
         var instructions = new List<Range>
         {
-            new Range(new Point2D(0, 0), new Point2D(999, 999), Action.On),
-            new Range(new Point2D(0, 0), new Point2D(999, 0), Action.Toggle),
+            new Range(new Point2D(), new Point2D(999, 999), Action.On),
+            new Range(new Point2D(), new Point2D(999, 0), Action.Toggle),
             new Range(new Point2D(499, 499), new Point2D(500, 500), Action.Off),
         };
 
@@ -174,8 +174,8 @@ internal class Day_06 : BaseDay
     {
         var instructions = new List<Range>
         {
-            new Range(new Point2D(0, 0), new Point2D(0, 0), Action.On),
-            new Range(new Point2D(0, 0), new Point2D(999, 999), Action.Toggle),
+            new Range(new Point2D(), new Point2D(), Action.On),
+            new Range(new Point2D(), new Point2D(999, 999), Action.Toggle),
         };
 
         return ExecuteTest(1 + 2_000_000, () => FollowInstructions(new IntGrid(), instructions));

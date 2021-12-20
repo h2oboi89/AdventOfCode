@@ -49,7 +49,7 @@ internal class Day_03 : BaseDay
 
     private static IEnumerable<House> Travel(IEnumerable<Direction> directions)
     {
-        var houses = new List<House> { new House(new Point2D(0, 0)) };
+        var houses = new List<House> { new House(new Point2D()) };
 
         var current = houses[0];
 

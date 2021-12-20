@@ -40,12 +40,14 @@ internal class Day_05 : BaseDay
             if (IsHorizonal) dy = 0;
             if (IsVertical) dx = 0;
 
-            var p = new Point2D(Start.X, Start.Y);
+            var dP = new Point2D(dx, dy);
+
+            var p = Start;
             for(var i = 0; i < NumPoints; i++)
             {
                 yield return p;
 
-                p = new Point2D(p.X + dx, p.Y + dy);
+                p += dP;
             }
         }
     }

@@ -53,7 +53,7 @@ internal class Day_19 : BaseDay
 
     private class Field
     {
-        private readonly List<Point3D> _scanners = new() { new Point3D(0, 0, 0) };
+        private readonly List<Point3D> _scanners = new() { new Point3D() };
         private readonly List<Point3D> _beacons = new();
 
         public IEnumerable<Point3D> Beacons
@@ -105,7 +105,7 @@ internal class Day_19 : BaseDay
         public Field Translate(Point3D translation)
         {
             IEnumerable<Point3D> Translate(IEnumerable<Point3D> points, Point3D translation) =>
-                ForEach(points, point => new Point3D(point.X + translation.X, point.Y + translation.Y, point.Z + translation.Z));
+                ForEach(points, point => point + translation);
 
             return new Field(Id, Translate(Beacons, translation), Translate(Scanners, translation));
         }
@@ -321,11 +321,9 @@ internal class Day_19 : BaseDay
 
         foreach (var (a, b) in field.Scanners.UniqueProduct())
         {
-            var dx = Math.Abs(a.X - b.X);
-            var dy = Math.Abs(a.Y - b.Y);
-            var dz = Math.Abs(a.Z - b.Z);
+            var distance = a.Distance(b);
 
-            var manhattanDistance = dx + dy + dz;
+            var manhattanDistance = distance.X + distance.Y + distance.Z;
 
             if (manhattanDistance > max) max = manhattanDistance;
         }

@@ -35,7 +35,7 @@ static class IEnumerableExtensions
         var possiblePairs = enumerable.CartesianProduct();
 
         // filter out pairs matching against themselves
-        possiblePairs = possiblePairs.Where(pair => !pair.a.Equals(pair.b)).ToList();
+        possiblePairs = possiblePairs.Where(pair => pair.a != null && !pair.a.Equals(pair.b)).ToList();
 
         var pairs = new List<(T a, T b)>();
 
