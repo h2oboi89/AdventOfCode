@@ -69,12 +69,7 @@ internal class Point2D : Point
 
     public static Point2D operator +(Point2D a, Point2D b) => new(a.coordinates.Zip(b.coordinates).Select(pair => pair.First + pair.Second));
 
-    public Point2D Distance(Point2D other)
-    {
-        var distances = base.Distance(other);
-
-        return new Point2D(distances[(int)Coordinate.X], distances[(int)Coordinate.Y]);
-    }
+    public Point2D Distance(Point2D other) => new(base.Distance(other));
 }
 
 internal class Point3D : Point
@@ -100,10 +95,5 @@ internal class Point3D : Point
 
     public static Point3D operator +(Point3D a, Point3D b) => new(a.coordinates.Zip(b.coordinates).Select(pair => pair.First + pair.Second));
 
-    public Point3D Distance(Point3D other)
-    {
-        var distances = base.Distance(other);
-
-        return new Point3D(distances[(int)Coordinate.X], distances[(int)Coordinate.Y], distances[(int)Coordinate.Z]);
-    }
+    public Point3D Distance(Point3D other) => new(base.Distance(other));
 }
