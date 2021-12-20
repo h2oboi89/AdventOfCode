@@ -4,7 +4,7 @@ internal abstract class Point
 {
     protected readonly int[] coordinates = Array.Empty<int>();
 
-    protected Point(int size) { coordinates = new int[size]; }
+    protected Point(int dimensions) { coordinates = new int[dimensions]; }
 
     protected enum Coordinate { X = 0, Y = 1, Z = 2, }
 
