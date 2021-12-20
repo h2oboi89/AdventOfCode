@@ -11,7 +11,6 @@ internal class Day_20 : BaseDay
     public Day_20(string inputFile)
     {
         var algo = Array.Empty<int>();
-        var image = new Image(Array.Empty<(Point2D, int)>());
 
         var parsingImage = false;
         var row = 0;
@@ -91,7 +90,7 @@ internal class Day_20 : BaseDay
             {
                 for (var x = 0; x < newDimensions.X; x++)
                 {
-                    newImagePixels.Add(new Point2D(x, y), 0);
+                    newImagePixels.Add(new Point2D(x, y), 0); // FIXME: need to smart expand
                 }
             }
 
@@ -109,11 +108,11 @@ internal class Day_20 : BaseDay
 
             var updated = expanded.Clone();
 
-            static int GetValue(Image image, Point2D point)
+            int GetValue(Point2D point)
             {
-                if (image._pixels.ContainsKey(point)) return image._pixels[point];
+                if (expanded._pixels.ContainsKey(point)) return expanded._pixels[point];
 
-                return 0;
+                return 0; // TODO: need to smart get expanded value
             }
 
             foreach (var (point, _) in expanded.Pixels)
@@ -126,7 +125,7 @@ internal class Day_20 : BaseDay
                 {
                     value <<= 1;
 
-                    value |= GetValue(expanded, neighbor);
+                    value |= GetValue(neighbor);
                 }
 
                 updated._pixels[point] = algorithm[value];
@@ -185,7 +184,7 @@ internal class Day_20 : BaseDay
             "#....",
             "##..#",
             "..#..",
-            "..###"
+            "..###",
         };
 
         var expected = string.Join(Environment.NewLine, lines);
@@ -223,13 +222,36 @@ internal class Day_20 : BaseDay
             "####..#",
             ".#..##.",
             "..##..#",
-            "...#.#."
+            "...#.#.",
         };
 
         var expected = string.Join(Environment.NewLine, lines);
 
         return ExecuteTest(expected, () => testValues.image.Enhance(testValues.algorithm).ToString());
     }
+
+    [DayTest]
+    public TestResult EnhanceImageTest()
+    {
+        var lines = new List<string>()
+        {
+            ".......#.",
+            ".#..#.#..",
+            "#.#...###",
+            "#...##.#.",
+            "#.....#.#",
+            ".#.#####.",
+            "..#.#####",
+            "...##.##.",
+            "....###..",
+        };
+
+        var expected = string.Join(Environment.NewLine, lines);
+
+        return ExecuteTest(expected, () => EnhanceImage(testValues.image, testValues.algorithm, 2).ToString());
+    }
+
+
 
     [DayTest]
     public TestResult Test1() => ExecuteTest(35, () => EnhanceImage(testValues.image, testValues.algorithm, 2).Lit);
@@ -239,8 +261,8 @@ internal class Day_20 : BaseDay
     {
         var enhanced = EnhanceImage(partValues.image, partValues.algorithm, 2);
 
-        Console.WriteLine(enhanced);
-        Console.WriteLine(enhanced.Dimensions);
+        //Console.WriteLine(enhanced);
+        //Console.WriteLine(enhanced.Dimensions);
         return $"{enhanced.Lit}";
     }
 }

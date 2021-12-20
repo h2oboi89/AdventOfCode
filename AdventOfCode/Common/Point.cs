@@ -1,4 +1,6 @@
-﻿namespace AdventOfCode.Common;
+﻿using System.Text.RegularExpressions;
+
+namespace AdventOfCode.Common;
 
 internal abstract class Point
 {
@@ -100,6 +102,20 @@ internal class Point2D : Point
         // bottom right
         yield return new Point2D(X + 1, Y + 1);
     }
+
+    private static readonly Regex parseRegex = new(@"\( (?<x>-?\d+), (?<y>-?\d+) \)");
+
+    public static Point2D? Parse(string input)
+    {
+        var match = parseRegex.Match(input);
+
+        if (match.Success)
+        {
+            return new Point2D(int.Parse(match.Groups["x"].Value), int.Parse(match.Groups["y"].Value));
+        }
+
+        return null;
+    }
 }
 
 internal class Point3D : Point
@@ -126,4 +142,18 @@ internal class Point3D : Point
     public static Point3D operator +(Point3D a, Point3D b) => new(a.coordinates.Zip(b.coordinates).Select(pair => pair.First + pair.Second));
 
     public Point3D Distance(Point3D other) => new(base.Distance(other));
+
+    private static readonly Regex parseRegex = new(@"\( (?<x>-?\d+), (?<y>-?\d+), (?<z>-?\d+) \)");
+
+    public static Point3D? Parse(string input)
+    {
+        var match = parseRegex.Match(input);
+
+        if (match.Success)
+        {
+            return new Point3D(int.Parse(match.Groups["x"].Value), int.Parse(match.Groups["y"].Value), int.Parse(match.Groups["z"].Value));
+        }
+
+        return null;
+    }
 }
