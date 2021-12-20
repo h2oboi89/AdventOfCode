@@ -228,7 +228,7 @@ internal class Day_07 : BaseDay
         return circuit;
     }
 
-    [Test]
+    [DayTest]
     public TestResult Test1()
     {
         var expected = new List<(string, object)>
@@ -248,13 +248,13 @@ internal class Day_07 : BaseDay
         return ExecuteTests(expected, (name) => circuit[name].Value);
     }
 
-    [Part]
+    [DayPart]
     public string Solve1()
     {
         return $"{Simulate(Assemble(instructions))["a"].Value}";
     }
 
-    [Part]
+    [DayPart]
     public string Solve2()
     {
         var circuit = Simulate(Assemble(instructions));

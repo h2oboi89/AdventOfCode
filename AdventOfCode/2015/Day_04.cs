@@ -36,7 +36,7 @@ internal class Day_04 : BaseDay
         }
     }
 
-    [Test]
+    [DayTest]
     public static TestResult Test1()
     {
         var testValues = new List<(string, object)>
@@ -48,9 +48,9 @@ internal class Day_04 : BaseDay
         return ExecuteTests(testValues, (i) => Mine(i, 5));
     }
 
-    [Part]
+    [DayPart]
     public string Solve1() => $"{Mine(input, 5)}";
 
-    [Part]
+    [DayPart]
     public string Solve2() => $"{Mine(input, 6)}";
 }

@@ -55,15 +55,15 @@ internal class Day_01 : BaseDay
         return increases;
     }
 
-    [Test]
+    [DayTest]
     public TestResult Test_1() => ExecuteTest(7, () => Solve(testInput, 1));
 
-    [Test]
+    [DayTest]
     public TestResult Test_2() => ExecuteTest(5, () => Solve(testInput, 3));
 
-    [Part]
+    [DayPart]
     public string Solve_1() => $"{Solve(input, 1)}";
 
-    [Part]
+    [DayPart]
     public string Solve_2() => $"{Solve(input, 3)}";
 }

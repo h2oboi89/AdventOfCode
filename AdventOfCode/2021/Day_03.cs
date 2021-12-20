@@ -125,15 +125,15 @@ internal class Day_03 : BaseDay
         return o2Rating[0] * co2Rating[0];
     }
 
-    [Test]
+    [DayTest]
     public TestResult Test1() => ExecuteTest(198, () => Solve1(testInput, testInputWidth));
 
-    [Test]
+    [DayTest]
     public TestResult Test2() => ExecuteTest(230, () => Solve2(testInput, testInputWidth));
 
-    [Part]
+    [DayPart]
     public string Solve_1() => $"{Solve1(input, inputWidth)}";
 
-    [Part]
+    [DayPart]
     public string Solve_2() => $"{Solve2(input, inputWidth)}";
 }

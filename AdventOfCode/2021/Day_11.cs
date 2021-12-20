@@ -100,7 +100,7 @@ internal class Day_11 : BaseDay
         input.All((x, y) => input[y, x].Value++);
 
         // flash stage
-        var processing = new Queue<Point>();
+        var processing = new Queue<Point2D>();
 
         input.All((p) => processing.Enqueue(p));
 
@@ -166,15 +166,15 @@ internal class Day_11 : BaseDay
         }
     }
 
-    [Test]
+    [DayTest]
     public TestResult Test1() => ExecuteTest(1656, () => Simulate(testInput, 100));
 
-    [Test]
+    [DayTest]
     public TestResult Test2() => ExecuteTest(195, () => SimulateSync(testInput));
 
-    [Part]
+    [DayPart]
     public string Solve1() => $"{Simulate(input, 100)}";
 
-    [Part]
+    [DayPart]
     public string Solve2() => $"{SimulateSync(input)}";
 }

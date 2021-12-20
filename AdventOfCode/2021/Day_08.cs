@@ -223,15 +223,15 @@ internal class Day_08 : BaseDay
         return sum;
     }
 
-    [Test]
+    [DayTest]
     public TestResult Test1() => ExecuteTest(26, () => CountUniqueLengthDigits(testInput));
 
-    [Test]
+    [DayTest]
     public TestResult Test2() => ExecuteTest(61229, () => Decode(testInput));
 
-    [Part]
+    [DayPart]
     public string Solve1() => $"{CountUniqueLengthDigits(input)}";
 
-    [Part]
+    [DayPart]
     public string Solve2() => $"{Decode(input)}";
 }

@@ -247,15 +247,15 @@ internal class Day_04 : BaseDay
         return 0;
     }
 
-    [Test]
+    [DayTest]
     public TestResult Test1() => ExecuteTest(4512, () => PlayToWin(testInput.values, testInput.boards));
 
-    [Test]
+    [DayTest]
     public TestResult Test2() => ExecuteTest(1924, () => PlayToLose(testInput.values, testInput.boards));
 
-    [Part]
+    [DayPart]
     public string Solve1() => $"{PlayToWin(input.values, input.boards)}";
 
-    [Part]
+    [DayPart]
     public string Solve2() => $"{PlayToLose(input.values, input.boards)}";
 }

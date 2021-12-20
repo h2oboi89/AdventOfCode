@@ -1,6 +1,8 @@
 YEAR := 
+DAY :=
 BUILD_CONFIG = -c Release
 RUN_CONFIG = $(BUILD_CONFIG) --project .\AdventOfCode --
+RUN = dotnet run $(RUN_CONFIG)
 
 .DEFAULT_GOAL = run
 
@@ -10,19 +12,27 @@ build:
 
 .PHONY: run
 run:
-	dotnet run $(RUN_CONFIG)
+	$(RUN)
+
+.PHONY: day
+day:
+	$(RUN) $(DAY)
 
 .PHONY: all
 all:
-	dotnet run $(RUN_CONFIG) --all
+	$(RUN) --all
 
 .PHONY: year
 year:
-	dotnet run $(RUN_CONFIG) --year $(YEAR)
+	$(RUN) --year $(YEAR)
+
+.PHONY: year-day
+year-day:
+	$(RUN) --year $(YEAR) $(DAY)
 
 .PHONY: year-all
 year-all:
-	dotnet run $(RUN_CONFIG) --year $(YEAR) --all
+	$(RUN) --year $(YEAR) --all
 
 .PHONY: test
 test:

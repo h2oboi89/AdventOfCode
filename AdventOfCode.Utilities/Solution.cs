@@ -1,7 +1,7 @@
 ﻿namespace AdventOfCode.Utilities;
 
 /// <summary>
-/// Result class from running a <see cref="BaseDay"/> extending classes <see cref="Test"/> and <see cref="Part"/> functions.
+/// Result class from running a <see cref="BaseDay"/> extending classes <see cref="DayTest"/> and <see cref="DayPart"/> functions.
 /// </summary>
 public class Solution
 {
@@ -31,12 +31,12 @@ public class Solution
     public TimeSpan RunTime = TimeSpan.Zero;
 
     /// <summary>
-    /// Results of running days <see cref="Test"/> functions.
+    /// Results of running days <see cref="DayTest"/> functions.
     /// </summary>
     public List<(string name, TestResult result, TimeSpan duration)> Tests = new();
 
     /// <summary>
-    /// Results of running days <see cref="Part"/> functions.
+    /// Results of running days <see cref="DayPart"/> functions.
     /// </summary>
     public List<(string name, string result, TimeSpan duration)> Parts = new();
 

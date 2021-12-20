@@ -52,15 +52,15 @@ internal class Day_07 : BaseDay
         return min.cost;
     }
 
-    [Test]
+    [DayTest]
     public static TestResult Test1() => ExecuteTest(37, () => FindMin(TestPositions, SimpleCost));
 
-    [Test]
+    [DayTest]
     public static TestResult Test2() => ExecuteTest(168, () => FindMin(TestPositions, ComplexCost));
 
-    [Part]
+    [DayPart]
     public string Solve1() => $"{FindMin(Positions, SimpleCost)}";
 
-    [Part]
+    [DayPart]
     public string Solve2() => $"{FindMin(Positions, ComplexCost)}";
 }

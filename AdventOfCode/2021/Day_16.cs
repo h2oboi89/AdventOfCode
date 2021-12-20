@@ -245,7 +245,7 @@ internal class Day_16 : BaseDay
 
     private static int VersionSum(Packet packet) => Iterate(packet).Select(p => (int)p.Version).Sum();
 
-    [Test]
+    [DayTest]
     public static TestResult Test1()
     {
         var input = "D2FE28";
@@ -259,7 +259,7 @@ internal class Day_16 : BaseDay
         return ExecuteTest(1, () => TotalPacketCount(packet));
     }
 
-    [Test]
+    [DayTest]
     public static TestResult Test2()
     {
         var input = "38006F45291200";
@@ -273,7 +273,7 @@ internal class Day_16 : BaseDay
         return ExecuteTest(3, () => TotalPacketCount(packet));
     }
 
-    [Test]
+    [DayTest]
     public static TestResult Test3()
     {
         var input = "EE00D40C823060";
@@ -287,7 +287,7 @@ internal class Day_16 : BaseDay
         return ExecuteTest(4, () => TotalPacketCount(packet));
     }
 
-    [Test]
+    [DayTest]
     public static TestResult Test4()
     {
         var testValues = new List<(string input, (int packetCount, int versionSum) expected)>()
@@ -306,7 +306,7 @@ internal class Day_16 : BaseDay
         });
     }
 
-    [Test]
+    [DayTest]
     public static TestResult Test5()
     {
         var testValues = new List<(string input, ulong expected)>()
@@ -324,9 +324,9 @@ internal class Day_16 : BaseDay
         return ExecuteTests(testValues, (input) => Packet.Parse(new BitStream(input)).Execute());
     }
 
-    [Part]
+    [DayPart]
     public string Solve1() => $"{VersionSum(Packet.Parse(input))}";
 
-    [Part]
+    [DayPart]
     public string Solve2() => $"{Packet.Parse(input).Execute()}";
 }

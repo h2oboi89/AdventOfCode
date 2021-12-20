@@ -5,8 +5,8 @@ namespace AdventOfCode._2021;
 
 internal class Day_13 : BaseDay
 {
-    private readonly (Page page, List<(char axis, int value)> folds) input = new();
-    private readonly (Page page, List<(char axis, int value)> folds) testInput = new();
+    private readonly (Page page, List<(Axis axis, int value)> folds) input = new();
+    private readonly (Page page, List<(Axis axis, int value)> folds) testInput = new();
 
     public Day_13(string inputFile)
     {
@@ -15,15 +15,15 @@ internal class Day_13 : BaseDay
         var points = new List<string>();
         var folds = new List<string>();
 
-        static (Page, List<(char, int)>) ParseInput(List<string> points, List<string> folds)
+        static (Page, List<(Axis, int)>) ParseInput(List<string> points, List<string> folds)
         {
-            var parsedPoints = new List<Point>();
-            var parsedFolds = new List<(char, int)>();
+            var parsedPoints = new List<Point2D>();
+            var parsedFolds = new List<(Axis, int)>();
 
             foreach (var p in points)
             {
                 var parts = p.Split(',').Select(p => int.Parse(p));
-                parsedPoints.Add(new Point(parts.First(), parts.Last()));
+                parsedPoints.Add(new Point2D(parts.First(), parts.Last()));
             }
 
             points.Clear();
@@ -31,7 +31,14 @@ internal class Day_13 : BaseDay
             foreach (var f in folds)
             {
                 var parts = f.Split(' ')[2].Split('=');
-                parsedFolds.Add((parts[0][0], int.Parse(parts[1])));
+                var axis = parts[0][0] switch
+                {
+                    'x' => Axis.X,
+                    'y' => Axis.Y,
+                    _ => throw new Exception($"Invalid axis {parts[0][0]}")
+                };
+
+                parsedFolds.Add((axis, int.Parse(parts[1])));
             }
 
             folds.Clear();
@@ -78,7 +85,7 @@ internal class Day_13 : BaseDay
 
         private const int SET = 1;
 
-        public Page(List<Point> points)
+        public Page(List<Point2D> points)
         {
             var maxX = 0;
             var maxY = 0;
@@ -95,7 +102,7 @@ internal class Day_13 : BaseDay
             SetPoints(points);
         }
 
-        private void SetPoints(IEnumerable<Point> points)
+        private void SetPoints(IEnumerable<Point2D> points)
         {
             foreach (var p in points)
             {
@@ -131,19 +138,19 @@ internal class Day_13 : BaseDay
             return sb.ToString();
         }
 
-        public Page Fold((char axis, int value) fold)
+        public Page Fold((Axis axis, int value) fold)
         {
             return fold.axis switch
             {
-                'y' => FoldAlongY(fold.value),
-                'x' => FoldAlongX(fold.value),
-                _ => throw new ArgumentException("Invalid fold", nameof(fold)),
+                Axis.Y => FoldAlongY(fold.value),
+                Axis.X => FoldAlongX(fold.value),
+                _ => throw new Exception($"Invalid fold axis {fold.axis}"),
             };
         }
 
         private Page FoldAlongY(int value)
         {
-            var points = new List<Point>();
+            var points = new List<Point2D>();
 
             var yH = value * 2;
 
@@ -153,11 +160,11 @@ internal class Day_13 : BaseDay
                 {
                     if (y > value)
                     {
-                        points.Add(new Point(x, yH - y));
+                        points.Add(new Point2D(x, yH - y));
                     }
                     else
                     {
-                        points.Add(new Point(x, y));
+                        points.Add(new Point2D(x, y));
                     }
                 }
             });
@@ -167,7 +174,7 @@ internal class Day_13 : BaseDay
 
         private Page FoldAlongX(int value)
         {
-            var points = new List<Point>();
+            var points = new List<Point2D>();
 
             var xH = value * 2;
 
@@ -177,11 +184,11 @@ internal class Day_13 : BaseDay
                 {
                     if (x > value)
                     {
-                        points.Add(new Point(xH - x, y));
+                        points.Add(new Point2D(xH - x, y));
                     }
                     else
                     {
-                        points.Add(new Point(x, y));
+                        points.Add(new Point2D(x, y));
                     }
                 }
             });
@@ -190,10 +197,10 @@ internal class Day_13 : BaseDay
         }
     }
 
-    [Test]
+    [DayTest]
     public TestResult Test1() => ExecuteTest(17, () => testInput.page.Fold(testInput.folds[0]).AreSet);
 
-    [Test]
+    [DayTest]
     public TestResult Test2() => ExecuteTest(16, () =>
     {
         var page = testInput.page;
@@ -209,10 +216,10 @@ internal class Day_13 : BaseDay
     });
 
 
-    [Part]
+    [DayPart]
     public string Solve1() => $"{input.page.Fold(input.folds[0]).AreSet}";
 
-    [Part]
+    [DayPart]
     public string Solve2()
     {
         var page = input.page;

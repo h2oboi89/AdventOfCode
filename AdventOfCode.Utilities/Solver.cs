@@ -66,12 +66,12 @@ public class Solver
 
     private static IEnumerable<MethodInfo> GetTests(Type type)
     {
-        return type.GetMethods().Where(x => x.GetCustomAttributes(typeof(Test), false).FirstOrDefault() != null);
+        return type.GetMethods().Where(x => x.GetCustomAttributes(typeof(DayTest), false).FirstOrDefault() != null);
     }
 
     private static IEnumerable<MethodInfo> GetParts(Type type)
     {
-        return type.GetMethods().Where(x => x.GetCustomAttributes(typeof(Part), false).FirstOrDefault() != null);
+        return type.GetMethods().Where(x => x.GetCustomAttributes(typeof(DayPart), false).FirstOrDefault() != null);
     }
 
     private static bool RunTests(Solution solution, Type type, BaseDay instance)

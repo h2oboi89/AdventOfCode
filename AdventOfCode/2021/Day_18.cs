@@ -315,7 +315,7 @@ internal class Day_18 : BaseDay
         return (ma, mb, mc, maxMagnitude);
     }
 
-    [Test]
+    [DayTest]
     public static TestResult ParseTest()
     {
         var input = new List<string>()
@@ -334,7 +334,7 @@ internal class Day_18 : BaseDay
         return ExecuteTests(testValues, (i) => Node.Internal.Parse(i).ToString());
     }
 
-    [Test]
+    [DayTest]
     public static TestResult RulesExample()
     {
         var a = Node.Internal.Parse("[[[[4,3],4],4],[7,[[8,4],9]]]");
@@ -347,7 +347,7 @@ internal class Day_18 : BaseDay
         return ExecuteTest(expected.ToString(), () => c.ToString());
     }
 
-    [Test]
+    [DayTest]
     public static TestResult MultipleAddTest()
     {
         var testValues = new List<(string, string)>()
@@ -360,7 +360,7 @@ internal class Day_18 : BaseDay
         return ExecuteTests(testValues, (line) => Node.Internal.Add(Node.Internal.Parse(line.Split(';'))).ToString());
     }
 
-    [Test]
+    [DayTest]
     public static TestResult BigAddTest()
     {
         var inputs = new List<string>()
@@ -382,7 +382,7 @@ internal class Day_18 : BaseDay
         return ExecuteTest(expected, () => Node.Internal.Add(Node.Internal.Parse(inputs)).ToString());
     }
 
-    [Test]
+    [DayTest]
     public static TestResult MagnitudeTest()
     {
         var testValues = new List<(string, int)>
@@ -398,7 +398,7 @@ internal class Day_18 : BaseDay
         return ExecuteTests(testValues, (i) => Node.Internal.Parse(i).Magnitude);
     }
 
-    [Test]
+    [DayTest]
     public TestResult Test1()
     {
         var expected = ("[[[[6,6],[7,6]],[[7,7],[7,0]]],[[[7,7],[7,7]],[[7,8],[9,9]]]]", 4140);
@@ -411,7 +411,7 @@ internal class Day_18 : BaseDay
         });
     }
 
-    [Test]
+    [DayTest]
     public TestResult Test2()
     {
         var expected = (
@@ -429,9 +429,9 @@ internal class Day_18 : BaseDay
         });
     }
 
-    [Part]
+    [DayPart]
     public string Solve1() => $"{Node.Internal.Add(Node.Internal.Parse(input)).Magnitude}";
 
-    [Part]
+    [DayPart]
     public string Solve2() => $"{FindLargestMagnitude(input).max}";
 }

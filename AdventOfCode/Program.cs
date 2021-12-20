@@ -121,6 +121,14 @@ public class Program
         var max = runTimes.Max();
         var avg = TimeSpan.FromMilliseconds(runTimes.Select(t => t.TotalMilliseconds).Average());
 
+        if (solutions.All(s => s.Tests.All(t => t.result.Pass))) {
+            ConsoleUtils.WriteLine(ConsoleColor.Green, "All tests passed");
+        }
+        else
+        {
+            ConsoleUtils.WriteLine(ConsoleColor.Red, "1 or more tests failed");
+        }
+
         Console.WriteLine($"{solutions.Count()} problems solved");
         Console.WriteLine($"Total Run Time: {FormatTime(totalRunTime)}");
         Console.WriteLine($" - Minimum: {FormatTime(min)}");

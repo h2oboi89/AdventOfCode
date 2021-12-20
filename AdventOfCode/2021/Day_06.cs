@@ -107,15 +107,15 @@ internal class Day_06 : BaseDay
         return count;
     }
 
-    [Test]
+    [DayTest]
     public TestResult Test1_1() => ExecuteTest((ulong)26, () => Simulate(testInput, 18));
 
-    [Test]
+    [DayTest]
     public TestResult Test1_2() => ExecuteTest((ulong)5934, () => Simulate(testInput, 80));
 
-    [Part]
+    [DayPart]
     public string Part1() => $"{Simulate(input, 80)}";
 
-    [Part]
+    [DayPart]
     public string Part2() => $"{Simulate(input, 256)}";
 }
