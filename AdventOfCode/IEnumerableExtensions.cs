@@ -40,7 +40,6 @@ static class IEnumerableExtensions
         // filter out pairs matching against themselves
         possiblePairs = possiblePairs.Where(pair => pair.a != null && !pair.a.Equals(pair.b));
 
-
         // filter out pairs that we already saw reverse of (a, b) == (b, a)
         foreach (var p in possiblePairs)
         {
