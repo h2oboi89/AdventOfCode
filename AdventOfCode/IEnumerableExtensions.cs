@@ -32,14 +32,16 @@ static class IEnumerableExtensions
 
     public static IEnumerable<(T a, T b)> UniqueProduct<T>(this IEnumerable<T> enumerable)
     {
+        var pairs = new List<(T a, T b)>();
+
+        // get all combinations
         var possiblePairs = enumerable.CartesianProduct();
 
         // filter out pairs matching against themselves
-        possiblePairs = possiblePairs.Where(pair => pair.a != null && !pair.a.Equals(pair.b)).ToList();
+        possiblePairs = possiblePairs.Where(pair => pair.a != null && !pair.a.Equals(pair.b));
 
-        var pairs = new List<(T a, T b)>();
 
-        // filter out pairs that we already say reverse of (a, b) == (b, a)
+        // filter out pairs that we already saw reverse of (a, b) == (b, a)
         foreach (var p in possiblePairs)
         {
             if (!pairs.Contains((p.b, p.a)))
