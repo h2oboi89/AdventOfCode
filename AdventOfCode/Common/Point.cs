@@ -70,6 +70,36 @@ internal class Point2D : Point
     public static Point2D operator +(Point2D a, Point2D b) => new(a.coordinates.Zip(b.coordinates).Select(pair => pair.First + pair.Second));
 
     public Point2D Distance(Point2D other) => new(base.Distance(other));
+
+    public IEnumerable<Point2D> GetNeighbors()
+    {
+        // top left
+        yield return new Point2D(X - 1, Y - 1);
+
+        // top
+        yield return new Point2D(X, Y - 1);
+
+        // top right
+        yield return new Point2D(X + 1, Y - 1);
+
+        // left
+        yield return new Point2D(X - 1, Y);
+
+        // self
+        yield return this;
+
+        // right
+        yield return new Point2D(X + 1, Y);
+
+        // bottom left
+        yield return new Point2D(X - 1, Y + 1);
+
+        // bottom
+        yield return new Point2D(X, Y + 1);
+
+        // bottom right
+        yield return new Point2D(X + 1, Y + 1);
+    }
 }
 
 internal class Point3D : Point
