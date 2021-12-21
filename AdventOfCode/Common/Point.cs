@@ -76,10 +76,6 @@ internal struct Point
 
         public int Y => point.Get(Coordinate.Y);
 
-        public static D2 operator -(D2 p) => new(-p.point);
-
-        public static D2 operator +(D2 a, D2 b) => new(a.point + b.point);
-
         public D2 Distance(D2 other) => new(new Point(point.Distance(other.point)));
 
         public IEnumerable<D2> GetNeighbors()
@@ -126,6 +122,14 @@ internal struct Point
             return null;
         }
 
+        public static D2 operator -(D2 p) => new(-p.point);
+
+        public static D2 operator +(D2 a, D2 b) => new(a.point + b.point);
+
+        public static bool operator ==(D2 a, D2 b) => a.Equals(b);
+
+        public static bool operator !=(D2 a, D2 b) => !(a == b);
+
         public override bool Equals([NotNullWhen(true)] object? obj)
         {
             if (obj is not D2 other) return false;
@@ -159,10 +163,6 @@ internal struct Point
 
         public int Z => point.Get(Coordinate.Z);
 
-        public static D3 operator -(D3 p) => new(-p.point);
-
-        public static D3 operator +(D3 a, D3 b) => new(a.point + b.point);
-
         public D3 Distance(D3 other) => new(new Point(point.Distance(other.point)));
 
         private static readonly Regex parseRegex = new(@"\( (?<x>-?\d+), (?<y>-?\d+), (?<z>-?\d+) \)");
@@ -178,6 +178,14 @@ internal struct Point
 
             return null;
         }
+
+        public static D3 operator -(D3 p) => new(-p.point);
+
+        public static D3 operator +(D3 a, D3 b) => new(a.point + b.point);
+
+        public static bool operator ==(D3 a, D3 b) => a.Equals(b);
+
+        public static bool operator !=(D3 a, D3 b) => !(a == b);
 
         public override bool Equals([NotNullWhen(true)] object? obj)
         {
