@@ -103,36 +103,12 @@ internal class Day_20 : BaseDay
             return step % 2 == 0 ? algorithm.Last() : algorithm.First();
         }
 
-        private Image Expand(int defaultValue)
-        {
-            var (min, max) = Dimensions;
-
-            var points = new List<(Point2D p, int v)>();
-
-            for (var x = min.X - 3; x <= max.X + 3; x++)
-            {
-                for (var y = min.Y - 3; y <= max.Y + 3; y++)
-                {
-                    points.Add((new Point2D(x, y), defaultValue));
-                }
-            }
-
-            var image = new Image(points);
-
-            foreach (var (p, v) in Pixels)
-            {
-                image._pixels[p] = v;
-            }
-
-            return image;
-        }
-
-        private Image Trim(int defaultValue)
+        private static IEnumerable<(Point2D p, int v)> Trim(IEnumerable<(Point2D, int)> points, int defaultValue)
         {
             var minX = int.MaxValue; var maxX = int.MinValue;
             var minY = int.MaxValue; var maxY = int.MinValue;
 
-            foreach (var (point, v) in Pixels)
+            foreach (var (point, v) in points)
             {
                 if (v != defaultValue)
                 {
@@ -143,67 +119,50 @@ internal class Day_20 : BaseDay
                 }
             }
 
-            var keep = new List<(Point2D, int)>();
-
-            foreach (var (point, v) in Pixels)
+            foreach (var (point, v) in points)
             {
                 if (point.X >= minX && point.X <= maxX &&
                     point.Y >= minY && point.Y <= maxY)
                 {
-                    keep.Add((point, v));
+                    yield return (point, v);
                 }
             }
-
-            return new Image(keep);
         }
 
         public Image Enhance(int[] algorithm, int step)
         {
-            Console.WriteLine();
-            Console.WriteLine(ToString());
-            Console.WriteLine();
-
             var defaultValue = GetDefaultValue(algorithm, step);
-
-            var expanded = Expand(defaultValue);
-
-            Console.WriteLine();
-            Console.WriteLine(expanded.ToString());
-            Console.WriteLine();
 
             var updated = new List<(Point2D, int)>();
 
-            int GetValue(Point2D point) => expanded._pixels.ContainsKey(point) ? expanded._pixels[point] : defaultValue;
+            int GetValue(Point2D point) => _pixels.ContainsKey(point) ? _pixels[point] : defaultValue;
 
-            foreach (var (point, _) in expanded.Pixels)
+            var (min, max) = Dimensions;
+
+            for (var x = min.X - 1; x <= max.X + 1; x++)
             {
-                var neighbors = point.GetNeighbors();
-
-                var value = 0;
-
-                foreach (var neighbor in neighbors)
+                for (var y = min.Y - 1; y <= max.Y + 1; y++)
                 {
-                    value <<= 1;
+                    var point = new Point2D(x, y);
 
-                    value |= GetValue(neighbor);
+                    var neighbors = point.GetNeighbors();
+
+                    var value = 0;
+
+                    foreach (var neighbor in neighbors)
+                    {
+                        value <<= 1;
+
+                        value |= GetValue(neighbor);
+                    }
+
+                    var v = algorithm[value];
+
+                    updated.Add((point, v));
                 }
-
-                var v = algorithm[value];
-
-                updated.Add((point, v));
             }
 
-            var enhancedImage = new Image(updated).Trim(defaultValue);
-
-            Console.WriteLine();
-            Console.WriteLine(enhancedImage.ToString());
-            Console.WriteLine();
-
-            Console.WriteLine();
-            Console.WriteLine("======================================");
-            Console.WriteLine();
-
-            return enhancedImage;
+            return new Image(Trim(updated, defaultValue));
         }
 
         public override string ToString()
@@ -239,9 +198,7 @@ internal class Day_20 : BaseDay
 
         for (var i = 0; i < steps; i++)
         {
-            var enhancedImage = temp.Enhance(algorithm, i);
-
-            temp = enhancedImage;
+            temp = temp.Enhance(algorithm, i);
         }
 
         return temp;
@@ -310,18 +267,15 @@ internal class Day_20 : BaseDay
         return ExecuteTest(expected, () => EnhanceImage(testValues.image, testValues.algorithm, 2).ToString());
     }
 
-
-
     [DayTest]
     public TestResult Test1() => ExecuteTest(35, () => EnhanceImage(testValues.image, testValues.algorithm, 2).Lit);
 
-    [DayPart]
-    public string Solve1()
-    {
-        var enhanced = EnhanceImage(partValues.image, partValues.algorithm, 2);
+    [DayTest]
+    public TestResult Test2() => ExecuteTest(3351, () => EnhanceImage(testValues.image, testValues.algorithm, 50).Lit);
 
-        //Console.WriteLine(enhanced);
-        //Console.WriteLine(enhanced.Dimensions);
-        return $"{enhanced.Lit}";
-    }
+    [DayPart]
+    public string Solve1()=> $"{EnhanceImage(partValues.image, partValues.algorithm, 2).Lit}";
+
+    [DayPart]
+    public string Solve2() => $"{EnhanceImage(partValues.image, partValues.algorithm, 50).Lit}";
 }
