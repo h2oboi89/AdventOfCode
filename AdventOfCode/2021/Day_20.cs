@@ -104,9 +104,10 @@ internal class Day_20 : BaseDay
 
         private static IEnumerable<(Point2D p, int v)> Trim(IEnumerable<(Point2D, int)> points, int defaultValue)
         {
-            var (min, max) = FindMinMax(points.Where(p => p.Item2 != defaultValue));
+            var filtered = points.Where(p => p.Item2 != defaultValue);
+            var (min, max) = FindMinMax(filtered);
 
-            foreach (var (point, v) in points)
+            foreach (var (point, v) in filtered)
             {
                 if (point.X >= min.X && point.X <= max.X &&
                     point.Y >= min.Y && point.Y <= max.Y)
@@ -169,7 +170,14 @@ internal class Day_20 : BaseDay
             {
                 for (var x = 0; x < image.GetLength(1); x++)
                 {
-                    sb.Append(image[y, x]);
+                    if (image[y,x] == default(char))
+                    {
+                        sb.Append('.');
+                    }
+                    else
+                    {
+                        sb.Append(image[y, x]);
+                    }
                 }
 
                 sb.AppendLine();
