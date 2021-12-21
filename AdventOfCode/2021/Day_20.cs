@@ -170,7 +170,7 @@ internal class Day_20 : BaseDay
             {
                 for (var x = 0; x < image.GetLength(1); x++)
                 {
-                    if (image[y,x] == default(char))
+                    if (image[y, x] == default(char))
                     {
                         sb.Append('.');
                     }
