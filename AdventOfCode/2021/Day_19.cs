@@ -112,8 +112,6 @@ internal class Day_19 : BaseDay
             _scanners = new(scanners);
         }
 
-        private static Exception InvalidAxis(Axis axis) => new($"Invalid axis {axis}");
-
         private static IEnumerable<Point.D3> ForEach(IEnumerable<Point.D3> points, Func<Point.D3, Point.D3> transformFunc)
         {
             foreach (var point in points)
@@ -133,7 +131,7 @@ internal class Day_19 : BaseDay
                 return new(x, y, z);
             });
 
-            return new Field(Id, Rotate(Beacons), Rotate(Scanners));
+            return new Field(Id, Rotate(_beacons), Rotate(_scanners));
         }
 
         public Field Translate(Point.D3 translation)
@@ -141,21 +139,21 @@ internal class Day_19 : BaseDay
             IEnumerable<Point.D3> Translate(IEnumerable<Point.D3> points, Point.D3 translation) =>
                 ForEach(points, point => point + translation);
 
-            return new Field(Id, Translate(Beacons, translation), Translate(Scanners, translation));
+            return new Field(Id, Translate(_beacons, translation), Translate(_scanners, translation));
         }
 
         public Field Merge(Field other) =>
-            new($"{Id}-{other.Id}", Beacons.Concat(other.Beacons).Distinct(), Scanners.Concat(other.Scanners).Distinct());
+            new($"{Id}-{other.Id}", _beacons.Concat(other._beacons).Distinct(), _scanners.Concat(other._scanners).Distinct());
 
-        public Field Clone() => new(Id, Beacons, Scanners);
+        public Field Clone() => new(Id, _beacons, _scanners);
 
         public int Compare(Field other)
         {
             var matches = 0;
 
-            foreach (var beacon in Beacons)
+            foreach (var beacon in _beacons)
             {
-                if (other.Beacons.Contains(beacon))
+                if (other._beacons.Contains(beacon))
                 {
                     matches++;
                 }
@@ -172,19 +170,33 @@ internal class Day_19 : BaseDay
 
             if (Id != other.Id) return false;
 
-            return Scanners.SequenceEqual(other.Scanners) && Beacons.SequenceEqual(other.Beacons);
+            if (_scanners.Count != other._scanners.Count) return false;
+
+            if (_beacons.Count != other._beacons.Count) return false;
+
+            for(var i = 0; i < _scanners.Count; i++)
+            {
+                if (_scanners[i] != other._scanners[i]) return false;
+            }
+
+            for (var i = 0; i < _beacons.Count; i++)
+            {
+                if (_beacons[i] != other._beacons[i]) return false;
+            }
+
+            return true;
         }
 
         public override int GetHashCode()
         {
             var hash = _beacons.Count;
 
-            foreach (var scanner in Scanners)
+            foreach (var scanner in _scanners)
             {
                 hash ^= scanner.GetHashCode();
             }
 
-            foreach (var beacon in Beacons)
+            foreach (var beacon in _beacons)
             {
                 hash ^= beacon.GetHashCode();
             }
@@ -192,7 +204,7 @@ internal class Day_19 : BaseDay
             return hash;
         }
 
-        public override string ToString() => $"{Id} [{Scanners.Count()}] ({string.Join(", ", Beacons)})";
+        public override string ToString() => $"{Id} [{_scanners.Count()}] ({string.Join(", ", _beacons)})";
 
         public Field? Align(Field other)
         {
@@ -200,7 +212,7 @@ internal class Day_19 : BaseDay
 
             static IEnumerable<Point.D3> GenerateTranslations(Field field)
             {
-                foreach (var beacon in field.Beacons)
+                foreach (var beacon in field._beacons)
                 {
                     yield return -beacon;
                 }
