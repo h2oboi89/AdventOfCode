@@ -19,10 +19,10 @@ public class Program
 
     private static (IEnumerable<Solution> solutions, TimeSpan duration) Solve(Options options)
     {
+        var solver = new Solver(Assembly.GetExecutingAssembly());
+
         var solveTask = Task.Run(() =>
         {
-            var solver = new Solver(Assembly.GetExecutingAssembly());
-
             if (options.All)
             {
                 return solver.SolveAll(options.Year);
@@ -46,9 +46,23 @@ public class Program
 
             var clearString = new string(Enumerable.Repeat(' ', Console.BufferWidth).ToArray());
 
+            static char ParseState(TaskStatus state) => state switch
+            {
+                TaskStatus.Created => '.',
+                TaskStatus.Running => '!',
+                TaskStatus.Faulted => 'X',
+                TaskStatus.RanToCompletion => '#',
+                _ => '?',
+            };
+
             while (!solveTask.IsCompleted)
             {
-                Console.Write($"{clearString}\r{FormatTime(sw.Elapsed)}\r");
+                var taskStates = solver.TaskStates.ToList();
+
+                var notSuccess = taskStates.Where(s => s != TaskStatus.RanToCompletion).ToList();
+
+                // FUTURE: optimize take value
+                Console.Write($"{clearString}\r{FormatTime(sw.Elapsed)} : [ {notSuccess.Count} / {taskStates.Count} ] : {string.Join("", notSuccess.Take(60).Select(ParseState))}\r");
 
                 Thread.Sleep(900);
             }
@@ -121,7 +135,8 @@ public class Program
         var max = runTimes.Max();
         var avg = TimeSpan.FromMilliseconds(runTimes.Select(t => t.TotalMilliseconds).Average());
 
-        if (solutions.All(s => s.Tests.All(t => t.result.Pass))) {
+        if (solutions.All(s => s.Tests.All(t => t.result.Pass)))
+        {
             ConsoleUtils.WriteLine(ConsoleColor.Green, "All tests passed");
         }
         else

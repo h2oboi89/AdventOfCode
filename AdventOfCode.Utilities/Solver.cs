@@ -25,6 +25,10 @@ public class Solver
 
     private readonly List<DayInfo> days = new();
 
+    public IEnumerable<TaskStatus> TaskStates => tasks.Select(t => t.Status);
+
+    private readonly List<Task<Solution>> tasks = new();
+
     public Solver(Assembly assembly)
     {
         dll = assembly;
@@ -188,21 +192,22 @@ public class Solver
         }
 
         var sw = new Stopwatch();
-        var dayTasks = new List<Task<Solution>>();
+
+        tasks.Clear();
 
         sw.Start();
         foreach (var day in days)
         {
-            dayTasks.Add(Task.Run(() => Solve(day, testMode)));
+            tasks.Add(Task.Run(() => Solve(day, testMode)));
         }
 
-        Task.WhenAll(dayTasks).Wait();
+        Task.WhenAll(tasks).Wait();
 
         sw.Stop();
 
         var totalRunTime = sw.Elapsed;
 
-        var solutions = dayTasks.Select(t => t.Result).OrderBy(s => s.Year).ThenBy(s => s.Day);
+        var solutions = tasks.Select(t => t.Result).OrderBy(s => s.Year).ThenBy(s => s.Day);
 
         return (solutions, totalRunTime);
     }

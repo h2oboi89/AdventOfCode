@@ -23,7 +23,7 @@ internal class Day_17 : BaseDay
             var y1 = int.Parse(captured.Groups["y1"].Value);
             var y2 = int.Parse(captured.Groups["y2"].Value);
 
-            var targetArea = new TargetArea(new Point2D(x1, y1), new Point2D(x2, y2));
+            var targetArea = new TargetArea(new Point.D2(x1, y1), new Point.D2(x2, y2));
 
             if (test)
             {
@@ -39,20 +39,20 @@ internal class Day_17 : BaseDay
 
     private class TargetArea
     {
-        private readonly Point2D Start;
-        private readonly Point2D End;
+        private readonly Point.D2 Start;
+        private readonly Point.D2 End;
 
-        public TargetArea() : this(new Point2D(), new Point2D()) { }
+        public TargetArea() : this(new Point.D2(), new Point.D2()) { }
 
-        public TargetArea(Point2D start, Point2D end) { Start = start; End = end; }
+        public TargetArea(Point.D2 start, Point.D2 end) { Start = start; End = end; }
 
         /// <summary>
         /// Determines relative position of <paramref name="point"/> to this <see cref="TargetArea"/>.
         /// Logic is similar to <see cref="IComparer{T}.Compare(T?, T?)"/>
         /// </summary>
-        /// <param name="point"><see cref="Point2D"/> to check.</param>
-        /// <returns><see cref="Point2D"/> comparing <paramref name="point"/> location to this <see cref="TargetArea"/></returns>
-        public Point2D CheckLocation(Point2D point)
+        /// <param name="point"><see cref="Point.D2"/> to check.</param>
+        /// <returns><see cref="Point.D2"/> comparing <paramref name="point"/> location to this <see cref="TargetArea"/></returns>
+        public Point.D2 CheckLocation(Point.D2 point)
         {
             int x = 0;
             if (point.X < Start.X) x = -1;
@@ -68,14 +68,14 @@ internal class Day_17 : BaseDay
         }
     }
 
-    private static (bool hit, int maxHeight) Launch(Point2D velocity, TargetArea area)
+    private static (bool hit, int maxHeight) Launch(Point.D2 velocity, TargetArea area)
     {
-        var position = new Point2D();
+        var position = new Point.D2();
         var maxY = position.Y;
 
         var initialRelation = area.CheckLocation(position);
 
-        static (Point2D p, Point2D v) Update(Point2D point, Point2D velocity)
+        static (Point.D2 p, Point.D2 v) Update(Point.D2 point, Point.D2 velocity)
         {
             var p = point + velocity;
 
@@ -83,7 +83,7 @@ internal class Day_17 : BaseDay
             if (velocity.X > 0) dx = -1;
             if (velocity.X < 0) dx = 1;
 
-            return (p, new Point2D(velocity.X + dx, velocity.Y - 1));
+            return (p, new Point.D2(velocity.X + dx, velocity.Y - 1));
         }
 
         while (true)
@@ -95,7 +95,7 @@ internal class Day_17 : BaseDay
             var relativePosition = area.CheckLocation(position);
 
             // in target area
-            if (relativePosition.Equals(new Point2D()))
+            if (relativePosition.Equals(new Point.D2()))
             {
                 return (true, maxY);
             }
@@ -115,11 +115,11 @@ internal class Day_17 : BaseDay
         }
     }
 
-    private static (Point2D bestVelocity, int maxHeight) CalculateBestVelocity(TargetArea area)
+    private static (Point.D2 bestVelocity, int maxHeight) CalculateBestVelocity(TargetArea area)
     {
-        var result = (new Point2D(), maxY: 0);
+        var result = (new Point.D2(), maxY: 0);
 
-        var velocities = Enumerable.Range(0, 100).CartesianProduct().Select(pair => new Point2D(pair.a, pair.b));
+        var velocities = Enumerable.Range(0, 100).CartesianProduct().Select(pair => new Point.D2(pair.a, pair.b));
 
         foreach (var velocity in velocities)
         {
@@ -134,12 +134,12 @@ internal class Day_17 : BaseDay
         return result;
     }
 
-    private static IEnumerable<Point2D> CalculateAllVelocities(TargetArea area)
+    private static IEnumerable<Point.D2> CalculateAllVelocities(TargetArea area)
     {
         var xRange = Enumerable.Range(0, 500);
         var yRange = Enumerable.Range(-500, 1000);
 
-        var velocities = xRange.CartesianProduct(yRange).Select(pair => new Point2D(pair.a, pair.b));
+        var velocities = xRange.CartesianProduct(yRange).Select(pair => new Point.D2(pair.a, pair.b));
 
         foreach (var v in velocities)
         {
@@ -152,7 +152,7 @@ internal class Day_17 : BaseDay
     [DayTest]
     public TestResult Test1()
     {
-        var testValues = new List<(Point2D velocity, bool expected)>()
+        var testValues = new List<(Point.D2 velocity, bool expected)>()
         {
             (new(7,2), true),
             (new(6,3), true),
@@ -164,7 +164,7 @@ internal class Day_17 : BaseDay
     }
 
     [DayTest]
-    public TestResult Test2() => ExecuteTest((new Point2D(6, 9), 45), () => CalculateBestVelocity(testArea));
+    public TestResult Test2() => ExecuteTest((new Point.D2(6, 9), 45), () => CalculateBestVelocity(testArea));
 
     [DayTest]
     public TestResult Test3() => ExecuteTest(112, () => CalculateAllVelocities(testArea).Count());

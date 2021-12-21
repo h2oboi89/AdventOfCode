@@ -100,7 +100,7 @@ internal class Day_11 : BaseDay
         input.All((x, y) => input[y, x].Value++);
 
         // flash stage
-        var processing = new Queue<Point2D>();
+        var processing = new Queue<Point.D2>();
 
         input.All((p) => processing.Enqueue(p));
 

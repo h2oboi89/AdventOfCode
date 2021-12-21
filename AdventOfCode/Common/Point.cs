@@ -1,34 +1,34 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text.RegularExpressions;
 
 namespace AdventOfCode.Common;
 
-internal abstract class Point
+internal struct Point
 {
-    protected readonly int[] coordinates = Array.Empty<int>();
+    private readonly int[] Coordinates = Array.Empty<int>();
 
-    protected Point(int dimensions) { coordinates = new int[dimensions]; }
+    private enum Coordinate { X = 0, Y = 1, Z = 2, }
 
-    protected Point(IEnumerable<int> coords) { coordinates = coords.ToArray(); }
+    private Point(int dimensions) { Coordinates = new int[dimensions]; }
 
-    protected enum Coordinate { X = 0, Y = 1, Z = 2, }
+    private Point(IEnumerable<int> coordinates) { Coordinates = coordinates.ToArray(); }
 
-    protected int Get(Coordinate coordinate) => coordinates[(int)coordinate];
-    protected void Set(Coordinate coordinate, int value) => coordinates[(int)coordinate] = value;
+    private int Get(Coordinate coordinate) => Coordinates[(int)coordinate];
 
-    public override bool Equals(object? obj)
+    private void Set(Coordinate coordinate, int value) => Coordinates[(int)coordinate] = value;
+
+    public override bool Equals([NotNullWhen(true)] object? obj)
     {
-        if (obj == null) return false;
-
         if (obj is not Point other) return false;
 
-        return coordinates.SequenceEqual(other.coordinates);
+        return Coordinates.SequenceEqual(other.Coordinates);
     }
 
     public override int GetHashCode()
     {
-        var hash = coordinates.Length;
+        var hash = Coordinates.Length;
 
-        foreach (var coor in coordinates)
+        foreach (var coor in Coordinates)
         {
             hash ^= coor.GetHashCode();
         }
@@ -36,124 +36,153 @@ internal abstract class Point
         return hash;
     }
 
-    public override string ToString() => $"( {string.Join(", ", coordinates)} )";
+    public override string ToString() => $"( {string.Join(", ", Coordinates)} )";
 
-    protected int[] Distance(Point other)
+    private int[] Distance(Point other)
     {
-        var distances = new int[coordinates.Length];
+        var distances = new int[Coordinates.Length];
 
-        for (var i = 0; i < coordinates.Length; i++)
+        for (var i = 0; i < Coordinates.Length; i++)
         {
-            distances[i] = Math.Abs(coordinates[i] - other.coordinates[i]);
+            distances[i] = Math.Abs(Coordinates[i] - other.Coordinates[i]);
         }
 
         return distances;
     }
-}
 
-internal class Point2D : Point
-{
-    public Point2D() : base(2) { }
+    public static Point operator -(Point p) => new(p.Coordinates.Select(c => -c));
 
-    public Point2D(int x, int y) : this()
-    {
-        Set(Coordinate.X, x);
-        Set(Coordinate.Y, y);
-    }
+    public static Point operator +(Point a, Point b) => new(a.Coordinates.Zip(b.Coordinates).Select(pair => pair.First + pair.Second));
 
-    private Point2D(IEnumerable<int> coordinates) : base(coordinates) { }
+    public struct D2 {
+        private readonly Point point;
 
-    public int X => Get(Coordinate.X);
+        public D2() => point = new Point(2);
 
-    public int Y => Get(Coordinate.Y);
-
-    public static Point2D operator -(Point2D p) => new(p.coordinates.Select(c => -c));
-
-    public static Point2D operator +(Point2D a, Point2D b) => new(a.coordinates.Zip(b.coordinates).Select(pair => pair.First + pair.Second));
-
-    public Point2D Distance(Point2D other) => new(base.Distance(other));
-
-    public IEnumerable<Point2D> GetNeighbors()
-    {
-        // top left
-        yield return new Point2D(X - 1, Y - 1);
-
-        // top
-        yield return new Point2D(X, Y - 1);
-
-        // top right
-        yield return new Point2D(X + 1, Y - 1);
-
-        // left
-        yield return new Point2D(X - 1, Y);
-
-        // self
-        yield return this;
-
-        // right
-        yield return new Point2D(X + 1, Y);
-
-        // bottom left
-        yield return new Point2D(X - 1, Y + 1);
-
-        // bottom
-        yield return new Point2D(X, Y + 1);
-
-        // bottom right
-        yield return new Point2D(X + 1, Y + 1);
-    }
-
-    private static readonly Regex parseRegex = new(@"\( (?<x>-?\d+), (?<y>-?\d+) \)");
-
-    public static Point2D? Parse(string input)
-    {
-        var match = parseRegex.Match(input);
-
-        if (match.Success)
+        public D2(int x, int y) : this()
         {
-            return new Point2D(int.Parse(match.Groups["x"].Value), int.Parse(match.Groups["y"].Value));
+            point.Set(Coordinate.X, x);
+            point.Set(Coordinate.Y, y);
         }
 
-        return null;
-    }
-}
+        private D2(Point p) => point = p;
 
-internal class Point3D : Point
-{
-    public Point3D() : base(3) { }
+        public int X => point.Get(Coordinate.X);
 
-    public Point3D(int x, int y, int z) : this()
-    {
-        Set(Coordinate.X, x);
-        Set(Coordinate.Y, y);
-        Set(Coordinate.Z, z);
-    }
+        public int Y => point.Get(Coordinate.Y);
 
-    private Point3D(IEnumerable<int> coordinates) : base(coordinates) { }
+        public static D2 operator -(D2 p) => new(-p.point);
 
-    public int X => Get(Coordinate.X);
+        public static D2 operator +(D2 a, D2 b) => new(a.point + b.point);
 
-    public int Y => Get(Coordinate.Y);
+        public D2 Distance(D2 other) => new(new Point(point.Distance(other.point)));
 
-    public int Z => Get(Coordinate.Z);
-
-    public static Point3D operator -(Point3D p) => new(p.coordinates.Select(c => -c));
-
-    public static Point3D operator +(Point3D a, Point3D b) => new(a.coordinates.Zip(b.coordinates).Select(pair => pair.First + pair.Second));
-
-    public Point3D Distance(Point3D other) => new(base.Distance(other));
-
-    private static readonly Regex parseRegex = new(@"\( (?<x>-?\d+), (?<y>-?\d+), (?<z>-?\d+) \)");
-
-    public static Point3D? Parse(string input)
-    {
-        var match = parseRegex.Match(input);
-
-        if (match.Success)
+        public IEnumerable<D2> GetNeighbors()
         {
-            return new Point3D(int.Parse(match.Groups["x"].Value), int.Parse(match.Groups["y"].Value), int.Parse(match.Groups["z"].Value));
+            // top left
+            yield return new D2(X - 1, Y - 1);
+
+            // top
+            yield return new D2(X, Y - 1);
+
+            // top right
+            yield return new D2(X + 1, Y - 1);
+
+            // left
+            yield return new D2(X - 1, Y);
+
+            // self
+            yield return this;
+
+            // right
+            yield return new D2(X + 1, Y);
+
+            // bottom left
+            yield return new D2(X - 1, Y + 1);
+
+            // bottom
+            yield return new D2(X, Y + 1);
+
+            // bottom right
+            yield return new D2(X + 1, Y + 1);
         }
 
-        return null;
+        private static readonly Regex parseRegex = new(@"\( (?<x>-?\d+), (?<y>-?\d+) \)");
+
+        public static D2? Parse(string input)
+        {
+            var match = parseRegex.Match(input);
+
+            if (match.Success)
+            {
+                return new D2(int.Parse(match.Groups["x"].Value), int.Parse(match.Groups["y"].Value));
+            }
+
+            return null;
+        }
+
+        public override bool Equals([NotNullWhen(true)] object? obj)
+        {
+            if (obj is not D2 other) return false;
+
+            return point.Equals(other.point);
+        }
+
+        public override int GetHashCode() => point.GetHashCode();
+
+        public override string ToString() => point.ToString();
+    }
+
+    internal struct D3
+    {
+        private readonly Point point;
+
+        public D3() => point = new Point(3);
+
+        public D3(int x, int y, int z) : this()
+        {
+            point.Set(Coordinate.X, x);
+            point.Set(Coordinate.Y, y);
+            point.Set(Coordinate.Z, z);
+        }
+
+        private D3(Point p) => point = p;
+
+        public int X => point.Get(Coordinate.X);
+
+        public int Y => point.Get(Coordinate.Y);
+
+        public int Z => point.Get(Coordinate.Z);
+
+        public static D3 operator -(D3 p) => new(-p.point);
+
+        public static D3 operator +(D3 a, D3 b) => new(a.point + b.point);
+
+        public D3 Distance(D3 other) => new(new Point(point.Distance(other.point)));
+
+        private static readonly Regex parseRegex = new(@"\( (?<x>-?\d+), (?<y>-?\d+), (?<z>-?\d+) \)");
+
+        public static D3? Parse(string input)
+        {
+            var match = parseRegex.Match(input);
+
+            if (match.Success)
+            {
+                return new D3(int.Parse(match.Groups["x"].Value), int.Parse(match.Groups["y"].Value), int.Parse(match.Groups["z"].Value));
+            }
+
+            return null;
+        }
+
+        public override bool Equals([NotNullWhen(true)] object? obj)
+        {
+            if (obj is not D3 other) return false;
+
+            return point.Equals(other.point);
+        }
+
+        public override int GetHashCode() => point.GetHashCode();
+
+        public override string ToString() => point.ToString();
     }
 }

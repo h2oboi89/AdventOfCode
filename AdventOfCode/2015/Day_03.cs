@@ -16,11 +16,11 @@ internal class Day_03 : BaseDay
 
     private class House
     {
-        public readonly Point2D Address;
+        public readonly Point.D2 Address;
 
         public int Presents = 0;
 
-        public House(Point2D address)
+        public House(Point.D2 address)
         {
             Address = address;
         }
@@ -49,7 +49,7 @@ internal class Day_03 : BaseDay
 
     private static IEnumerable<House> Travel(IEnumerable<Direction> directions)
     {
-        var houses = new List<House> { new House(new Point2D()) };
+        var houses = new List<House> { new House(new Point.D2()) };
 
         var current = houses[0];
 
@@ -59,10 +59,10 @@ internal class Day_03 : BaseDay
         {
             var newAddr = direction switch
             {
-                Direction.Up => new Point2D(current.Address.X, current.Address.Y + 1),
-                Direction.Down => new Point2D(current.Address.X, current.Address.Y - 1),
-                Direction.Left => new Point2D(current.Address.X - 1, current.Address.Y),
-                Direction.Right => new Point2D(current.Address.X + 1, current.Address.Y),
+                Direction.Up => new Point.D2(current.Address.X, current.Address.Y + 1),
+                Direction.Down => new Point.D2(current.Address.X, current.Address.Y - 1),
+                Direction.Left => new Point.D2(current.Address.X - 1, current.Address.Y),
+                Direction.Right => new Point.D2(current.Address.X + 1, current.Address.Y),
                 _ => throw new InvalidOperationException("WTF...")
             };
 

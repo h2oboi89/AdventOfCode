@@ -48,7 +48,7 @@ internal class Day_09 : BaseDay
         }
     }
 
-    private static IEnumerable<Point2D> FindMinimums(int[,] input)
+    private static IEnumerable<Point.D2> FindMinimums(int[,] input)
     {
         for (var y = 0; y < input.GetLength(0); y++)
         {
@@ -58,7 +58,7 @@ internal class Day_09 : BaseDay
 
                 var isMin = true;
 
-                foreach (var neighbor in input.GetNeighborPoints(new Point2D(x, y), false).Select(input.GetValue))
+                foreach (var neighbor in input.GetNeighborPoints(new Point.D2(x, y), false).Select(input.GetValue))
                 {
                     if (current >= neighbor)
                     {
@@ -69,7 +69,7 @@ internal class Day_09 : BaseDay
 
                 if (isMin)
                 {
-                    yield return new Point2D(x, y);
+                    yield return new Point.D2(x, y);
                 }
             }
         }
@@ -77,12 +77,12 @@ internal class Day_09 : BaseDay
 
     private static int FindRisk(int[,] input) => FindMinimums(input).Sum(m => input.GetValue(m) + 1);
 
-    private static IEnumerable<List<Point2D>> FindBasins(int[,] input)
+    private static IEnumerable<List<Point.D2>> FindBasins(int[,] input)
     {
         foreach (var min in FindMinimums(input))
         {
-            var basin = new List<Point2D>();
-            var unprocessed = new Queue<Point2D>();
+            var basin = new List<Point.D2>();
+            var unprocessed = new Queue<Point.D2>();
 
             unprocessed.Enqueue(min);
 

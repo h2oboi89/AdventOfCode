@@ -17,13 +17,13 @@ internal class Day_13 : BaseDay
 
         static (Page, List<(Axis, int)>) ParseInput(List<string> points, List<string> folds)
         {
-            var parsedPoints = new List<Point2D>();
+            var parsedPoints = new List<Point.D2>();
             var parsedFolds = new List<(Axis, int)>();
 
             foreach (var p in points)
             {
                 var parts = p.Split(',').Select(p => int.Parse(p));
-                parsedPoints.Add(new Point2D(parts.First(), parts.Last()));
+                parsedPoints.Add(new Point.D2(parts.First(), parts.Last()));
             }
 
             points.Clear();
@@ -85,7 +85,7 @@ internal class Day_13 : BaseDay
 
         private const int SET = 1;
 
-        public Page(List<Point2D> points)
+        public Page(List<Point.D2> points)
         {
             var maxX = 0;
             var maxY = 0;
@@ -102,7 +102,7 @@ internal class Day_13 : BaseDay
             SetPoints(points);
         }
 
-        private void SetPoints(IEnumerable<Point2D> points)
+        private void SetPoints(IEnumerable<Point.D2> points)
         {
             foreach (var p in points)
             {
@@ -150,7 +150,7 @@ internal class Day_13 : BaseDay
 
         private Page FoldAlongY(int value)
         {
-            var points = new List<Point2D>();
+            var points = new List<Point.D2>();
 
             var yH = value * 2;
 
@@ -160,11 +160,11 @@ internal class Day_13 : BaseDay
                 {
                     if (y > value)
                     {
-                        points.Add(new Point2D(x, yH - y));
+                        points.Add(new Point.D2(x, yH - y));
                     }
                     else
                     {
-                        points.Add(new Point2D(x, y));
+                        points.Add(new Point.D2(x, y));
                     }
                 }
             });
@@ -174,7 +174,7 @@ internal class Day_13 : BaseDay
 
         private Page FoldAlongX(int value)
         {
-            var points = new List<Point2D>();
+            var points = new List<Point.D2>();
 
             var xH = value * 2;
 
@@ -184,11 +184,11 @@ internal class Day_13 : BaseDay
                 {
                     if (x > value)
                     {
-                        points.Add(new Point2D(xH - x, y));
+                        points.Add(new Point.D2(xH - x, y));
                     }
                     else
                     {
-                        points.Add(new Point2D(x, y));
+                        points.Add(new Point.D2(x, y));
                     }
                 }
             });
