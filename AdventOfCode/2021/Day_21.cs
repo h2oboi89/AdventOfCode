@@ -40,17 +40,15 @@ internal class Day_21 : BaseDay
         public int Position;
         public int Score;
 
-        private Player(int postion, int score)
+        public Player(int postion, int score = 0)
         {
             Position = postion;
             Score = score;
         }
 
-        public Player(int position) : this(position, 0) { }
-
         public void Move(int roll)
         {
-            Position = Board.Move(Position, roll);
+            Position = ((Position - 1 + roll) % 10) + 1;
             Score += Position;
         }
 
@@ -68,6 +66,10 @@ internal class Day_21 : BaseDay
         }
 
         public override int GetHashCode() => HashCode.Combine(Position, Score);
+
+        public static bool operator ==(Player a, Player b) => a.Equals(b);
+
+        public static bool operator !=(Player a, Player b) => !(a == b);
     }
 
     private class DeterministicDice
@@ -93,7 +95,7 @@ internal class Day_21 : BaseDay
         }
     }
 
-    private class DiracDice
+    private static class DiracDice
     {
         private static readonly List<int> _values = new() { 1, 2, 3 };
 
@@ -111,22 +113,23 @@ internal class Day_21 : BaseDay
             }
         }
 
-        private static readonly List<List<int>> Permutations = Permute().ToList();
+        public static readonly IReadOnlyDictionary<int, int> Rolls;
 
-        public static IEnumerable<IEnumerable<int>> Roll3()
+        static DiracDice()
         {
-            foreach (var permutation in Permutations)
+            var rolls = new Dictionary<int, int>();
+
+            foreach (var permutation in Permute())
             {
-                yield return permutation;
+                var sum = permutation.Sum();
+
+                if (!rolls.ContainsKey(sum)) rolls[sum] = 0;
+
+                rolls[sum]++;
             }
+
+            Rolls = rolls;
         }
-    }
-
-    private static class Board
-    {
-        private const int _size = 10;
-
-        public static int Move(int start, int step) => ((start - 1 + step) % _size) + 1;
     }
 
     private static IEnumerable<int> Repeat(Func<int> func, int count)
@@ -137,7 +140,7 @@ internal class Day_21 : BaseDay
         }
     }
 
-    private static (int winner, int loser, int rolls) PlayDeterministicGame(List<int> playerPositions)
+    private static (int winner, int loser, int rolls) PlayDeterministicGame(IEnumerable<int> playerPositions)
     {
         var dice = new DeterministicDice();
 
@@ -164,15 +167,59 @@ internal class Day_21 : BaseDay
         return (results.First().Score, results.Last().Score, rolls);
     }
 
-    private static ulong PlayQuantumGames(List<(int id, int position)> playerInfo)
+    private static ulong PlayQuantumGames(IEnumerable<int> playerPositions)
     {
-        // how do we play and store a lot of games simultaneously?
+        var players = playerPositions.Select(position => new Player(position)).ToList();
 
-        throw new NotImplementedException();
+        var universes = new Dictionary<(Player player1, Player player2, int currentPlayer), ulong>()
+        {
+            { (players.First(), players.Last(), 0), 1 }
+        };
+
+        ulong player1Wins = 0, player2Wins = 0;
+        var win = 21;
+
+
+        while(universes.Any())
+        {
+            var newUniverses = new Dictionary<(Player, Player, int), ulong>();
+
+            foreach(var (universe, count) in universes)
+            {
+                foreach(var (roll, frequency) in DiracDice.Rolls)
+                {
+                    var p1 = universe.player1.Clone(); 
+                    var p2 = universe.player2.Clone();
+                    var occurences = count * (ulong)frequency;
+
+                    if (universe.currentPlayer == 0)
+                    {
+                        p1.Move(roll);
+                        if (p1.Score >= win)
+                        {
+                            player1Wins += occurences;
+                            continue;
+                        }
+                    }
+                    else
+                    {
+                        p2.Move(roll);
+                        if (p2.Score >= win)
+                        {
+                            player2Wins += occurences;
+                            continue;
+                        }
+                    }
+
+                    newUniverses.AddOrUpdate((p1, p2, (universe.currentPlayer + 1) % 2), occurences);
+                }
+            }
+
+            universes = newUniverses;
+        }
+
+        return Math.Max(player1Wins, player2Wins);
     }
-
-    [DayTest]
-    public static TestResult BoardMoveTest() => ExecuteTest(2, () => Board.Move(7, 5));
 
     [DayTest]
     public TestResult MultipleMovesTest()
@@ -202,6 +249,9 @@ internal class Day_21 : BaseDay
         return lose * rolls;
     });
 
+    [DayTest]
+    public TestResult Test2() => ExecuteTest((ulong)444_356_092_776_315, () => PlayQuantumGames(testPlayers));
+
     [DayPart]
     public string Solve1()
     {
@@ -209,4 +259,7 @@ internal class Day_21 : BaseDay
 
         return $"{lose * rolls}";
     }
+
+    [DayPart]
+    public string Solve2() => $"{PlayQuantumGames(partPlayers)}";
 }
