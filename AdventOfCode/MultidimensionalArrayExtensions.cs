@@ -4,6 +4,7 @@ namespace AdventOfCode;
 
 static class MultidimensionalArrayExtensions
 {
+    // FUTURE: update this to work with Point2D.GetNeighbors?
     public static IEnumerable<Point2D> GetNeighborPoints<T>(this T[,] array, Point2D p, bool includeDiagonal)
     {
         // top left
