@@ -41,7 +41,14 @@ internal struct Point
     {
         if (obj is not Point other) return false;
 
-        return Coordinates.SequenceEqual(other.Coordinates);
+        if (Coordinates.Length != other.Coordinates.Length) return false;
+
+        for (var i = 0; i < Coordinates.Length; i++)
+        {
+            if (Coordinates[i] != other.Coordinates[i]) return false;
+        }
+
+        return true;
     }
 
     public override int GetHashCode()

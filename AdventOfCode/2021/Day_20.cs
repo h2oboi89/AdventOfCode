@@ -101,7 +101,7 @@ internal class Day_20 : BaseDay
 
         public (Point.D2 min, Point.D2 max) Dimensions => FindMinMax(Pixels);
 
-        public int Lit => Pixels.Sum(p => p.Value);
+        public int Lit => _pixels.Sum(p => p.Value);
 
         private static byte GetDefaultValue(byte[] algorithm, int step)
         {
