@@ -17,27 +17,6 @@ internal struct Point
 
     private void Set(Coordinate coordinate, int value) => Coordinates[(int)coordinate] = value;
 
-    public override bool Equals([NotNullWhen(true)] object? obj)
-    {
-        if (obj is not Point other) return false;
-
-        return Coordinates.SequenceEqual(other.Coordinates);
-    }
-
-    public override int GetHashCode()
-    {
-        var hash = Coordinates.Length;
-
-        foreach (var coor in Coordinates)
-        {
-            hash ^= coor.GetHashCode();
-        }
-
-        return hash;
-    }
-
-    public override string ToString() => $"( {string.Join(", ", Coordinates)} )";
-
     private int[] Distance(Point other)
     {
         var distances = new int[Coordinates.Length];
@@ -54,7 +33,33 @@ internal struct Point
 
     public static Point operator +(Point a, Point b) => new(a.Coordinates.Zip(b.Coordinates).Select(pair => pair.First + pair.Second));
 
-    public struct D2 {
+    public static bool operator ==(Point a, Point b) => a.Equals(b);
+
+    public static bool operator !=(Point a, Point b) => !(a == b);
+
+    public override bool Equals([NotNullWhen(true)] object? obj)
+    {
+        if (obj is not Point other) return false;
+
+        return Coordinates.SequenceEqual(other.Coordinates);
+    }
+
+    public override int GetHashCode()
+    {
+        var hash = Coordinates.Length;
+
+        foreach (var coordinate in Coordinates)
+        {
+            hash ^= coordinate.GetHashCode();
+        }
+
+        return hash;
+    }
+
+    public override string ToString() => $"( {string.Join(", ", Coordinates)} )";
+
+    public struct D2
+    {
         private readonly Point point;
 
         public D2() => point = new Point(2);
