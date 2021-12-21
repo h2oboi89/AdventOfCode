@@ -133,20 +133,16 @@ internal class Day_20 : BaseDay
                 {
                     var point = new Point2D(x, y);
 
-                    var neighbors = point.GetNeighbors();
-
                     var value = 0;
 
-                    foreach (var neighbor in neighbors)
+                    foreach (var neighbor in point.GetNeighbors())
                     {
                         value <<= 1;
 
                         value |= GetValue(neighbor);
                     }
 
-                    var v = algorithm[value];
-
-                    updated.Add((point, v));
+                    updated.Add((point, algorithm[value]));
                 }
             }
 
