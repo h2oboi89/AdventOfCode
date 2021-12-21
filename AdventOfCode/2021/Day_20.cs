@@ -5,18 +5,18 @@ namespace AdventOfCode._2021;
 
 internal class Day_20 : BaseDay
 {
-    private readonly (Image image, int[] algorithm) testValues = new();
-    private readonly (Image image, int[] algorithm) partValues = new();
+    private readonly (Image image, byte[] algorithm) testValues = new();
+    private readonly (Image image, byte[] algorithm) partValues = new();
 
     public Day_20(string inputFile)
     {
-        var algo = Array.Empty<int>();
+        var algo = Array.Empty<byte>();
 
         var parsingImage = false;
         var row = 0;
-        var pixels = new List<(Point2D point, int v)>();
+        var pixels = new List<Pixel>();
 
-        static int ParsePixelValue(char c) => c switch
+        static byte ParsePixelValue(char c) => c switch
         {
             '.' => 0,
             '#' => 1,
@@ -55,37 +55,45 @@ internal class Day_20 : BaseDay
             }
             else
             {
-                pixels.AddRange(line.Select((c, i) => (new Point2D(i, row), ParsePixelValue(c))));
+                pixels.AddRange(line.Select((c, i) => new Pixel(new Point2D(i, row), ParsePixelValue(c))));
                 row++;
             }
         }
     }
 
+    private struct Pixel
+    {
+        public readonly Point2D Point;
+        public readonly byte Value;
+
+        public Pixel(Point2D point, byte value) { Point = point; Value = value; }
+    }
+
     private class Image
     {
-        private readonly Dictionary<Point2D, int> _pixels = new();
+        private readonly Dictionary<Point2D, byte> _pixels = new();
 
-        public IEnumerable<(Point2D p, int v)> Pixels => _pixels.Select(kvp => (kvp.Key, kvp.Value));
+        public IEnumerable<Pixel> Pixels => _pixels.Select(kvp => new Pixel(kvp.Key, kvp.Value));
 
-        public Image(IEnumerable<(Point2D, int)> pixels)
+        public Image(IEnumerable<Pixel> pixels)
         {
-            foreach (var (point, v) in pixels)
+            foreach (var pixel in pixels)
             {
-                _pixels.Add(point, v);
+                _pixels.Add(pixel.Point, pixel.Value);
             }
         }
 
-        private static (Point2D min, Point2D max) FindMinMax(IEnumerable<(Point2D p, int v)> pixels)
+        private static (Point2D min, Point2D max) FindMinMax(IEnumerable<Pixel> pixels)
         {
             static (int min, int max) MinMax(int i, int min, int max) => (Math.Min(min, i), Math.Max(max, i));
 
             var minX = int.MaxValue; var maxX = int.MinValue;
             var minY = int.MaxValue; var maxY = int.MinValue;
 
-            foreach (var (point, _) in pixels)
+            foreach (var pixel in pixels)
             {
-                (minX, maxX) = MinMax(point.X, minX, maxX);
-                (minY, maxY) = MinMax(point.Y, minY, maxY);
+                (minX, maxX) = MinMax(pixel.Point.X, minX, maxX);
+                (minY, maxY) = MinMax(pixel.Point.Y, minY, maxY);
             }
 
             return (new Point2D(minX, minY), new Point2D(maxX, maxY));
@@ -93,35 +101,35 @@ internal class Day_20 : BaseDay
 
         public (Point2D min, Point2D max) Dimensions => FindMinMax(Pixels);
 
-        public int Lit => Pixels.Sum(p => p.v);
+        public int Lit => Pixels.Sum(p => p.Value);
 
-        private static int GetDefaultValue(int[] algorithm, int step)
+        private static byte GetDefaultValue(byte[] algorithm, int step)
         {
             if (algorithm.First() == 0) return 0;
 
             return step % 2 == 0 ? algorithm.Last() : algorithm.First();
         }
 
-        private static IEnumerable<(Point2D p, int v)> Trim(IEnumerable<(Point2D, int)> points, int defaultValue)
+        private static IEnumerable<Pixel> Trim(IEnumerable<Pixel> pixels, byte defaultValue)
         {
-            var filtered = points.Where(p => p.Item2 != defaultValue);
+            var filtered = pixels.Where(p => p.Value != defaultValue);
             var (min, max) = FindMinMax(filtered);
 
-            foreach (var (point, v) in filtered)
+            foreach (var pixel in filtered)
             {
-                if (point.X >= min.X && point.X <= max.X &&
-                    point.Y >= min.Y && point.Y <= max.Y)
+                if (pixel.Point.X >= min.X && pixel.Point.X <= max.X &&
+                    pixel.Point.Y >= min.Y && pixel.Point.Y <= max.Y)
                 {
-                    yield return (point, v);
+                    yield return pixel;
                 }
             }
         }
 
-        public Image Enhance(int[] algorithm, int step)
+        public Image Enhance(byte[] algorithm, int step)
         {
             var defaultValue = GetDefaultValue(algorithm, step);
 
-            var updated = new List<(Point2D, int)>();
+            var updated = new List<Pixel>();
 
             int GetValue(Point2D point) => _pixels.ContainsKey(point) ? _pixels[point] : defaultValue;
 
@@ -142,7 +150,7 @@ internal class Day_20 : BaseDay
                         value |= GetValue(neighbor);
                     }
 
-                    updated.Add((point, algorithm[value]));
+                    updated.Add(new(point, algorithm[value]));
                 }
             }
 
@@ -157,9 +165,9 @@ internal class Day_20 : BaseDay
 
             var image = new char[max.Y - min.Y + 1, max.X - min.X + 1];
 
-            foreach (var (p, v) in Pixels)
+            foreach (var pixel in Pixels)
             {
-                image[p.Y - min.Y, p.X - min.X] = v == 0 ? '.' : '#';
+                image[pixel.Point.Y - min.Y, pixel.Point.X - min.X] = pixel.Value == 0 ? '.' : '#';
             }
 
             for (var y = 0; y < image.GetLength(0); y++)
@@ -183,7 +191,7 @@ internal class Day_20 : BaseDay
         }
     }
 
-    private static Image EnhanceImage(Image image, int[] algorithm, int steps)
+    private static Image EnhanceImage(Image image, byte[] algorithm, int steps)
     {
         var temp = image;
 
@@ -198,7 +206,7 @@ internal class Day_20 : BaseDay
     [DayTest]
     public TestResult ParseAlgoTest()
     {
-        return ExecuteTests(new List<(int[], int)>() { (testValues.algorithm, 512), (partValues.algorithm, 512) }, (i) => i.Length);
+        return ExecuteTests(new List<(byte[], int)>() { (testValues.algorithm, 512), (partValues.algorithm, 512) }, (i) => i.Length);
     }
 
     [DayTest]
