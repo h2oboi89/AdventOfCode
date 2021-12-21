@@ -75,24 +75,23 @@ internal class Day_20 : BaseDay
             }
         }
 
-        public (Point2D min, Point2D max) Dimensions
+        private static (Point2D min, Point2D max) FindMinMax(IEnumerable<(Point2D p, int v)> pixels)
         {
-            get
+            static (int min, int max) MinMax(int i, int min, int max) => (Math.Min(min, i), Math.Max(max, i));
+
+            var minX = int.MaxValue; var maxX = int.MinValue;
+            var minY = int.MaxValue; var maxY = int.MinValue;
+
+            foreach (var (point, _) in pixels)
             {
-                var minX = int.MaxValue; var maxX = int.MinValue;
-                var minY = int.MaxValue; var maxY = int.MinValue;
-
-                foreach (var (point, _) in Pixels)
-                {
-                    if (point.X < minX) minX = point.X;
-                    if (point.X > maxX) maxX = point.X;
-                    if (point.Y < minY) minY = point.Y;
-                    if (point.Y > maxY) maxY = point.Y;
-                }
-
-                return (new Point2D(minX, minY), new Point2D(maxX, maxY));
+                (minX, maxX) = MinMax(point.X, minX, maxX);
+                (minY, maxY) = MinMax(point.Y, minY, maxY);
             }
+
+            return (new Point2D(minX, minY), new Point2D(maxX, maxY));
         }
+
+        public (Point2D min, Point2D max) Dimensions => FindMinMax(Pixels);
 
         public int Lit => Pixels.Sum(p => p.v);
 
@@ -105,24 +104,12 @@ internal class Day_20 : BaseDay
 
         private static IEnumerable<(Point2D p, int v)> Trim(IEnumerable<(Point2D, int)> points, int defaultValue)
         {
-            var minX = int.MaxValue; var maxX = int.MinValue;
-            var minY = int.MaxValue; var maxY = int.MinValue;
+            var (min, max) = FindMinMax(points.Where(p => p.Item2 != defaultValue));
 
             foreach (var (point, v) in points)
             {
-                if (v != defaultValue)
-                {
-                    if (point.X < minX) minX = point.X;
-                    if (point.X > maxX) maxX = point.X;
-                    if (point.Y < minY) minY = point.Y;
-                    if (point.Y > maxY) maxY = point.Y;
-                }
-            }
-
-            foreach (var (point, v) in points)
-            {
-                if (point.X >= minX && point.X <= maxX &&
-                    point.Y >= minY && point.Y <= maxY)
+                if (point.X >= min.X && point.X <= max.X &&
+                    point.Y >= min.Y && point.Y <= max.Y)
                 {
                     yield return (point, v);
                 }
@@ -274,7 +261,7 @@ internal class Day_20 : BaseDay
     public TestResult Test2() => ExecuteTest(3351, () => EnhanceImage(testValues.image, testValues.algorithm, 50).Lit);
 
     [DayPart]
-    public string Solve1()=> $"{EnhanceImage(partValues.image, partValues.algorithm, 2).Lit}";
+    public string Solve1() => $"{EnhanceImage(partValues.image, partValues.algorithm, 2).Lit}";
 
     [DayPart]
     public string Solve2() => $"{EnhanceImage(partValues.image, partValues.algorithm, 50).Lit}";
