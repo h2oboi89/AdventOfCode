@@ -5,33 +5,51 @@ namespace AdventOfCode.Common;
 
 internal struct Point
 {
-    private readonly int[] Coordinates = Array.Empty<int>();
+    private readonly int[] _coordinates = Array.Empty<int>();
 
-    private enum Coordinate { X = 0, Y = 1, Z = 2, }
+    private const int X = 0;
+    private const int Y = 1;
+    private const int Z = 2;
 
-    private Point(int dimensions) { Coordinates = new int[dimensions]; }
+    private Point(int dimensions) { _coordinates = new int[dimensions]; }
 
-    private Point(IEnumerable<int> coordinates) { Coordinates = coordinates.ToArray(); }
-
-    private int Get(Coordinate coordinate) => Coordinates[(int)coordinate];
-
-    private void Set(Coordinate coordinate, int value) => Coordinates[(int)coordinate] = value;
+    private Point(int[] coordinates) { _coordinates = coordinates; }
 
     private int[] Distance(Point other)
     {
-        var distances = new int[Coordinates.Length];
+        var distances = new int[_coordinates.Length];
 
-        for (var i = 0; i < Coordinates.Length; i++)
+        for (var i = 0; i < _coordinates.Length; i++)
         {
-            distances[i] = Math.Abs(Coordinates[i] - other.Coordinates[i]);
+            distances[i] = Math.Abs(_coordinates[i] - other._coordinates[i]);
         }
 
         return distances;
     }
 
-    public static Point operator -(Point p) => new(p.Coordinates.Select(c => -c));
+    public static Point operator -(Point p)
+    {
+        var newCoordinates = new int[p._coordinates.Length];
 
-    public static Point operator +(Point a, Point b) => new(a.Coordinates.Zip(b.Coordinates).Select(pair => pair.First + pair.Second));
+        for (var i = 0; i < newCoordinates.Length; i++)
+        {
+            newCoordinates[i] = -p._coordinates[i];
+        }
+
+        return new Point(newCoordinates);
+    }
+
+    public static Point operator +(Point a, Point b)
+    {
+        var newCoordinates = new int[a._coordinates.Length];
+
+        for (var i = 0; i < newCoordinates.Length; i++)
+        {
+            newCoordinates[i] = a._coordinates[i] + b._coordinates[i];
+        }
+
+        return new Point(newCoordinates);
+    }
 
     public static bool operator ==(Point a, Point b) => a.Equals(b);
 
@@ -41,11 +59,11 @@ internal struct Point
     {
         if (obj is not Point other) return false;
 
-        if (Coordinates.Length != other.Coordinates.Length) return false;
+        if (_coordinates.Length != other._coordinates.Length) return false;
 
-        for (var i = 0; i < Coordinates.Length; i++)
+        for (var i = 0; i < _coordinates.Length; i++)
         {
-            if (Coordinates[i] != other.Coordinates[i]) return false;
+            if (_coordinates[i] != other._coordinates[i]) return false;
         }
 
         return true;
@@ -53,17 +71,17 @@ internal struct Point
 
     public override int GetHashCode()
     {
-        var hash = Coordinates.Length;
+        var hash = _coordinates.Length;
 
-        foreach (var coordinate in Coordinates)
+        for (var i = 0; i < _coordinates.Length; i++)
         {
-            hash ^= coordinate.GetHashCode();
+            hash ^= _coordinates[i];
         }
 
         return hash;
     }
 
-    public override string ToString() => $"( {string.Join(", ", Coordinates)} )";
+    public override string ToString() => $"( {string.Join(", ", _coordinates)} )";
 
     public struct D2
     {
@@ -73,15 +91,15 @@ internal struct Point
 
         public D2(int x, int y) : this()
         {
-            point.Set(Coordinate.X, x);
-            point.Set(Coordinate.Y, y);
+            point._coordinates[Point.X] = x;
+            point._coordinates[Point.Y] = y;
         }
 
         private D2(Point p) => point = p;
 
-        public int X => point.Get(Coordinate.X);
+        public int X => point._coordinates[Point.X];
 
-        public int Y => point.Get(Coordinate.Y);
+        public int Y => point._coordinates[Point.Y];
 
         public D2 Distance(D2 other) => new(new Point(point.Distance(other.point)));
 
@@ -157,18 +175,18 @@ internal struct Point
 
         public D3(int x, int y, int z) : this()
         {
-            point.Set(Coordinate.X, x);
-            point.Set(Coordinate.Y, y);
-            point.Set(Coordinate.Z, z);
+            point._coordinates[Point.X] = x;
+            point._coordinates[Point.Y] = y;
+            point._coordinates[Point.Z] = z;
         }
 
         private D3(Point p) => point = p;
 
-        public int X => point.Get(Coordinate.X);
+        public int X => point._coordinates[Point.X];
 
-        public int Y => point.Get(Coordinate.Y);
+        public int Y => point._coordinates[Point.Y];
 
-        public int Z => point.Get(Coordinate.Z);
+        public int Z => point._coordinates[Point.Z];
 
         public D3 Distance(D3 other) => new(new Point(point.Distance(other.point)));
 
