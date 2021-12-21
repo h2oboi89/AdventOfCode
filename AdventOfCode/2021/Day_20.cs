@@ -55,7 +55,7 @@ internal class Day_20 : BaseDay
             }
             else
             {
-                pixels.AddRange(line.Select((c, i) => new Pixel(new Point2D(i, row), ParsePixelValue(c))));
+                pixels.AddRange(line.Select((c, i) => new Pixel(new Point.D2(i, row), ParsePixelValue(c))));
                 row++;
             }
         }
@@ -63,15 +63,15 @@ internal class Day_20 : BaseDay
 
     private struct Pixel
     {
-        public readonly Point2D Point;
+        public readonly Point.D2 Point;
         public readonly byte Value;
 
-        public Pixel(Point2D point, byte value) { Point = point; Value = value; }
+        public Pixel(Point.D2 point, byte value) { Point = point; Value = value; }
     }
 
     private class Image
     {
-        private readonly Dictionary<Point2D, byte> _pixels = new();
+        private readonly Dictionary<Point.D2, byte> _pixels = new();
 
         public IEnumerable<Pixel> Pixels => _pixels.Select(kvp => new Pixel(kvp.Key, kvp.Value));
 
@@ -83,7 +83,7 @@ internal class Day_20 : BaseDay
             }
         }
 
-        private static (Point2D min, Point2D max) FindMinMax(IEnumerable<Pixel> pixels)
+        private static (Point.D2 min, Point.D2 max) FindMinMax(IEnumerable<Pixel> pixels)
         {
             static (int min, int max) MinMax(int i, int min, int max) => (Math.Min(min, i), Math.Max(max, i));
 
@@ -96,10 +96,10 @@ internal class Day_20 : BaseDay
                 (minY, maxY) = MinMax(pixel.Point.Y, minY, maxY);
             }
 
-            return (new Point2D(minX, minY), new Point2D(maxX, maxY));
+            return (new Point.D2(minX, minY), new Point.D2(maxX, maxY));
         }
 
-        public (Point2D min, Point2D max) Dimensions => FindMinMax(Pixels);
+        public (Point.D2 min, Point.D2 max) Dimensions => FindMinMax(Pixels);
 
         public int Lit => Pixels.Sum(p => p.Value);
 
@@ -112,10 +112,9 @@ internal class Day_20 : BaseDay
 
         private static IEnumerable<Pixel> Trim(IEnumerable<Pixel> pixels, byte defaultValue)
         {
-            var filtered = pixels.Where(p => p.Value != defaultValue);
-            var (min, max) = FindMinMax(filtered);
+            var (min, max) = FindMinMax(pixels.Where(p => p.Value != defaultValue));
 
-            foreach (var pixel in filtered)
+            foreach (var pixel in pixels)
             {
                 if (pixel.Point.X >= min.X && pixel.Point.X <= max.X &&
                     pixel.Point.Y >= min.Y && pixel.Point.Y <= max.Y)
@@ -131,7 +130,7 @@ internal class Day_20 : BaseDay
 
             var updated = new List<Pixel>();
 
-            int GetValue(Point2D point) => _pixels.ContainsKey(point) ? _pixels[point] : defaultValue;
+            int GetValue(Point.D2 point) => _pixels.ContainsKey(point) ? _pixels[point] : defaultValue;
 
             var (min, max) = Dimensions;
 
@@ -139,7 +138,7 @@ internal class Day_20 : BaseDay
             {
                 for (var y = min.Y - 1; y <= max.Y + 1; y++)
                 {
-                    var point = new Point2D(x, y);
+                    var point = new Point.D2(x, y);
 
                     var value = 0;
 
@@ -174,14 +173,7 @@ internal class Day_20 : BaseDay
             {
                 for (var x = 0; x < image.GetLength(1); x++)
                 {
-                    if (image[y, x] == default(char))
-                    {
-                        sb.Append('.');
-                    }
-                    else
-                    {
-                        sb.Append(image[y, x]);
-                    }
+                    sb.Append(image[y, x]);
                 }
 
                 sb.AppendLine();

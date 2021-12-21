@@ -12,7 +12,7 @@ internal class Day_19 : BaseDay
     {
         var fields = new List<Field>();
         var id = string.Empty;
-        var points = new List<Point3D>();
+        var points = new List<Point.D3>();
 
         var idRegex = new Regex(@"--- scanner (?<id>\d+) ---");
 
@@ -47,41 +47,41 @@ internal class Day_19 : BaseDay
 
             // default line is coordinate triplet
             var coords = line.Split(',').Select(int.Parse).ToArray();
-            points.Add(new Point3D(coords[0], coords[1], coords[2]));
+            points.Add(new Point.D3(coords[0], coords[1], coords[2]));
         }
     }
 
     private class Field
     {
-        private readonly List<Point3D> _scanners = new() { new Point3D() };
-        private readonly List<Point3D> _beacons = new();
+        private readonly List<Point.D3> _scanners = new() { new Point.D3() };
+        private readonly List<Point.D3> _beacons = new();
 
-        public IEnumerable<Point3D> Beacons
+        public IEnumerable<Point.D3> Beacons
         {
             get { foreach (var beacon in _beacons) yield return beacon; }
         }
 
-        public IEnumerable<Point3D> Scanners
+        public IEnumerable<Point.D3> Scanners
         {
             get { foreach (var scanner in _scanners) yield return scanner; }
         }
 
         public readonly string Id;
 
-        public Field(string id, IEnumerable<Point3D> beacons)
+        public Field(string id, IEnumerable<Point.D3> beacons)
         {
             Id = id;
             _beacons.AddRange(beacons);
         }
 
-        private Field(string id, IEnumerable<Point3D> beacons, IEnumerable<Point3D> scanners) : this(id, beacons)
+        private Field(string id, IEnumerable<Point.D3> beacons, IEnumerable<Point.D3> scanners) : this(id, beacons)
         {
             _scanners = new(scanners);
         }
 
         private static Exception InvalidAxis(Axis axis) => new($"Invalid axis {axis}");
 
-        private static IEnumerable<Point3D> ForEach(IEnumerable<Point3D> points, Func<Point3D, Point3D> transformFunc)
+        private static IEnumerable<Point.D3> ForEach(IEnumerable<Point.D3> points, Func<Point.D3, Point.D3> transformFunc)
         {
             foreach (var point in points)
             {
@@ -91,20 +91,20 @@ internal class Day_19 : BaseDay
 
         public Field Rotate(Axis axis)
         {
-            IEnumerable<Point3D> Rotate(IEnumerable<Point3D> points) => ForEach(points, point => axis switch
+            IEnumerable<Point.D3> Rotate(IEnumerable<Point.D3> points) => ForEach(points, point => axis switch
             {
-                Axis.X => new Point3D(point.X, point.Z, -point.Y),
-                Axis.Y => new Point3D(-point.Z, point.Y, point.X),
-                Axis.Z => new Point3D(point.Y, -point.X, point.Z),
+                Axis.X => new Point.D3(point.X, point.Z, -point.Y),
+                Axis.Y => new Point.D3(-point.Z, point.Y, point.X),
+                Axis.Z => new Point.D3(point.Y, -point.X, point.Z),
                 _ => throw InvalidAxis(axis)
             });
 
             return new Field(Id, Rotate(Beacons), Rotate(Scanners));
         }
 
-        public Field Translate(Point3D translation)
+        public Field Translate(Point.D3 translation)
         {
-            IEnumerable<Point3D> Translate(IEnumerable<Point3D> points, Point3D translation) =>
+            IEnumerable<Point.D3> Translate(IEnumerable<Point.D3> points, Point.D3 translation) =>
                 ForEach(points, point => point + translation);
 
             return new Field(Id, Translate(Beacons, translation), Translate(Scanners, translation));
@@ -188,7 +188,7 @@ internal class Day_19 : BaseDay
                 return permutations;
             }
 
-            static IEnumerable<Point3D> GenerateTranslations(Field field)
+            static IEnumerable<Point.D3> GenerateTranslations(Field field)
             {
                 foreach (var beacon in field.Beacons)
                 {

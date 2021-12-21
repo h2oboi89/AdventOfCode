@@ -31,7 +31,7 @@ internal class Day_06 : BaseDay
             var endX = int.Parse(captured.Groups["endX"].Value);
             var endY = int.Parse(captured.Groups["endY"].Value);
 
-            values.Add(new Range(new Point2D(startX, startY), new Point2D(endX, endY), action));
+            values.Add(new Range(new Point.D2(startX, startY), new Point.D2(endX, endY), action));
         }
 
         instructions = values;
@@ -39,23 +39,23 @@ internal class Day_06 : BaseDay
 
     private enum Action { Unknown, On, Off, Toggle }
 
-    private class Range : IEnumerable<Point2D>
+    private class Range : IEnumerable<Point.D2>
     {
-        public readonly Point2D Start, End;
+        public readonly Point.D2 Start, End;
         public readonly Action Action;
 
-        public Range(Point2D start, Point2D end, Action action)
+        public Range(Point.D2 start, Point.D2 end, Action action)
         {
             Start = start; End = end; Action = action;
         }
 
-        public IEnumerator<Point2D> GetEnumerator()
+        public IEnumerator<Point.D2> GetEnumerator()
         {
             for (var x = Start.X; x <= End.X; x++)
             {
                 for (var y = Start.Y; y <= End.Y; y++)
                 {
-                    yield return new Point2D(x, y);
+                    yield return new Point.D2(x, y);
                 }
             }
         }
@@ -65,9 +65,9 @@ internal class Day_06 : BaseDay
 
     private abstract class Grid
     {
-        public abstract void On(Point2D point);
-        public abstract void Off(Point2D point);
-        public abstract void Toggle(Point2D point);
+        public abstract void On(Point.D2 point);
+        public abstract void Off(Point.D2 point);
+        public abstract void Toggle(Point.D2 point);
         public abstract int Lit { get; }
     }
 
@@ -75,13 +75,13 @@ internal class Day_06 : BaseDay
     {
         private readonly bool[,] grid = new bool[1000, 1000];
 
-        private void Set(Point2D point, bool state) => grid[point.Y, point.X] = state;
+        private void Set(Point.D2 point, bool state) => grid[point.Y, point.X] = state;
 
-        public override void On(Point2D point) => Set(point, true);
+        public override void On(Point.D2 point) => Set(point, true);
 
-        public override void Off(Point2D point) => Set(point, false);
+        public override void Off(Point.D2 point) => Set(point, false);
 
-        public override void Toggle(Point2D point) => Set(point, !grid[point.Y, point.X]);
+        public override void Toggle(Point.D2 point) => Set(point, !grid[point.Y, point.X]);
 
         public override int Lit
         {
@@ -103,21 +103,21 @@ internal class Day_06 : BaseDay
     {
         private readonly int[,] grid = new int[1000, 1000];
 
-        public override void On(Point2D point)
+        public override void On(Point.D2 point)
         {
             if (grid[point.Y, point.X] == int.MaxValue) return;
 
             grid[point.Y, point.X]++;
         }
 
-        public override void Off(Point2D point)
+        public override void Off(Point.D2 point)
         {
             if (grid[point.Y, point.X] == 0) return;
 
             grid[point.Y, point.X]--;
         }
 
-        public override void Toggle(Point2D point) { On(point); On(point); }
+        public override void Toggle(Point.D2 point) { On(point); On(point); }
 
         public override int Lit
         {
@@ -139,7 +139,7 @@ internal class Day_06 : BaseDay
     {
         foreach (var instruction in instructions)
         {
-            Action<Point2D> method = instruction.Action switch
+            Action<Point.D2> method = instruction.Action switch
             {
                 Action.On => grid.On,
                 Action.Off => grid.Off,
@@ -161,9 +161,9 @@ internal class Day_06 : BaseDay
     {
         var instructions = new List<Range>
         {
-            new Range(new Point2D(), new Point2D(999, 999), Action.On),
-            new Range(new Point2D(), new Point2D(999, 0), Action.Toggle),
-            new Range(new Point2D(499, 499), new Point2D(500, 500), Action.Off),
+            new Range(new Point.D2(), new Point.D2(999, 999), Action.On),
+            new Range(new Point.D2(), new Point.D2(999, 0), Action.Toggle),
+            new Range(new Point.D2(499, 499), new Point.D2(500, 500), Action.Off),
         };
 
         return ExecuteTest((1_000 * 1_000) - 1_000 - 4, () => FollowInstructions(new BoolGrid(), instructions));
@@ -174,8 +174,8 @@ internal class Day_06 : BaseDay
     {
         var instructions = new List<Range>
         {
-            new Range(new Point2D(), new Point2D(), Action.On),
-            new Range(new Point2D(), new Point2D(999, 999), Action.Toggle),
+            new Range(new Point.D2(), new Point.D2(), Action.On),
+            new Range(new Point.D2(), new Point.D2(999, 999), Action.Toggle),
         };
 
         return ExecuteTest(1 + 2_000_000, () => FollowInstructions(new IntGrid(), instructions));
