@@ -53,8 +53,41 @@ internal class Day_19 : BaseDay
 
     private class Field
     {
-        private readonly List<Point.D3> _scanners = new() { new Point.D3() };
+        private readonly List<Point.D3> _scanners = new();
         private readonly List<Point.D3> _beacons = new();
+
+        private static readonly IEnumerable<int[,]> _rotations = new List<int[,]>()
+        {
+            new int[3,3] { {  1,  0,  0 }, {  0,  1,  0 }, {  0,  0,  1 } },
+            new int[3,3] { {  0,  0,  1 }, {  0,  1,  0 }, { -1,  0,  0 } },
+            new int[3,3] { { -1,  0,  0 }, {  0,  1,  0 }, {  0,  0, -1 } },
+            new int[3,3] { {  0,  0, -1 }, {  0,  1,  0 }, {  1,  0,  0 } },
+
+            new int[3,3] { {  0, -1,  0 }, {  1,  0,  0 }, {  0,  0,  1 } },
+            new int[3,3] { {  0,  0,  1 }, {  1,  0,  0 }, {  0,  1,  0 } },
+            new int[3,3] { {  0,  1,  0 }, {  1,  0,  0 }, {  0,  0, -1 } },
+            new int[3,3] { {  0,  0, -1 }, {  1,  0,  0 }, {  0, -1,  0 } },
+
+            new int[3,3] { {  0,  1,  0 }, { -1,  0,  0 }, {  0,  0,  1 } },
+            new int[3,3] { {  0,  0,  1 }, { -1,  0,  0 }, {  0, -1,  0 } },
+            new int[3,3] { {  0, -1,  0 }, { -1,  0,  0 }, {  0,  0, -1 } },
+            new int[3,3] { {  0,  0, -1 }, { -1,  0,  0 }, {  0,  1,  0 } },
+
+            new int[3,3] { {  1,  0,  0 }, {  0,  0, -1 }, {  0,  1,  0 } },
+            new int[3,3] { {  0,  1,  0 }, {  0,  0, -1 }, { -1,  0,  0 } },
+            new int[3,3] { { -1,  0,  0 }, {  0,  0, -1 }, {  0, -1,  0 } },
+            new int[3,3] { {  0, -1,  0 }, {  0,  0, -1 }, {  1,  0,  0 } },
+
+            new int[3,3] { {  1,  0,  0 }, {  0, -1,  0 }, {  0,  0, -1 } },
+            new int[3,3] { {  0,  0, -1 }, {  0, -1,  0 }, { -1,  0,  0 } },
+            new int[3,3] { { -1,  0,  0 }, {  0, -1,  0 }, {  0,  0,  1 } },
+            new int[3,3] { {  0,  0,  1 }, {  0, -1,  0 }, {  1,  0,  0 } },
+
+            new int[3,3] { {  1,  0,  0 }, {  0,  0,  1 }, {  0, -1,  0 } },
+            new int[3,3] { {  0, -1,  0 }, {  0,  0,  1 }, { -1,  0,  0 } },
+            new int[3,3] { { -1,  0,  0 }, {  0,  0,  1 }, {  0,  1,  0 } },
+            new int[3,3] { {  0,  1,  0 }, {  0,  0,  1 }, {  1,  0,  0 } },
+        };
 
         public IEnumerable<Point.D3> Beacons
         {
@@ -68,67 +101,57 @@ internal class Day_19 : BaseDay
 
         public readonly string Id;
 
-        public Field(string id, IEnumerable<Point.D3> beacons)
+        public Field(string id, IEnumerable<Point.D3> beacons, IEnumerable<Point.D3>? scanners = null)
         {
             Id = id;
             _beacons.AddRange(beacons);
-        }
 
-        private Field(string id, IEnumerable<Point.D3> beacons, IEnumerable<Point.D3> scanners) : this(id, beacons)
-        {
-            _scanners = new(scanners);
-        }
-
-        private static Exception InvalidAxis(Axis axis) => new($"Invalid axis {axis}");
-
-        private static IEnumerable<Point.D3> ForEach(IEnumerable<Point.D3> points, Func<Point.D3, Point.D3> transformFunc)
-        {
-            foreach (var point in points)
+            if (scanners == null)
             {
-                yield return transformFunc(point);
+                _scanners.Add(new Point.D3());
+            }
+            else
+            {
+                _scanners.AddRange(scanners);
             }
         }
 
-        public Field Rotate(Axis axis)
+        public Field Rotate(int[,] rotation)
         {
-            IEnumerable<Point.D3> Rotate(IEnumerable<Point.D3> points) => ForEach(points, point => axis switch
+            static IEnumerable<Point.D3> Rotate(List<Point.D3> points, int[,] rotation)
             {
-                Axis.X => new Point.D3(point.X, point.Z, -point.Y),
-                Axis.Y => new Point.D3(-point.Z, point.Y, point.X),
-                Axis.Z => new Point.D3(point.Y, -point.X, point.Z),
-                _ => throw InvalidAxis(axis)
-            });
+                foreach (var point in points)
+                {
+                    var x = rotation[0, 0] * point.X + rotation[0, 1] * point.Y + rotation[0, 2] * point.Z;
+                    var y = rotation[1, 0] * point.X + rotation[1, 1] * point.Y + rotation[1, 2] * point.Z;
+                    var z = rotation[2, 0] * point.X + rotation[2, 1] * point.Y + rotation[2, 2] * point.Z;
 
-            return new Field(Id, Rotate(Beacons), Rotate(Scanners));
+                    yield return new(x, y, z);
+                }
+            };
+
+            return new Field(Id, Rotate(_beacons, rotation), Rotate(_scanners, rotation));
         }
 
         public Field Translate(Point.D3 translation)
         {
-            IEnumerable<Point.D3> Translate(IEnumerable<Point.D3> points, Point.D3 translation) =>
-                ForEach(points, point => point + translation);
+            static IEnumerable<Point.D3> Translate(IEnumerable<Point.D3> points, Point.D3 translation)
+            {
+                foreach (var point in points)
+                {
+                    yield return point + translation;
+                }
+            };
 
-            return new Field(Id, Translate(Beacons, translation), Translate(Scanners, translation));
+            return new Field(Id, Translate(_beacons, translation), Translate(_scanners, translation));
         }
 
         public Field Merge(Field other) =>
-            new($"{Id}-{other.Id}", Beacons.Concat(other.Beacons).Distinct(), Scanners.Concat(other.Scanners).Distinct());
+            new($"{Id}-{other.Id}", _beacons.Concat(other._beacons).Distinct(), _scanners.Concat(other._scanners).Distinct());
 
-        public Field Clone() => new(Id, Beacons, Scanners);
+        public Field Clone() => new(Id, _beacons, _scanners);
 
-        public int Compare(Field other)
-        {
-            var matches = 0;
-
-            foreach (var beacon in Beacons)
-            {
-                if (other.Beacons.Contains(beacon))
-                {
-                    matches++;
-                }
-            }
-
-            return matches;
-        }
+        public int Compare(Field other) => new HashSet<Point.D3>(_beacons).Intersect(other._beacons).Count();
 
         public override bool Equals(object? obj)
         {
@@ -138,19 +161,33 @@ internal class Day_19 : BaseDay
 
             if (Id != other.Id) return false;
 
-            return Scanners.SequenceEqual(other.Scanners) && Beacons.SequenceEqual(other.Beacons);
+            if (_scanners.Count != other._scanners.Count) return false;
+
+            if (_beacons.Count != other._beacons.Count) return false;
+
+            for (var i = 0; i < _scanners.Count; i++)
+            {
+                if (_scanners[i] != other._scanners[i]) return false;
+            }
+
+            for (var i = 0; i < _beacons.Count; i++)
+            {
+                if (_beacons[i] != other._beacons[i]) return false;
+            }
+
+            return true;
         }
 
         public override int GetHashCode()
         {
             var hash = _beacons.Count;
 
-            foreach (var scanner in Scanners)
+            foreach (var scanner in _scanners)
             {
                 hash ^= scanner.GetHashCode();
             }
 
-            foreach (var beacon in Beacons)
+            foreach (var beacon in _beacons)
             {
                 hash ^= beacon.GetHashCode();
             }
@@ -158,39 +195,15 @@ internal class Day_19 : BaseDay
             return hash;
         }
 
-        public override string ToString() => $"{Id} [{Scanners.Count()}] ({string.Join(", ", Beacons)})";
+        public override string ToString() => $"{Id} [{_scanners.Count()}] ({string.Join(", ", _beacons)})";
 
         public Field? Align(Field other)
         {
-            static IEnumerable<Field> GenerateRotations(Field field)
-            {
-                var permutations = new List<Field>();
-
-                var temp = field.Clone();
-
-                for (var x = 0; x < 4; x++)
-                {
-                    for (var y = 0; y < 4; y++)
-                    {
-                        for (var z = 0; z < 4; z++)
-                        {
-                            if (!permutations.Contains(temp)) permutations.Add(temp);
-
-                            temp = temp.Rotate(Axis.Z);
-                        }
-
-                        temp = temp.Rotate(Axis.Y);
-                    }
-
-                    temp = temp.Rotate(Axis.X);
-                }
-
-                return permutations;
-            }
+            static IEnumerable<Field> GenerateRotations(Field field) => _rotations.Select(r => field.Rotate(r));
 
             static IEnumerable<Point.D3> GenerateTranslations(Field field)
             {
-                foreach (var beacon in field.Beacons)
+                foreach (var beacon in field._beacons)
                 {
                     yield return -beacon;
                 }
