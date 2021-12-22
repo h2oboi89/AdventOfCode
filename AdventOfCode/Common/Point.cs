@@ -51,6 +51,46 @@ internal struct Point
         return new Point(newCoordinates);
     }
 
+    public static bool operator >(Point a, Point b)
+    {
+        for(var i = 0; i < a._coordinates.Length; i++)
+        {
+            if (a._coordinates[i] <= b._coordinates[i]) return false;
+        }
+
+        return true;
+    }
+
+    public static bool operator <(Point a, Point b)
+    {
+        for (var i = 0; i < a._coordinates.Length; i++)
+        {
+            if (a._coordinates[i] >= b._coordinates[i]) return false;
+        }
+
+        return true;
+    }
+
+    public static bool operator >=(Point a, Point b)
+    {
+        for (var i = 0; i < a._coordinates.Length; i++)
+        {
+            if (a._coordinates[i] < b._coordinates[i]) return false;
+        }
+
+        return true;
+    }
+
+    public static bool operator <=(Point a, Point b)
+    {
+        for (var i = 0; i < a._coordinates.Length; i++)
+        {
+            if (a._coordinates[i] > b._coordinates[i]) return false;
+        }
+
+        return true;
+    }
+
     public static bool operator ==(Point a, Point b) => a.Equals(b);
 
     public static bool operator !=(Point a, Point b) => !(a == b);
@@ -151,6 +191,14 @@ internal struct Point
 
         public static D2 operator +(D2 a, D2 b) => new(a.point + b.point);
 
+        public static bool operator <(D2 a, D2 b) => a.point < b.point;
+
+        public static bool operator >(D2 a, D2 b) => a.point > b.point;
+
+        public static bool operator <=(D2 a, D2 b) => a.point <= b.point;
+
+        public static bool operator >=(D2 a, D2 b) => a.point >= b.point;
+
         public static bool operator ==(D2 a, D2 b) => a.Equals(b);
 
         public static bool operator !=(D2 a, D2 b) => !(a == b);
@@ -207,6 +255,14 @@ internal struct Point
         public static D3 operator -(D3 p) => new(-p.point);
 
         public static D3 operator +(D3 a, D3 b) => new(a.point + b.point);
+
+        public static bool operator <(D3 a, D3 b) => a.point < b.point;
+
+        public static bool operator >(D3 a, D3 b) => a.point > b.point;
+
+        public static bool operator <=(D3 a, D3 b) => a.point <= b.point;
+
+        public static bool operator >=(D3 a, D3 b) => a.point >= b.point;
 
         public static bool operator ==(D3 a, D3 b) => a.Equals(b);
 
