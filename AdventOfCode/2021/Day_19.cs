@@ -195,7 +195,7 @@ internal class Day_19 : BaseDay
             return hash;
         }
 
-        public override string ToString() => $"{Id} [{_scanners.Count()}] ({string.Join(", ", _beacons)})";
+        public override string ToString() => $"{Id} [{_scanners.Count}] ({string.Join(", ", _beacons)})";
 
         public Field? Align(Field other)
         {
