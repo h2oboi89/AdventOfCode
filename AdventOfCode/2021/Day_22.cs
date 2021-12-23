@@ -7,7 +7,8 @@ internal class Day_22 : BaseDay
 {
     private readonly Regex lineRegex = new(@"(?<action>on|off) x=(?<x_min>-?\d+)\.\.(?<x_max>-?\d+),y=(?<y_min>-?\d+)\.\.(?<y_max>-?\d+),z=(?<z_min>-?\d+)\.\.(?<z_max>-?\d+)");
 
-    private readonly List<Instruction> testInstructions = new();
+    private readonly List<Instruction> test1Instructions = new();
+    private readonly List<Instruction> test2Instructions = new();
     private readonly List<Instruction> partInstructions = new();
 
     public Day_22(string inputFile)
@@ -25,7 +26,14 @@ internal class Day_22 : BaseDay
         {
             if (line.StartsWith("###"))
             {
-                testInstructions.AddRange(instructions);
+                test1Instructions.AddRange(instructions);
+                instructions.Clear();
+                continue;
+            }
+
+            if (line.StartsWith("$$$"))
+            {
+                test2Instructions.AddRange(instructions);
                 instructions.Clear();
                 continue;
             }
@@ -54,83 +62,124 @@ internal class Day_22 : BaseDay
             Start = start; End = end; On = on;
         }
 
-        public Instruction Limit(int min, int max)
+        public bool InLimit(int min, int max)
         {
-            var startX = Math.Max(min, Start.X);
-            var startY = Math.Max(min, Start.Y);
-            var StartZ = Math.Max(min, Start.Z);
+            static bool InLimit(int i, int min, int max) => i >= min && i <= max;
 
-            var endX = Math.Min(max, End.X);
-            var endY = Math.Min(max, End.Y);
-            var endZ = Math.Min(max, End.Z);
+            if (!InLimit(Start.X, min, max)) return false;
+            if (!InLimit(Start.Y, min, max)) return false;
+            if (!InLimit(Start.Z, min, max)) return false;
 
-            return new Instruction(new Point.D3(startX, startY, StartZ), new Point.D3(endX, endY, endZ), On);
+            if (!InLimit(End.X, min, max)) return false;
+            if (!InLimit(End.Y, min, max)) return false;
+            if (!InLimit(End.Z, min, max)) return false;
+
+            return true;
         }
 
         public override string ToString() => $"{Start} {End} {On}";
     }
 
-    private static IEnumerable<Point.D3> Enumerate(Point.D3 start, Point.D3 end)
+    private class Cuboid
     {
-        for (var x = start.X; x <= end.X; x++)
+        private readonly Point.D3 Min;
+        private readonly Point.D3 Max;
+        private readonly sbyte Sign;
+
+        public Cuboid(Point.D3 min, Point.D3 max, sbyte sign)
         {
-            for (var y = start.Y; y <= end.Y; y++)
+            Min = min; Max = max; Sign = sign;
+        }
+
+        public bool Intersect(Cuboid other)
+        {
+            static bool CheckDimension(int aMin, int aMax, int bMin, int bMax) => aMin <= bMax && aMax >= bMin;
+
+            if (!CheckDimension(Min.X, Max.X, other.Min.X, other.Max.X)) return false;
+
+            if (!CheckDimension(Min.Y, Max.Y, other.Min.Y, other.Max.Y)) return false;
+
+            if (!CheckDimension(Min.Z, Max.Z, other.Min.Z, other.Max.Z)) return false;
+
+            return true;
+        }
+
+        public Cuboid Intersection(Cuboid other)
+        {
+            static (int min, int max) GetDimension(int aMin, int aMax, int bMin, int bMax) => (Math.Max(aMin, bMin), Math.Min(aMax, bMax));
+
+            var (xMin, xMax) = GetDimension(Min.X, Max.X, other.Min.X, other.Max.X);
+            var (yMin, yMax) = GetDimension(Min.Y, Max.Y, other.Min.Y, other.Max.Y);
+            var (zMin, zMax) = GetDimension(Min.Z, Max.Z, other.Min.Z, other.Max.Z);
+
+            var sign = Sign * other.Sign;
+            if (Sign == other.Sign) sign = -Sign;
+            if (Sign == 1 && other.Sign == -1) sign = 1;
+
+            return new Cuboid(new Point.D3(xMin, yMin, zMin), new Point.D3(xMax, yMax, zMax), (sbyte)sign);
+        }
+
+        public long Volume
+        {
+            get
             {
-                for (var z = start.Z; z <= end.Z; z++)
-                {
-                    yield return new Point.D3(x, y, z);
-                }
+                static long GetDimension(int min, int max) => max - min + 1;
+
+                return Sign * GetDimension(Min.X, Max.X) * GetDimension(Min.Y, Max.Y) * GetDimension(Min.Z, Max.Z);
             }
         }
+
+        public override string ToString() => $"{Min} {Max} {Volume}";
     }
 
-    private static bool InRange(Point.D3 point, Point.D3 start, Point.D3 end) => point >= start && point <= end;
-
-    private static HashSet<Point.D3> Execute(HashSet<Point.D3> reactor, Instruction instruction)
+    private static long Execute(IEnumerable<Instruction> instructions, int min, int max)
     {
-        if (instruction.On)
+        var cuboids = new List<Cuboid>();
+
+        foreach (var instruction in instructions.Where(i => i.InLimit(min, max)))
         {
-            foreach (var point in Enumerate(instruction.Start, instruction.End))
+            var current = new Cuboid(instruction.Start, instruction.End, (sbyte)(instruction.On ? 1 : -1));
+
+            var intersections = new List<Cuboid>();
+
+            foreach (var cuboid in cuboids)
             {
-                reactor.Add(point);
-            }
-        }
-        else
-        {
-            foreach (var point in reactor)
-            {
-                if (InRange(point, instruction.Start, instruction.End))
+                if (current.Intersect(cuboid))
                 {
-                    reactor.Remove(point);
+                    intersections.Add(current.Intersection(cuboid));
                 }
             }
+
+            cuboids.AddRange(intersections);
+
+            if (current.Volume > 0)
+            {
+                cuboids.Add(current);
+            }
         }
 
-        return reactor;
-    }
-    private static HashSet<Point.D3> Execute(IEnumerable<Instruction> instructions, int min, int max)
-    {
-        // FIXME: test data takes 10 minutes
-        // Next idea: keep track of "on" ranges
-        // Break into smaller cuboids based on edges of the other range and how they intersect this range
-        // - if both on: get unique range and discard duplicates
-        // - if one off: eliminate overlap range and keep rest
-        var reactor = new HashSet<Point.D3>();
+        long result = 0;
 
-        foreach(var instruction in instructions)
+        foreach (var cuboid in cuboids)
         {
-            reactor = Execute(reactor, instruction.Limit(min, max));
+            result += cuboid.Volume;
         }
 
-        return reactor;
+        return result;
     }
 
     [DayTest]
-    public TestResult ParseTest() => ExecuteTest(22, () => testInstructions.Count);
+    public TestResult ParseTest() => ExecuteTest(22, () => test1Instructions.Count);
 
     [DayTest]
-    public TestResult Test1() => ExecuteTest(590_784, () => Execute(testInstructions, -50, 50).Count);
+    public TestResult Test1() => ExecuteTest(590_784, () => Execute(test1Instructions, -50, 50));
+
+    [DayTest]
+    public TestResult Test2() => ExecuteTest(2_758_514_936_282_235, () => Execute(test2Instructions, int.MinValue, int.MaxValue));
 
     [DayPart]
-    public string Solve1() => $"{Execute(partInstructions, -50, -50).Count}";
+    public string Solve1() => $"{Execute(partInstructions, -50, 50)}";
+
+    [DayPart]
+    public string Solve2() => $"{Execute(partInstructions, int.MinValue, int.MaxValue)}";
 }
