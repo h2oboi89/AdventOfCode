@@ -111,4 +111,64 @@ internal class Day_24 : BaseDay
             }
         }
     }
+
+    private static IEnumerable<(long serial, IEnumerable<int> digits)> GenerateSerialNumbers()
+    {
+        const long START = 11111111111111;
+        const long END = 99999999999999;
+
+        var current = START;
+
+        while(current <= END)
+        {
+            var digits = new List<int>();
+
+            var value = current;
+            var valid = true;
+
+            while(value > 0)
+            {
+                var digit = value % 10;
+
+                if (digit == 0)
+                {
+                    valid = false;
+                    break;
+                }
+
+                digits.Add((int)digit);
+
+                value /= 10;
+            }
+
+            if (valid)
+            {
+                digits.Reverse();
+
+                yield return (current, digits);
+            }
+
+            current++;
+        }
+    }
+
+    [DayPart]
+    public string ValidateSerials()
+    {
+        var max = long.MinValue;
+
+        foreach(var (serial, digits) in GenerateSerialNumbers())
+        {
+            var alu = new ALU(digits);
+
+            alu.Execute(instructions);
+
+            if (alu.Z == 0 && serial > max)
+            {
+                max = serial;
+            }
+        }
+
+        return $"{max}";
+    }
 }
