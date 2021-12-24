@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
 
 namespace AdventOfCode._2021;
 
 internal class Day_24 : BaseDay
 {
-    private readonly List<(string operation, string a, string b)> instructions = new();
+    private readonly List<(Operation operation, string a, string b)> instructions = new();
 
     public Day_24(string inputFile)
     {
@@ -16,159 +12,182 @@ internal class Day_24 : BaseDay
         {
             var parts = line.Split(' ');
 
-            switch (parts[0])
-            {
-                case "inp": instructions.Add((parts[0], parts[1], string.Empty)); break;
-                default: instructions.Add((parts[0], parts[1], parts[2])); break;
-            }
+            var op = ParseOperation(parts[0]);
+            var a = parts[1];
+            var b = op == Operation.Input ? string.Empty : parts[2];
+
+            instructions.Add((op, a, b));
         }
     }
 
+    private enum Operation
+    {
+        Input,
+        Add,
+        Multiply,
+        Divide,
+        Modulo,
+        Equal
+    }
+
+    private static Operation ParseOperation(string operation) => operation switch
+    {
+        "inp" => Operation.Input,
+        "add" => Operation.Add,
+        "mul" => Operation.Multiply,
+        "div" => Operation.Divide,
+        "mod" => Operation.Modulo,
+        "eql" => Operation.Equal,
+        _ => throw new Exception($"Invalid operation: '{operation}"),
+    };
+
     private class ALU
     {
-        public int W { get; private set; } = 0;
-        public int X { get; private set; } = 0;
-        public int Y { get; private set; } = 0;
-        public int Z { get; private set; } = 0;
+        public long W { get; private set; } = 0;
+        public long X { get; private set; } = 0;
+        public long Y { get; private set; } = 0;
+        public long Z { get; private set; } = 0;
 
-        private readonly Queue<int> InputValues = new();
-
-        public ALU(IEnumerable<int> input)
+        private void SetRegister(string r, long value)
         {
-            var values = input.Reverse();
-
-            InputValues = new Queue<int>(values);
-        }
-
-        private void SetRegister(string c, int value)
-        {
-            switch (c)
+            switch (r)
             {
                 case "w": W = value; break;
                 case "x": X = value; break;
                 case "y": Y = value; break;
                 case "z": Z = value; break;
-                default: throw new Exception($"Invalid register: '{c}'");
+                default: throw new Exception($"Invalid register: '{r}'");
             }
         }
 
-        private int GetRegister(string c)
+        private long GetRegister(string r)
         {
-            switch (c)
+            switch (r)
             {
                 case "w": return W;
                 case "x": return X;
                 case "y": return Y;
                 case "z": return Z;
-                default: throw new Exception($"Invalid register: '{c}'");
+                default: throw new Exception($"Invalid register: '{r}'");
             }
         }
 
-        private void Input(string a, int b) => SetRegister(a, b);
+        private void Execute(Operation operation, string r, long a, long b)
+        {
+            switch (operation)
+            {
+                case Operation.Input: SetRegister(r, a); break;
+                case Operation.Add: SetRegister(r, a + b); break;
+                case Operation.Multiply: SetRegister(r, a * b); break;
+                case Operation.Divide: SetRegister(r, a / b); break;
+                case Operation.Modulo: SetRegister(r, a % b); break;
+                case Operation.Equal: SetRegister(r, a == b ? 1 : 0); break;
+            }
+        }
 
-        private void Add(string r, int a, int b) => SetRegister(r, a + b);
+        public ALU Clone() => new() { W = W, X = X, Y = Y, Z = Z };
 
-        private void Multiply(string r, int a, int b) => SetRegister(r, a * b);
+        public override bool Equals(object? obj)
+        {
+            if (obj == null) return false;
 
-        private void Divide(string r, int a, int b) => SetRegister(r, a / b);
+            if (obj is not ALU other) return false;
 
-        private void Modulo(string r, int a, int b) => SetRegister(r, a < 0 ? ((a + 1) % b + b - 1) : a % b);
+            return W == other.W && X == other.X && Y == other.Y && Z == other.Z;
+        }
 
-        private void Equal(string r, int a, int b) => SetRegister(r, a == b ? 1 : 0);
+        public override int GetHashCode() => (W, X, Y, Z).GetHashCode();
 
-        private void Execute((string operation, string a, string b) instruction)
+        public override string ToString() => $"W : {W}, X : {X}, Y : {Y}, Z :{Z}";
+
+        private static void Execute((Operation operation, string a, string b) instruction, ref List<(ALU, ulong, ulong)> alus)
         {
             var (operation, a, b) = instruction;
 
-            var aValue = GetRegister(a);
-            int bValue;
-
-            if (operation == "inp")
+            if (operation == Operation.Input)
             {
-                bValue = InputValues.Dequeue();
+                var uniqueAlus = new Dictionary<ALU, (ulong min, ulong max)>();
+
+                for(var i = 0; i < alus.Count; i++)
+                {
+                    var (alu, min, max) = alus[i];
+
+                    for (ulong j = 1; j < 10; j++)
+                    {
+                        var newAlu = alu.Clone();
+
+                        newAlu.Execute(operation, a, (long)j, 0);
+
+                        var uMin = (min * 10) + j;
+                        var uMax = (max * 10) + j;
+
+                        if (!uniqueAlus.ContainsKey(newAlu))
+                        {
+                            uniqueAlus[newAlu] = (uMin, uMax);
+                        }
+
+                        var prev = uniqueAlus[newAlu];
+
+                        uniqueAlus[newAlu] = (Math.Min(prev.min, uMin), Math.Min(prev.max, uMax));
+                    }
+                }
+
+                alus = uniqueAlus.Select(kvp => (kvp.Key, kvp.Value.min, kvp.Value.max)).ToList();
+
+                if (Debugger.IsAttached)
+                {
+                    Console.WriteLine($"Processing {alus.Count} alu states");
+                }
             }
             else
             {
-                if (!int.TryParse(b, out bValue)) bValue = GetRegister(b);
-            }
-
-            switch (operation)
-            {
-                case "inp": Input(a, bValue); break;
-                case "add": Add(a, aValue, bValue); break;
-                case "mul": Multiply(a, aValue, bValue); break;
-                case "div": Divide(a, aValue, bValue); break;
-                case "mod": Modulo(a, aValue, bValue); break;
-                case "eql": Equal(a, aValue, bValue); break;
-            }
-        }
-
-        public void Execute(IEnumerable<(string operation, string a, string b)> instructions)
-        {
-            foreach (var instruction in instructions)
-            {
-                Execute(instruction);
-            }
-        }
-    }
-
-    private static IEnumerable<(long serial, IEnumerable<int> digits)> GenerateSerialNumbers()
-    {
-        const long START = 11111111111111;
-        const long END = 99999999999999;
-
-        var current = START;
-
-        while(current <= END)
-        {
-            var digits = new List<int>();
-
-            var value = current;
-            var valid = true;
-
-            while(value > 0)
-            {
-                var digit = value % 10;
-
-                if (digit == 0)
+                Parallel.ForEach(alus, (v) =>
                 {
-                    valid = false;
-                    break;
-                }
+                    var (alu, _, _) = v;
 
-                digits.Add((int)digit);
+                    var aValue = alu.GetRegister(a);
 
-                value /= 10;
+                    if (!long.TryParse(b, out long bValue)) bValue = alu.GetRegister(b);
+
+                    alu.Execute(operation, a, aValue, bValue);
+                });
+
+                //for (var i = 0; i < alus.Count; i++)
+                //{
+                //    var (alu, _, _) = alus[i];
+
+                //    var aValue = alu.GetRegister(a);
+
+                //    if (!long.TryParse(b, out long bValue)) bValue = alu.GetRegister(b);
+
+                //    alu.Execute(operation, a, aValue, bValue);
+                //}
             }
+        }
 
-            if (valid)
+        public static IEnumerable<(ALU alu, ulong min, ulong max)> Execute(List<(Operation operation, string a, string b)> instructions)
+        {
+            var alus = new List<(ALU, ulong, ulong)>() { (new ALU(), 0, 0) };
+
+            for(var i = 0; i < instructions.Count; i++)
             {
-                digits.Reverse();
-
-                yield return (current, digits);
+                Execute(instructions[i], ref alus);
             }
 
-            current++;
+            return alus;
         }
     }
 
     [DayPart]
     public string ValidateSerials()
     {
-        var max = long.MinValue;
+        var alus = ALU.Execute(instructions);
 
-        foreach(var (serial, digits) in GenerateSerialNumbers())
-        {
-            var alu = new ALU(digits);
+        var validSerials = alus.Where(v => v.alu.Z == 0).ToList();
 
-            alu.Execute(instructions);
+        var max = validSerials.Select(v => v.max).Max();
+        var min = validSerials.Select(v => v.min).Min();
 
-            if (alu.Z == 0 && serial > max)
-            {
-                max = serial;
-            }
-        }
-
-        return $"{max}";
+        return $"{min}, {max}";
     }
 }
