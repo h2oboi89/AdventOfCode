@@ -107,8 +107,16 @@ internal class Day_24 : BaseDay
             var (operation, a, b) = instruction;
 
             var aValue = GetRegister(a);
+            long bValue = 0;
 
-            if (!long.TryParse(b, out long bValue)) bValue = GetRegister(b);
+            if (operation == Operation.Input)
+            {
+                aValue = GetInput();
+            }
+            else
+            {
+                if (!long.TryParse(b, out bValue)) bValue = GetRegister(b);
+            }
 
             Execute(operation, a, aValue, bValue);
         }
@@ -120,5 +128,98 @@ internal class Day_24 : BaseDay
                 Execute(instructions[i]);
             }
         }
+    }
+
+    [DayTest]
+    public static TestResult NegationTest()
+    {
+        var input = new List<long>() { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+        var expected = input.Select(v => -v).ToList();
+
+        var testValues = input.Zip(expected);
+
+        var instructions = new List<(Operation, string, string)>()
+        {
+            (Operation.Input, "x", string.Empty),
+            (Operation.Multiply, "x", "-1")
+        };
+
+        return ExecuteTests(testValues, (i) =>
+        {
+            var alu = new ALU(() => i);
+
+            alu.Execute(instructions);
+
+            return alu.X;
+        });
+    }
+
+    [DayTest]
+    public static TestResult ThreeTimesTest()
+    {
+        var testValues = new List<(Queue<long>, long)>() {
+            (new Queue<long>(new long[] { 1, 1}), 0),
+            (new Queue<long>(new long[] { 1, 3}), 1),
+            (new Queue<long>(new long[] { 3, 1}), 0),
+            (new Queue<long>(new long[] { 3, 9}), 1),
+        };
+
+        var instructions = new List<(Operation, string, string)>()
+        {
+            (Operation.Input, "z", string.Empty),
+            (Operation.Input, "x", string.Empty),
+            (Operation.Multiply, "z", "3"),
+            (Operation.Equal, "z", "x")
+        };
+
+        return ExecuteTests(testValues, (i) =>
+        {
+            var alu = new ALU(() => i.Dequeue());
+
+            alu.Execute(instructions);
+
+            return alu.Z;
+        });
+    }
+
+    [DayTest]
+    public static TestResult BinaryTest()
+    {
+        var testValues = new List<(long, (long, long, long, long))>() {
+            (0b0000, (0, 0, 0, 0)),
+            (0b0001, (0, 0, 0, 1)),
+            (0b0010, (0, 0, 1, 0)),
+            (0b0100, (0, 1, 0, 0)),
+            (0b1000, (1, 0, 0, 0)),
+            (0b1111, (1, 1, 1, 1)),
+        };
+
+        var instructions = new List<(Operation, string, string)>()
+        {
+            (Operation.Input, "w", string.Empty),
+
+            (Operation.Add, "z", "w"),
+            (Operation.Modulo, "z", "2"),
+            (Operation.Divide, "w", "2"),
+
+            (Operation.Add, "y", "w"),
+            (Operation.Modulo, "y", "2"),
+            (Operation.Divide, "w", "2"),
+
+            (Operation.Add, "x", "w"),
+            (Operation.Modulo, "x", "2"),
+            (Operation.Divide, "w", "2"),
+
+            (Operation.Modulo, "w", "2"),
+        };
+
+        return ExecuteTests(testValues, (i) =>
+        {
+            var alu = new ALU(() => i);
+
+            alu.Execute(instructions);
+
+            return (alu.W, alu.X, alu.Y, alu.Z);
+        });
     }
 }
