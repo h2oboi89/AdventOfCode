@@ -8,9 +8,20 @@ namespace AdventOfCode._2021;
 
 internal class Day_24 : BaseDay
 {
+    private readonly List<(string operation, string a, string b)> instructions = new();
+
     public Day_24(string inputFile)
     {
+        foreach (var line in File.ReadLines(inputFile))
+        {
+            var parts = line.Split(' ');
 
+            switch (parts[0])
+            {
+                case "inp": instructions.Add((parts[0], parts[1], string.Empty)); break;
+                default: instructions.Add((parts[0], parts[1], parts[2])); break;
+            }
+        }
     }
 
     private class ALU
@@ -19,6 +30,15 @@ internal class Day_24 : BaseDay
         public int X { get; private set; } = 0;
         public int Y { get; private set; } = 0;
         public int Z { get; private set; } = 0;
+
+        private readonly Queue<int> InputValues = new();
+
+        public ALU(IEnumerable<int> input)
+        {
+            var values = input.Reverse();
+
+            InputValues = new Queue<int>(values);
+        }
 
         private void SetRegister(string c, int value)
         {
@@ -60,9 +80,17 @@ internal class Day_24 : BaseDay
         {
             var (operation, a, b) = instruction;
 
-            int aValue = GetRegister(a);
+            var aValue = GetRegister(a);
+            int bValue;
 
-            if (!int.TryParse(b, out var bValue)) bValue = GetRegister(b);
+            if (operation == "inp")
+            {
+                bValue = InputValues.Dequeue();
+            }
+            else
+            {
+                if (!int.TryParse(b, out bValue)) bValue = GetRegister(b);
+            }
 
             switch (operation)
             {
@@ -77,7 +105,7 @@ internal class Day_24 : BaseDay
 
         public void Execute(IEnumerable<(string operation, string a, string b)> instructions)
         {
-            foreach(var instruction in instructions)
+            foreach (var instruction in instructions)
             {
                 Execute(instruction);
             }
