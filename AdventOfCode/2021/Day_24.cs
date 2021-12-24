@@ -130,6 +130,55 @@ internal class Day_24 : BaseDay
         }
     }
 
+    private static class Monad
+    {
+        private static readonly long[] r5 = new long[] { 1, 1, 1, 26, 1, 1, 1, 26, 1, 26, 26, 26, 26, 26 };
+        private static readonly long[] r6 = new long[] { 13, 12, 11, -11, 14, 13, 12, -5, 10, 0, -11, -13, -13, -11 };
+        private static readonly long[] r15 = new long[] { 8, 16, 4, 1, 13, 5, 0, 10, 7, 2, 13, 15, 14, 9 };
+
+        private static long RunRound(long w, long z, int round)
+        {
+            var x = (long)(((z % 26) + r6[round]) == w ? 0 : 1);
+
+            var y = 25 * x + 1;
+
+            z /= r5[round] * y;
+
+            y = w + r15[round];
+
+            z += y * x;
+
+            return z;
+        }
+
+        public static bool Validate(List<long> serial)
+        {
+            long z = 0;
+
+            for (var i = 0; i < serial.Count; i++)
+            {
+                var w = serial[i];
+
+                z = RunRound(w, z, i);
+            }
+
+            return z == 0;
+        }
+    }
+
+    private static List<long> GetDigits(ulong serial)
+    {
+        var digits = new List<long>();
+
+        while (serial > 0)
+        {
+            digits.Add((long)(serial % 10));
+            serial /= 10;
+        }
+
+        return digits;
+    }
+
     [DayTest]
     public static TestResult NegationTest()
     {
@@ -221,5 +270,51 @@ internal class Day_24 : BaseDay
 
             return (alu.W, alu.X, alu.Y, alu.Z);
         });
+    }
+
+    [DayTest]
+    public TestResult MonadVersusAlu()
+    {
+        var testValues = new List<(ulong serial, bool)>
+        {
+            (12345671234567, true),
+            (12345678912345, true),
+        };
+
+        return ExecuteTests(testValues, (serial) =>
+        {
+            var digits = GetDigits(serial);
+
+            var i = 0;
+            var getInput = () => digits[i++];
+
+            var alu = new ALU(getInput);
+            alu.Execute(instructions);
+
+            var result = Monad.Validate(digits);
+
+            return (alu.Z == 0) == result;
+        });
+    }
+
+    [DayPart]
+    public static string Solve1()
+    {
+        for (ulong i = 99999999999999; i >= 11111111111111; i--)
+        {
+            var digits = GetDigits(i);
+
+            if (digits.Any(d => d == 0))
+            {
+                continue;
+            }
+
+            if (Monad.Validate(digits))
+            {
+                return $"{i}";
+            }
+        }
+
+        return String.Empty;
     }
 }
