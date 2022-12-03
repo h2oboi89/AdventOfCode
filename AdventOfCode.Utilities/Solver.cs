@@ -23,6 +23,8 @@ public class Solver
         }
     }
 
+    public const int ANY_YEAR = -1;
+
     private readonly List<DayInfo> days = new();
 
     public IEnumerable<TaskStatus> TaskStates => tasks.Select(t => t.Status);
@@ -214,7 +216,7 @@ public class Solver
 
     public (IEnumerable<Solution> solutions, TimeSpan duration) SolveAll(int year)
     {
-        if (year == -1)
+        if (year == ANY_YEAR)
         {
             return Solve(days);
         }
@@ -226,7 +228,7 @@ public class Solver
 
     public (IEnumerable<Solution> solutions, TimeSpan duration) SolveLast(int year)
     {
-        if (year == -1) year = GetHighestYear();
+        if (year == ANY_YEAR) year = GetHighestYear();
 
         var lastDay = days.Where(d => d.Year == year).LastOrDefault();
 

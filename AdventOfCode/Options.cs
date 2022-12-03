@@ -5,7 +5,7 @@ namespace AdventOfCode;
 public class Options
 {
     [Option('y', "year", Required = false, HelpText = "Year selection (default is highest year)")]
-    public int Year { get; set; } = -1;
+    public int Year { get; set; } = Solver.ANY_YEAR;
 
     [Option("all", Required = false, HelpText = "Enables running all days for year or all years if no year is specified")]
     public bool All { get; set; } = false;
