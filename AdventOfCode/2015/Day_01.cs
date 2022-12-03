@@ -8,8 +8,7 @@ internal class Day_01 : BaseDay
     {
         directions = ParseDirections(File.ReadAllText(inputFile));
     }
-
-    private static List<int> ParseDirections(string input)
+        private static List<int> ParseDirections(string input)
     {
         var directions = new List<int>();
 
