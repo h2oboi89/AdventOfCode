@@ -51,4 +51,31 @@ static class IEnumerableExtensions
 
         return pairs;
     }
+
+    public static IEnumerable<IEnumerable<T>> Batch<T>(this IEnumerable<T> source, int batchSize)
+    {
+        if (!source.Any())
+        {
+            yield return new List<T>();
+        }
+
+        using var enumerator = source.GetEnumerator();
+
+        var batch = new List<T>();
+        while (enumerator.MoveNext())
+        {
+            batch.Add(enumerator.Current);
+
+            if (batch.Count == batchSize)
+            {
+                yield return batch;
+                batch = new();
+            }
+        }
+
+        if (batch.Count > 0)
+        {
+            yield return batch;
+        };
+    }
 }
