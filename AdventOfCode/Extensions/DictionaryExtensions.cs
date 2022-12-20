@@ -1,6 +1,6 @@
-﻿namespace AdventOfCode;
+﻿namespace AdventOfCode.Extensions;
 
-static  class DictionaryExtensions
+static class DictionaryExtensions
 {
     public static void AddOrUpdate<TKey>(this Dictionary<TKey, ulong> dict, TKey key) where TKey : notnull
     {

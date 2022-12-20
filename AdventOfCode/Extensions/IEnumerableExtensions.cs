@@ -1,4 +1,4 @@
-﻿namespace AdventOfCode;
+﻿namespace AdventOfCode.Extensions;
 
 static class IEnumerableExtensions
 {

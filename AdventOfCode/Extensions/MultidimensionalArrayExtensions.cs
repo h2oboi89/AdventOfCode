@@ -1,6 +1,6 @@
 ﻿using AdventOfCode.Common;
 
-namespace AdventOfCode;
+namespace AdventOfCode.Extensions;
 
 static class MultidimensionalArrayExtensions
 {

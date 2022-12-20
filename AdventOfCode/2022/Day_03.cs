@@ -1,4 +1,6 @@
-﻿namespace AdventOfCode._2022
+﻿using AdventOfCode.Extensions;
+
+namespace AdventOfCode._2022
 {
     internal class Day_03 : BaseDay
     {
