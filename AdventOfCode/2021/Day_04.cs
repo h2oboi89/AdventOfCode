@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using AdventOfCode.Extensions;
 
 namespace AdventOfCode._2021;
 
