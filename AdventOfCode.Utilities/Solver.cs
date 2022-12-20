@@ -45,7 +45,7 @@ public class Solver
     #region Helper Methods
     private IEnumerable<Type> GetDays()
     {
-        return dll.GetTypes().Where(type => typeof(BaseDay).IsAssignableFrom(type) && !type.IsInterface && !type.IsAbstract);
+        return dll.GetTypes().Where(type => typeof(BaseDay).IsAssignableFrom(type) && !type.IsInterface && !type.IsAbstract && type.Name != "Day_Template");
     }
 
     private static int GetYear(Type type)
