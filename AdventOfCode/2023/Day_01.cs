@@ -63,15 +63,7 @@ internal class Day_01(string inputFile) : BaseDay
             return false;
         }
 
-        for (var k = 0; k < word.Length; k++)
-        {
-            if (line[i + k] != word[k])
-            {
-                return false;
-            }
-        }
-
-        return true;
+        return line.AsSpan(i, word.Length).SequenceEqual(word);
     }
 
     private static int SumLines(IEnumerable<string> lines, bool advanced)
