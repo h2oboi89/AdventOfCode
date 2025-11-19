@@ -11,5 +11,5 @@ public class Options
     public bool All { get; set; } = false;
 
     [Value(0, Required = false, HelpText = "Specify days to run (ie: 1 2 3)")]
-    public IEnumerable<int> Days { get; set; } = new List<int>();
+    public IEnumerable<int> Days { get; set; } = [];
 }

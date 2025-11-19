@@ -3,9 +3,9 @@ using System.Text.RegularExpressions;
 
 namespace AdventOfCode.Common;
 
-internal struct Point
+internal partial struct Point
 {
-    private readonly int[] _coordinates = Array.Empty<int>();
+    private readonly int[] _coordinates = [];
 
     private const int X = 0;
     private const int Y = 1;
@@ -15,7 +15,7 @@ internal struct Point
 
     private Point(int[] coordinates) { _coordinates = coordinates; }
 
-    private int[] Distance(Point other)
+    private readonly int[] Distance(Point other)
     {
         var distances = new int[_coordinates.Length];
 
@@ -55,7 +55,7 @@ internal struct Point
 
     public static bool operator !=(Point a, Point b) => !(a == b);
 
-    public override bool Equals([NotNullWhen(true)] object? obj)
+    public override readonly bool Equals([NotNullWhen(true)] object? obj)
     {
         if (obj is not Point other) return false;
 
@@ -69,7 +69,7 @@ internal struct Point
         return true;
     }
 
-    public override int GetHashCode()
+    public override readonly int GetHashCode()
     {
         var hash = _coordinates.Length;
 
@@ -81,9 +81,9 @@ internal struct Point
         return hash;
     }
 
-    public override string ToString() => $"( {string.Join(", ", _coordinates)} )";
+    public override readonly string ToString() => $"( {string.Join(", ", _coordinates)} )";
 
-    public struct D2
+    public readonly partial struct D2
     {
         private readonly Point point;
 
@@ -97,11 +97,11 @@ internal struct Point
 
         private D2(Point p) => point = p;
 
-        public int X => point._coordinates[Point.X];
+        public readonly int X => point._coordinates[Point.X];
 
-        public int Y => point._coordinates[Point.Y];
+        public readonly int Y => point._coordinates[Point.Y];
 
-        public D2 Distance(D2 other) => new(new Point(point.Distance(other.point)));
+        public readonly D2 Distance(D2 other) => new(new Point(point.Distance(other.point)));
 
         public IEnumerable<D2> GetNeighbors()
         {
@@ -133,11 +133,9 @@ internal struct Point
             yield return new D2(X + 1, Y + 1);
         }
 
-        private static readonly Regex parseRegex = new(@"\( (?<x>-?\d+), (?<y>-?\d+) \)");
-
         public static D2? Parse(string input)
         {
-            var match = parseRegex.Match(input);
+            var match = ParseRegex().Match(input);
 
             if (match.Success)
             {
@@ -155,19 +153,21 @@ internal struct Point
 
         public static bool operator !=(D2 a, D2 b) => !(a == b);
 
-        public override bool Equals([NotNullWhen(true)] object? obj)
+        public override readonly bool Equals([NotNullWhen(true)] object? obj)
         {
             if (obj is not D2 other) return false;
 
             return point.Equals(other.point);
         }
 
-        public override int GetHashCode() => point.GetHashCode();
+        public override readonly int GetHashCode() => point.GetHashCode();
 
-        public override string ToString() => point.ToString();
+        public override readonly string ToString() => point.ToString();
+        [GeneratedRegex(@"\( (?<x>-?\d+), (?<y>-?\d+) \)")]
+        private static partial Regex ParseRegex();
     }
 
-    internal struct D3
+    internal readonly partial struct D3
     {
         private readonly Point point;
 
@@ -182,19 +182,17 @@ internal struct Point
 
         private D3(Point p) => point = p;
 
-        public int X => point._coordinates[Point.X];
+        public readonly int X => point._coordinates[Point.X];
 
-        public int Y => point._coordinates[Point.Y];
+        public readonly int Y => point._coordinates[Point.Y];
 
-        public int Z => point._coordinates[Point.Z];
+        public readonly int Z => point._coordinates[Point.Z];
 
-        public D3 Distance(D3 other) => new(new Point(point.Distance(other.point)));
-
-        private static readonly Regex parseRegex = new(@"\( (?<x>-?\d+), (?<y>-?\d+), (?<z>-?\d+) \)");
+        public readonly D3 Distance(D3 other) => new(new Point(point.Distance(other.point)));
 
         public static D3? Parse(string input)
         {
-            var match = parseRegex.Match(input);
+            var match = ParseRegex().Match(input);
 
             if (match.Success)
             {
@@ -212,15 +210,18 @@ internal struct Point
 
         public static bool operator !=(D3 a, D3 b) => !(a == b);
 
-        public override bool Equals([NotNullWhen(true)] object? obj)
+        public override readonly bool Equals([NotNullWhen(true)] object? obj)
         {
             if (obj is not D3 other) return false;
 
             return point.Equals(other.point);
         }
 
-        public override int GetHashCode() => point.GetHashCode();
+        public override readonly int GetHashCode() => point.GetHashCode();
 
-        public override string ToString() => point.ToString();
+        public override readonly string ToString() => point.ToString();
+
+        [GeneratedRegex(@"\( (?<x>-?\d+), (?<y>-?\d+), (?<z>-?\d+) \)")]
+        private static partial Regex ParseRegex();
     }
 }

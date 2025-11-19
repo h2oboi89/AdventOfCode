@@ -9,27 +9,20 @@ public class Solver
     private readonly Assembly dll;
     private readonly string dllDir;
 
-    private class DayInfo
+    private class DayInfo(int year, int day, Type type)
     {
-        public readonly int Year;
-        public readonly int Day;
-        public readonly Type Type;
-
-        public DayInfo(int year, int day, Type type)
-        {
-            Year = year;
-            Day = day;
-            Type = type;
-        }
+        public readonly int Year = year;
+        public readonly int Day = day;
+        public readonly Type Type = type;
     }
 
     public const int ANY_YEAR = -1;
 
-    private readonly List<DayInfo> days = new();
+    private readonly List<DayInfo> days = [];
 
     public IEnumerable<TaskStatus> TaskStates => tasks.Select(t => t.Status);
 
-    private readonly List<Task<Solution>> tasks = new();
+    private readonly List<Task<Solution>> tasks = [];
 
     public Solver(Assembly assembly)
     {
@@ -160,17 +153,11 @@ public class Solver
         var solution = new Solution(day.Year, day.Day, day.Type.Name);
 
         var sw = new Stopwatch();
-        var constructor = day.Type.GetConstructor(new Type[] { typeof(string) });
-
-        if (constructor == null)
-        {
-            throw new SolvingException("Expected constructor of type Constructor(string) but found none.");
-        }
-
+        var constructor = day.Type.GetConstructor([typeof(string)]) ?? throw new SolvingException("Expected constructor of type Constructor(string) but found none.");
         var inputFile = GetInputFile(day.Year, day.Day);
 
         sw.Start();
-        var instance = (BaseDay)constructor.Invoke(new object[] { inputFile });
+        var instance = (BaseDay)constructor.Invoke([inputFile]);
         solution.Construction = sw.Elapsed;
 
         var testsPassed = RunTests(solution, day.Type, instance);
@@ -234,7 +221,7 @@ public class Solver
 
         if (lastDay != default)
         {
-            return Solve(new List<DayInfo> { lastDay });
+            return Solve([lastDay]);
         }
 
         return (new List<Solution>(), TimeSpan.Zero);

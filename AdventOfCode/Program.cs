@@ -44,7 +44,7 @@ public class Program
 
             Console.WriteLine("Running solution...");
 
-            var clearString = new string(Enumerable.Repeat(' ', Console.BufferWidth).ToArray());
+            var clearString = new string([.. Enumerable.Repeat(' ', Console.BufferWidth)]);
 
             static char ParseState(TaskStatus state) => state switch
             {
