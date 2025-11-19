@@ -22,6 +22,7 @@ internal class Day_01(string inputFile) : BaseDay
                     if (CheckDigitWord(line, i, word))
                     {
                         digits.Add(d);
+                        break;
                     }
                 }
             }
