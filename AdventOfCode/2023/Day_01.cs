@@ -37,7 +37,7 @@ internal class Day_01(string inputFile) : BaseDay
 
         if (char.IsDigit(c))
         {
-            digit = int.Parse($"{c}");
+            digit = c - '0';
             return true;
         }
 
