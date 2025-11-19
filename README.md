@@ -6,7 +6,9 @@
 Solutions for [Advent of Code](https://adventofcode.com/)
 
 Usage:
- - `AdventOfCode.exe -h` displays usage information.
+ - `AdventOfCode.exe --help` displays usage information.
+
+NOTE: default is to run highest year, last day
 
 ## Description
  - `AdventOfCode` has solutions for each days problem for each year and is main executable
