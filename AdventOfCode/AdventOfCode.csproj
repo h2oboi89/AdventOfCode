@@ -129,8 +129,4 @@
     </None>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="2023\Inputs\" />
-  </ItemGroup>
-
 </Project>
