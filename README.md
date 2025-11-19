@@ -12,7 +12,7 @@ NOTE: default is to run highest year, last day
 
 ## Description
  - `AdventOfCode` has solutions for each days problem for each year and is main executable
- - `AdventOfCode.Utilities` has framework code for that facilitates running problems
+ - `AdventOfCode.Utilities` namespace has framework code for that facilitates running problems
  - `AdventofCode.Tests` is NUnit test project that runs all days tests (used by CI to verify solution functional)
 
 ## Credits
