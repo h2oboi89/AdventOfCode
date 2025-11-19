@@ -119,7 +119,7 @@ internal class Day_16 : BaseDay
 
         public class Operator : Packet
         {
-            public readonly List<Packet> Packets = new();
+            public readonly List<Packet> Packets = [];
 
             private Operator(byte version, byte type, IEnumerable<Packet> packets) : base(version, type)
             {

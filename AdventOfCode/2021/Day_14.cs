@@ -4,8 +4,8 @@ namespace AdventOfCode._2021;
 
 internal class Day_14 : BaseDay
 {
-    private readonly Polymer input = new(string.Empty, new());
-    private readonly Polymer testInput = new(string.Empty, new());
+    private readonly Polymer input = new(string.Empty, []);
+    private readonly Polymer testInput = new(string.Empty, []);
 
     public Day_14(string inputFile)
     {
@@ -65,9 +65,9 @@ internal class Day_14 : BaseDay
 
     private class Polymer
     {
-        public readonly Dictionary<char, ulong> Elements = new();
+        public readonly Dictionary<char, ulong> Elements = [];
 
-        private readonly Dictionary<string, ulong> pairs = new();
+        private readonly Dictionary<string, ulong> pairs = [];
         private readonly Dictionary<string, char> rules;
 
         public Polymer(string polymer, Dictionary<string, char> rules) : this(rules)

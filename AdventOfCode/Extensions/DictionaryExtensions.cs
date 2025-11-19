@@ -4,21 +4,17 @@ static class DictionaryExtensions
 {
     public static void AddOrUpdate<TKey>(this Dictionary<TKey, ulong> dict, TKey key) where TKey : notnull
     {
-        if (!dict.ContainsKey(key))
+        if (!dict.TryGetValue(key, out ulong value))
         {
             dict.Add(key, 0);
         }
 
-        dict[key]++;
+        dict[key] = ++value;
     }
 
     public static void AddOrUpdate<TKey>(this Dictionary<TKey, ulong> dict, TKey key, ulong value) where TKey : notnull
     {
-        if (!dict.ContainsKey(key))
-        {
-            dict.Add(key, value);
-        }
-        else
+        if (!dict.TryAdd(key, value))
         {
             dict[key] += value;
         }

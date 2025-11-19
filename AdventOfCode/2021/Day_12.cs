@@ -2,8 +2,8 @@
 
 internal class Day_12 : BaseDay
 {
-    private readonly Dictionary<string, Node> input = new();
-    private readonly List<Dictionary<string, Node>> testInputs = new();
+    private readonly Dictionary<string, Node> input = [];
+    private readonly List<Dictionary<string, Node>> testInputs = [];
 
     private const string START = "start", END = "end";
     private const int UNLIMITED = -1;
@@ -66,7 +66,7 @@ internal class Day_12 : BaseDay
     {
         public readonly string Id;
 
-        public List<Node> Connections = new();
+        public List<Node> Connections = [];
 
         public readonly Size Size;
 

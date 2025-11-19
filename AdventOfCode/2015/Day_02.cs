@@ -2,7 +2,7 @@
 
 internal class Day_02 : BaseDay
 {
-    private readonly List<(int a, int b, int c)> input = new();
+    private readonly List<(int a, int b, int c)> input = [];
 
     public Day_02(string inputFile)
     {

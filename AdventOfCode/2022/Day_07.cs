@@ -10,7 +10,7 @@ namespace AdventOfCode._2022
 {
     internal class Day_07 : BaseDay
     {
-        private readonly List<string> input = new();
+        private readonly List<string> input = [];
 
         private const string testInput = """
         $ cd /
@@ -49,7 +49,7 @@ namespace AdventOfCode._2022
         private class TerminalStatement
         {
             public readonly string Command;
-            public readonly List<string> Output = new();
+            public readonly List<string> Output = [];
 
             public TerminalStatement(string command)
             {
@@ -60,7 +60,7 @@ namespace AdventOfCode._2022
         private abstract class FileSystemNode
         {
             public FileSystemNode? Parent = null;
-            public readonly List<FileSystemNode> Children = new();
+            public readonly List<FileSystemNode> Children = [];
 
             public string Name { get; }
             public abstract int Size { get; }

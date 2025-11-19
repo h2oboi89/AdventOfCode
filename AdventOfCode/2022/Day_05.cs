@@ -5,7 +5,7 @@ namespace AdventOfCode._2022
 {
     internal partial class Day_05 : BaseDay
     {
-        private readonly List<string> input = new();
+        private readonly List<string> input = [];
 
         private const string testInput = """
             [D]    

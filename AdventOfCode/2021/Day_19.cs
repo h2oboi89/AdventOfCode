@@ -6,8 +6,8 @@ namespace AdventOfCode._2021;
 
 internal class Day_19 : BaseDay
 {
-    private readonly List<Field> partsFields = new();
-    private readonly List<Field> testFields = new();
+    private readonly List<Field> partsFields = [];
+    private readonly List<Field> testFields = [];
 
     public Day_19(string inputFile)
     {
@@ -54,8 +54,8 @@ internal class Day_19 : BaseDay
 
     private class Field
     {
-        private readonly List<Point.D3> _scanners = new();
-        private readonly List<Point.D3> _beacons = new();
+        private readonly List<Point.D3> _scanners = [];
+        private readonly List<Point.D3> _beacons = [];
 
         private static readonly IEnumerable<int[,]> _rotations = new List<int[,]>()
         {
@@ -247,7 +247,7 @@ internal class Day_19 : BaseDay
                         return new List<Field>() { a, c };
                     }
 
-                    return new();
+                    return [];
                 }));
             }
 

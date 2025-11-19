@@ -2,7 +2,7 @@
 {
     internal class Day_01 : BaseDay
     {
-        private readonly List<string> input = new();
+        private readonly List<string> input = [];
 
         private const string testInput = """
             1000
@@ -24,7 +24,7 @@
 
         private class Elf
         {
-            public readonly List<int> Calories = new();
+            public readonly List<int> Calories = [];
             public int Total => Calories.Sum();
 
             public override string ToString() => $"{Total}";

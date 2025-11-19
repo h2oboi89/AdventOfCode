@@ -51,7 +51,7 @@ internal class Day_04 : BaseDay
                 if (row.Count == Spaces.GetLength(0))
                 {
                     yield return row;
-                    row = new List<Space>();
+                    row = [];
                 }
             }
         }
@@ -70,7 +70,7 @@ internal class Day_04 : BaseDay
                 }
 
                 yield return column;
-                column = new List<Space>();
+                column = [];
             }
         }
 

@@ -25,7 +25,7 @@ internal class Day_06 : BaseDay
                     input = values;
                 }
 
-                values = new List<int>();
+                values = [];
                 isTest = false;
                 continue;
             }

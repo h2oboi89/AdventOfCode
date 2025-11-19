@@ -2,10 +2,10 @@
 
 internal class Day_01 : BaseDay
 {
-    private readonly List<int> input = new();
+    private readonly List<int> input = [];
 
-    private readonly List<int> testInput = new()
-    {
+    private readonly List<int> testInput =
+    [
         199,
         200,
         208,
@@ -16,7 +16,7 @@ internal class Day_01 : BaseDay
         269,
         260,
         263,
-    };
+    ];
 
     public Day_01(string inputFile)
     {

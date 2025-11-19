@@ -26,7 +26,7 @@ internal class Day_07 : BaseDay
 
         public bool IsSet { get; private set; }
 
-        private readonly List<Node> Children = new();
+        private readonly List<Node> Children = [];
 
         public Node(string name) { Name = name; }
 

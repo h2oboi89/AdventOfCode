@@ -4,8 +4,8 @@ namespace AdventOfCode._2021;
 
 internal class Day_18 : BaseDay
 {
-    private readonly List<string> testInput = new();
-    private readonly List<string> input = new();
+    private readonly List<string> testInput = [];
+    private readonly List<string> input = [];
 
     public Day_18(string inputFile)
     {

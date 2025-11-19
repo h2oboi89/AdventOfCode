@@ -9,7 +9,7 @@ namespace AdventOfCode.YEAR
 {
     internal class Day_Template : BaseDay
     {
-        private readonly List<string> input = new();
+        private readonly List<string> input = [];
 
         private const string testInput = """
             

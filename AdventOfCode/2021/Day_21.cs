@@ -5,8 +5,8 @@ namespace AdventOfCode._2021;
 
 internal class Day_21 : BaseDay
 {
-    private readonly List<int> testPlayers = new();
-    private readonly List<int> partPlayers = new();
+    private readonly List<int> testPlayers = [];
+    private readonly List<int> partPlayers = [];
 
     private static readonly Regex playerRegex = new(@"Player (?<id>\d) starting position: (?<position>\d)");
 
@@ -98,7 +98,7 @@ internal class Day_21 : BaseDay
 
     private static class DiracDice
     {
-        private static readonly List<int> _values = new() { 1, 2, 3 };
+        private static readonly List<int> _values = [1, 2, 3];
 
         private static IEnumerable<List<int>> Permute()
         {

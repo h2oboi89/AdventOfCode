@@ -2,7 +2,7 @@
 {
     internal class Day_02 : BaseDay
     {
-        private readonly List<string> input = new();
+        private readonly List<string> input = [];
 
         private const string testInput = """
             A Y

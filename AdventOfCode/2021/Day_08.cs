@@ -35,7 +35,7 @@ internal class Day_08 : BaseDay
                 if (test)
                 {
                     testInput = parsed;
-                    parsed = new List<(IEnumerable<string> patterns, IEnumerable<string> digits)>();
+                    parsed = [];
                     test = false;
                 }
                 else

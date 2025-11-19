@@ -69,7 +69,7 @@ static class IEnumerableExtensions
             if (batch.Count == batchSize)
             {
                 yield return batch;
-                batch = new();
+                batch = [];
             }
         }
 

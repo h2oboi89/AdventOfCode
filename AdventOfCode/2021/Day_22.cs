@@ -7,9 +7,9 @@ internal class Day_22 : BaseDay
 {
     private readonly Regex lineRegex = new(@"(?<action>on|off) x=(?<x_min>-?\d+)\.\.(?<x_max>-?\d+),y=(?<y_min>-?\d+)\.\.(?<y_max>-?\d+),z=(?<z_min>-?\d+)\.\.(?<z_max>-?\d+)");
 
-    private readonly List<Instruction> test1Instructions = new();
-    private readonly List<Instruction> test2Instructions = new();
-    private readonly List<Instruction> partInstructions = new();
+    private readonly List<Instruction> test1Instructions = [];
+    private readonly List<Instruction> test2Instructions = [];
+    private readonly List<Instruction> partInstructions = [];
 
     public Day_22(string inputFile)
     {

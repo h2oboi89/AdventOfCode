@@ -71,7 +71,7 @@ internal class Day_20 : BaseDay
 
     private class Image
     {
-        private readonly Dictionary<Point.D2, byte> _pixels = new();
+        private readonly Dictionary<Point.D2, byte> _pixels = [];
 
         public IEnumerable<Pixel> Pixels => _pixels.Select(kvp => new Pixel(kvp.Key, kvp.Value));
 

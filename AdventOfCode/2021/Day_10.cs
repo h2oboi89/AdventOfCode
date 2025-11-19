@@ -20,7 +20,7 @@ internal class Day_10 : BaseDay
                 {
                     test = false;
                     testInput = values;
-                    values = new();
+                    values = [];
                 }
                 else
                 {

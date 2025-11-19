@@ -134,7 +134,7 @@ internal class Day_05 : BaseDay
 
                 max = 0;
 
-                values = new List<PointPair>();
+                values = [];
                 isTest = false;
                 continue;
             }

@@ -2,10 +2,10 @@
 
 static class StringExtensions
 {
-
     public static IEnumerable<string> SplitInParts(this string s, int partLength)
     {
-        if (s == null) throw new ArgumentNullException(nameof(s));
+        ArgumentNullException.ThrowIfNull(s);
+
         if (partLength <= 0) throw new ArgumentException("Part length has to be positive.", nameof(partLength));
 
         for (var i = 0; i < s.Length; i += partLength)

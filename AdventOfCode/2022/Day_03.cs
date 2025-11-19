@@ -4,7 +4,7 @@ namespace AdventOfCode._2022
 {
     internal class Day_03 : BaseDay
     {
-        private readonly List<string> input = new();
+        private readonly List<string> input = [];
 
         private readonly string testInput = """
             vJrwpWtwJgWrhcsFMMfFFhFp

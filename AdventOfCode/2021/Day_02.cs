@@ -2,17 +2,17 @@
 
 internal class Day_02 : BaseDay
 {
-    private readonly List<(Direction direction, int value)> input = new();
+    private readonly List<(Direction direction, int value)> input = [];
 
-    private readonly List<(Direction direction, int value)> testInput = new()
-    {
+    private readonly List<(Direction direction, int value)> testInput =
+    [
         (Direction.forward, 5),
         (Direction.down, 5),
         (Direction.forward, 8),
         (Direction.up, 3),
         (Direction.down, 8),
         (Direction.forward, 2),
-    };
+    ];
 
     private enum Direction
     {
