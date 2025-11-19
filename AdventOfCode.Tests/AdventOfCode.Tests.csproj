@@ -15,7 +15,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AdventOfCode.Utilities\AdventOfCode.Utilities.csproj" />
     <ProjectReference Include="..\AdventOfCode\AdventOfCode.csproj" />
   </ItemGroup>
 

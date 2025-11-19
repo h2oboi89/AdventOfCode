@@ -1,6 +1,6 @@
 ﻿namespace AdventOfCode.Utilities;
 
-public static  class ConsoleUtils
+public static class ConsoleUtils
 {
     private static void ConsoleColorMethod(ConsoleColor color, string text, Action<string> method)
     {

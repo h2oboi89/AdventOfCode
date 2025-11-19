@@ -12,10 +12,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AdventOfCode.Utilities\AdventOfCode.Utilities.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Update="2015\Inputs\02.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

@@ -3,22 +3,22 @@
 /// <summary>
 /// Result class from running a <see cref="BaseDay"/> extending classes <see cref="DayTest"/> and <see cref="DayPart"/> functions.
 /// </summary>
-public class Solution
+public class Solution(int year, int day, string typeName)
 {
     /// <summary>
     /// Year this <see cref="Solution"/> belongs to.
     /// </summary>
-    public readonly int Year;
+    public readonly int Year = year;
 
     /// <summary>
     /// Specific <see cref="BaseDay"/> extending day class this <see cref="Solution"/> belongs to.
     /// </summary>
-    public readonly int Day;
+    public readonly int Day = day;
 
     /// <summary>
     /// Exact name of the class that extends <see cref="BaseDay"/>
     /// </summary>
-    public readonly string TypeName;
+    public readonly string TypeName = typeName;
 
     /// <summary>
     /// How long it takes constructor to execute.
@@ -33,19 +33,12 @@ public class Solution
     /// <summary>
     /// Results of running days <see cref="DayTest"/> functions.
     /// </summary>
-    public List<(string name, TestResult result, TimeSpan duration)> Tests = new();
+    public List<(string name, TestResult result, TimeSpan duration)> Tests = [];
 
     /// <summary>
     /// Results of running days <see cref="DayPart"/> functions.
     /// </summary>
-    public List<(string name, string result, TimeSpan duration)> Parts = new();
-
-    public Solution(int year, int day, string typeName)
-    {
-        Year = year;
-        Day = day;
-        TypeName = typeName;
-    }
+    public List<(string name, string result, TimeSpan duration)> Parts = [];
 
     /// <summary>
     /// Printable name for this <see cref="Solution"/> that should match <see cref="BaseDay"/> extending classes name and namespace.
